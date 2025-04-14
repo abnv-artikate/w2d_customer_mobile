@@ -1,0 +1,102 @@
+name: w2d_customer_mobile
+description: "A new Flutter project."
+
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.2
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  carousel_slider_plus: ^7.1.0
+  go_router: ^14.8.1
+  get_it: ^8.0.3
+  dio: ^5.8.0+1
+  retrofit: ^4.4.0
+  logger: ^2.4.0
+  json_annotation: ^4.9.0
+  dartz: ^0.10.1
+  equatable: ^2.0.7
+  internet_connection_checker_plus: ^2.7.1
+  flutter_bloc: ^9.1.0
+  fluttertoast: ^8.2.12
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+  retrofit_generator: '>=8.0.0 <10.0.0'
+  build_runner: ^2.3.3
+  json_serializable: ^6.8.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/icons/
+
+  fonts:
+    - family: ClassicoURW
+      fonts:
+        - asset: 'assets/fonts/URWClassico-Bold.ttf'
+        - asset: 'assets/fonts/URWClassico-BoldItalic.ttf'
+        - asset: 'assets/fonts/URWClassico-Italic.ttf'
+        - asset: 'assets/fonts/URWClassico-Regular.ttf'
+
+    - family: CormorantGaramond
+      fonts:
+        - asset: 'assets/fonts/CormorantGaramond-Bold.ttf'
+        - asset: 'assets/fonts/CormorantGaramond-BoldItalic.ttf'
+        - asset: 'assets/fonts/CormorantGaramond-Italic.ttf'
+        - asset: 'assets/fonts/CormorantGaramond-Light.ttf'
+        - asset: 'assets/fonts/CormorantGaramond-LightItalic.ttf'
+        - asset: 'assets/fonts/CormorantGaramond-Medium.ttf'
+        - asset: 'assets/fonts/CormorantGaramond-MediumItalic.ttf'
+        - asset: 'assets/fonts/CormorantGaramond-Regular.ttf'
+        - asset: 'assets/fonts/CormorantGaramond-SemiBold.ttf'
+        - asset: 'assets/fonts/CormorantGaramond-SemiBoldItalic.ttf'
+
+  
+  
+#
+#  // thin 300
+#  // regular 400
+#  // medium 500
+#  // semiBold 600
+#  // bold 700
+#  // extraBold 800
+#  // black 900
+  
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
