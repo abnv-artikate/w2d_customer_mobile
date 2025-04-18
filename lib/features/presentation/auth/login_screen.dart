@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
               }
 
               if (state is VerifyOtpSuccess) {
-                context.go(AppRoutes.homeRoute);
+                context.go(AppRoutes.homeRoute, extra: state.userEntity);
               } else if (state is VerifyOtpError) {
                 widget.showErrorToast(context: context, message: state.error);
               }

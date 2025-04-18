@@ -19,9 +19,9 @@ final class SendOtpError extends AuthState {
 }
 
 final class VerifyOtpSuccess extends AuthState {
-  final String message;
+  final UserEntity userEntity;
 
-  VerifyOtpSuccess(this.message);
+  VerifyOtpSuccess(this.userEntity);
 }
 
 final class VerifyOtpError extends AuthState {

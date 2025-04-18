@@ -1,9 +1,11 @@
 import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
-import 'package:w2d_customer_mobile/core/widgets/drawer_item_widget.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/product_item_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/user_profile_widget.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
 final List<String> imgList = [
@@ -32,7 +34,9 @@ final List<Widget> imageSliders =
         .toList();
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  // final UserEntity userEntity;
+
+  const HomeScreen({super.key /*required this.userEntity*/});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -63,25 +67,18 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
-        title: Image.asset(
-          Assets.iconsW2DHorizontalLogo,
-          fit: BoxFit.fitHeight,
-          color: AppColors.deepBlue,
-        ),
-        centerTitle: true,
+        // title: Image.asset(
+        //   Assets.iconsW2DHorizontalLogo,
+        //   fit: BoxFit.fitHeight,
+        //   color: AppColors.deepBlue,
+        // ),
+        // centerTitle: true,
         iconTheme: IconThemeData(color: AppColors.deepBlue),
-        actions: [
-          Container(
-            margin: EdgeInsets.only(right: 10),
-            child: Icon(
-              Icons.shopping_cart_outlined,
-              color: AppColors.deepBlue,
-            ),
-          ),
-        ],
+        leading: UserProfileWidget(),
+        actions: [BrandMallToggleWidget()],
       ),
-      // drawer: Drawer(child: _drawer()),
 
+      // drawer: Drawer(child: _drawer()),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -97,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _brandAndHiddenGems() {
     return Column(
       children: [
-        BrandMallWidget(),
+        // BrandMallWidget(),
         SizedBox(height: 10),
         SizedBox(
           height: 200,
@@ -127,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
             options: _bestSellerCarouselOption,
             items: List.generate(5, (_) {
               return Container(
-                color: AppColors.worldGreen10,
+                color: AppColors.transparent,
                 child: ProductItemWidget(
                   width: MediaQuery.of(context).size.width * 0.45,
                 ),
@@ -140,6 +137,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _popularCategories() {
-    return Container();
+    return Column(
+      children: [
+        SizedBox(height: 20),
+        Center(child: Text('//TODO: Popular categories here')),
+      ],
+    );
   }
 }

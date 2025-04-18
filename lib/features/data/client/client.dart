@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:w2d_customer_mobile/core/utils/endpoint_constants.dart';
+import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/success_message_model.dart';
 
 part 'client.g.dart';
@@ -34,5 +35,5 @@ abstract class RestClient {
   });
 
   @POST(EndPoints.verifyOtp)
-  Future<SuccessMessageModel> verifyOtp(@Body() Map<String, dynamic> body);
+  Future<VerifyOtpModel> verifyOtp(@Body() Map<String, dynamic> body);
 }

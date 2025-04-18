@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
-import 'package:w2d_customer_mobile/generated/assets.dart';
 
 class ScaffoldWithNav extends StatefulWidget {
   final Widget child;
@@ -31,41 +31,21 @@ class _ScaffoldWithNavState extends State<ScaffoldWithNav> {
         selectedIndex: navBarIndex,
         destinations: <Widget>[
           CustomNavigationDestination(
-            icon: Icon(Icons.home_outlined, size: 30),
+            icon: Icon(LucideIcons.home, size: 30),
             label: 'Home',
           ),
           CustomNavigationDestination(
-            icon:
-                navBarIndex == 1
-                    ? Image.asset(
-                      Assets.iconsBrandMallActive,
-                      height: 30,
-                      width: 30,
-                    )
-                    : Image.asset(
-                      Assets.iconsBrandMallInactive,
-                      height: 30,
-                      width: 30,
-                    ),
-            label: 'Brand Mall',
+            icon: Icon(LucideIcons.layoutPanelLeft, size: 30),
+            label: 'Explore',
           ),
+
           CustomNavigationDestination(
-            icon:
-                navBarIndex == 2
-                    ? Image.asset(
-                      Assets.iconsHiddenGemsActive,
-                      height: 30,
-                      width: 30,
-                    )
-                    : Image.asset(
-                      Assets.iconsHiddenGemsInactive,
-                      height: 30,
-                      width: 30,
-                    ),
-            label: 'Hidden Gems',
+            icon: Icon(LucideIcons.shoppingCart, size: 30),
+            label: 'Cart',
           ),
+
           CustomNavigationDestination(
-            icon: Icon(Icons.person_2_outlined, size: 30),
+            icon: Icon(LucideIcons.user, size: 30),
             label: 'Profile',
           ),
         ],

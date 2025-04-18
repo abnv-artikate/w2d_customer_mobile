@@ -50,13 +50,13 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<SuccessMessageModel> verifyOtp(Map<String, dynamic> body) async {
+  Future<VerifyOtpModel> verifyOtp(Map<String, dynamic> body) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body);
-    final _options = _setStreamType<SuccessMessageModel>(
+    final _options = _setStreamType<VerifyOtpModel>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -67,9 +67,9 @@ class _RestClient implements RestClient {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late SuccessMessageModel _value;
+    late VerifyOtpModel _value;
     try {
-      _value = SuccessMessageModel.fromJson(_result.data!);
+      _value = VerifyOtpModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

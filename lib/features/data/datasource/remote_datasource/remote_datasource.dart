@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:w2d_customer_mobile/core/error/exceptions.dart';
 import 'package:w2d_customer_mobile/core/utils/constants.dart';
 import 'package:w2d_customer_mobile/features/data/client/client.dart';
+import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/success_message_model.dart';
 
 abstract class RemoteDatasource {
@@ -10,7 +11,7 @@ abstract class RemoteDatasource {
     required Map<String, dynamic> body,
   });
 
-  Future<SuccessMessageModel> verifyOtp(Map<String, dynamic> body);
+  Future<VerifyOtpModel> verifyOtp(Map<String, dynamic> body);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
@@ -41,7 +42,7 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   }
 
   @override
-  Future<SuccessMessageModel> verifyOtp(Map<String, dynamic> body) async {
+  Future<VerifyOtpModel> verifyOtp(Map<String, dynamic> body) async {
     try {
       return await client.verifyOtp(body);
     } on DioException catch (e) {

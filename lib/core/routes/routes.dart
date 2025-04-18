@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/login_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/scaffold_with_nav.dart';
@@ -15,7 +16,7 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: AppRoutes.initial,
+  initialLocation: AppRoutes.homeRoute,
   routes: <RouteBase>[
     GoRoute(
       path: AppRoutes.initial,

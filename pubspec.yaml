@@ -28,6 +28,9 @@ dependencies:
   internet_connection_checker_plus: ^2.7.1
   flutter_bloc: ^9.1.0
   fluttertoast: ^8.2.12
+  flutter_secure_storage: ^9.2.4
+  shared_preferences: ^2.5.3
+  lucide_icons: ^0.257.0
 
 dev_dependencies:
   flutter_test:

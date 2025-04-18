@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
 
@@ -15,6 +16,7 @@ class AuthCubit extends Cubit<AuthState> {
     : super(AuthInitial());
 
   sendOtp(SendOtpParams params) async {
+    emit(AuthLoading());
     final result = await sendOtpUseCase(params);
     result.fold((l) => _emitFailure(l), (data) {
       emit(SendOtpSuccess(data));
@@ -22,6 +24,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   verifyOtp(VerifyOtpParams params) async {
+    emit(AuthLoading());
     final result = await verifyOtpUseCase(params);
     result.fold((l) => _emitFailure(l), (data) {
       emit(VerifyOtpSuccess(data));

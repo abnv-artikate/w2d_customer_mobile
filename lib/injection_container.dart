@@ -3,9 +3,12 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:w2d_customer_mobile/core/config/my_shared_pref.dart';
 import 'package:w2d_customer_mobile/core/network/network_info.dart';
 import 'package:w2d_customer_mobile/core/utils/constants.dart';
 import 'package:w2d_customer_mobile/features/data/client/client.dart';
+import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/remote_datasource/remote_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/repositories/repository_impl.dart';
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
@@ -34,17 +37,24 @@ Future<void> init() async {
   /// Repositories
   sl.registerLazySingleton<Repository>(
     () => RepositoryImpl(
+      localDatasource: sl<LocalDatasource>(),
       remoteDatasource: sl<RemoteDatasource>(),
       networkInfo: sl<NetworkInfo>(),
     ),
   );
 
   /// Datasource
+  sl.registerLazySingleton<LocalDatasource>(
+    () => LocalDataSourceImpl(sl<MySharedPref>()),
+  );
   sl.registerLazySingleton<RemoteDatasource>(
     () => RemoteDatasourceImpl(client: sl<RestClient>()),
   );
 
   /// Core
+  sl.registerLazySingleton<MySharedPref>(
+    () => MySharedPref(sl<SharedPreferences>()),
+  );
   sl.registerLazySingleton<NetworkInfo>(
     () => NetworkInfoImpl(sl<InternetConnection>()),
   );
@@ -70,9 +80,13 @@ Future<void> init() async {
     ),
   );
 
+  /// Shared Preference
+
   /// Clients
   sl.registerLazySingleton<RestClient>(() => RestClient(dio));
 
   /// Dependencies
+  final sharedPreference = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreference);
   sl.registerLazySingleton<InternetConnection>(() => InternetConnection());
 }

@@ -5,6 +5,7 @@ import 'package:w2d_customer_mobile/injection_container.dart' as di;
 import 'core/utils/constants.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await di.init();
   runApp(const MyApp());
 }
