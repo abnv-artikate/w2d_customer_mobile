@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/generated/assets.dart';
 
 class UserProfileWidget extends StatelessWidget {
   const UserProfileWidget({super.key});
@@ -16,8 +17,8 @@ class UserProfileWidget extends StatelessWidget {
         backgroundColor: AppColors.worldGreen,
         child: CircleAvatar(
           radius: 15,
-          foregroundImage: NetworkImage(imgUrl),
-          backgroundImage: NetworkImage(imgUrl),
+          // foregroundImage: NetworkImage(imgUrl),
+          // backgroundImage: AssetImage(Assets.iconsDefaultAvatar),
           backgroundColor: AppColors.softWhite80,
         ),
       ),

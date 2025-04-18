@@ -19,6 +19,7 @@ class Assets {
   static const String iconsBrandMallActive = 'assets/icons/brand_mall_active.png';
   static const String iconsBrandMallInactive = 'assets/icons/brand_mall_inactive.png';
   static const String iconsCart5 = 'assets/icons/cart5.png';
+  static const String iconsDefaultAvatar = 'assets/icons/default_avatar.svg';
   static const String iconsHiddenGemsActive = 'assets/icons/hidden_gems_active.png';
   static const String iconsHiddenGemsInactive = 'assets/icons/hidden_gems_inactive.png';
   static const String iconsLikeOutlined = 'assets/icons/like_outlined.png';

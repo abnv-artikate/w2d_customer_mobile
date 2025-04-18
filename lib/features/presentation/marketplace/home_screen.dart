@@ -26,7 +26,7 @@ final List<Widget> imageSliders =
             height: 200,
             errorBuilder: (context, widget, stack) {
               return Center(
-                child: Text('Image not available ${stack.toString()}'),
+                child: Text('Image not available.'),
               );
             },
           ),
