@@ -4,6 +4,7 @@ class AppColors {
   static const transparent = Color(0x00000000);
   static const worldGreen = Color(0xFF00972C);
   static const worldGreen10 = Color(0xFFDFF8E4);
+  static const worldGreen80 = Color(0xFF3DA644);
   static const deepBlue = Color(0xFF010A23);
   static const techRed = Color(0xFFFF303E);
   static const doorOchre = Color(0xFFFFC440);
@@ -24,5 +25,9 @@ class AppColors {
       Color(0xFFF7E771),
       Color(0xFFC6882C),
     ],
+  );
+
+  static const worldGreenGradiant = LinearGradient(
+    colors: [Color(0xFF32BF73), Color(0xFF00A739)],
   );
 }
