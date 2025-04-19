@@ -55,6 +55,9 @@ class RepositoryImpl extends Repository {
 
         localDatasource.setAccessToken(result.data?.access ?? "");
         localDatasource.setRefreshToken(result.data?.refresh ?? "");
+        localDatasource.setUserEmail(
+          RepositoryConv.convertVerifyOtpModelToUserEntity(result).email,
+        );
 
         return Right(RepositoryConv.convertVerifyOtpModelToUserEntity(result));
       } else {

@@ -13,11 +13,11 @@ class UserProfileWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(left: 20),
       child: CircleAvatar(
-        radius: 20,
+        radius: 90,
         backgroundColor: AppColors.worldGreen,
         child: CircleAvatar(
-          radius: 15,
-          // foregroundImage: NetworkImage(imgUrl),
+          radius: 85,
+          backgroundImage: NetworkImage(imgUrl),
           // backgroundImage: AssetImage(Assets.iconsDefaultAvatar),
           backgroundColor: AppColors.softWhite80,
         ),

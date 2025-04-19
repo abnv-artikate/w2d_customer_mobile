@@ -1,11 +1,11 @@
 import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
-import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/product_item_widget.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/user_profile_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/search_widget.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
 final List<String> imgList = [
@@ -25,9 +25,7 @@ final List<Widget> imageSliders =
             fit: BoxFit.cover,
             height: 200,
             errorBuilder: (context, widget, stack) {
-              return Center(
-                child: Text('Image not available.'),
-              );
+              return Center(child: Text('Image not available.'));
             },
           ),
         )
@@ -61,12 +59,14 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   int navBarIndex = 0;
+  bool isBrand = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 80,
+        toolbarHeight: 130,
+        // backgroundColor: AppColors.worldGreen10,
         // title: Image.asset(
         //   Assets.iconsW2DHorizontalLogo,
         //   fit: BoxFit.fitHeight,
@@ -74,11 +74,35 @@ class _HomeScreenState extends State<HomeScreen> {
         // ),
         // centerTitle: true,
         iconTheme: IconThemeData(color: AppColors.deepBlue),
-        leading: UserProfileWidget(),
-        actions: [BrandMallToggleWidget()],
+        leadingWidth: 80,
+        leading: Container(
+          margin: EdgeInsets.only(left: 10),
+          child: Image.asset(
+            isBrand
+                ? Assets.iconsW2DLogoAspirationalGold
+                : Assets.iconsW2DLogoGreen,
+            fit: BoxFit.contain,
+          ),
+        ),
+        actions: [
+          BrandMallToggleWidget(
+            onTap: () {
+              setState(() {
+                isBrand = !isBrand;
+              });
+            },
+            isBrand: isBrand,
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: Size.zero,
+          child: SearchWidget(
+            onTap: () {
+              context.push(AppRoutes.searchRoute);
+            },
+          ),
+        ),
       ),
-
-      // drawer: Drawer(child: _drawer()),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -94,7 +118,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _brandAndHiddenGems() {
     return Column(
       children: [
-        // BrandMallWidget(),
         SizedBox(height: 10),
         SizedBox(
           height: 200,

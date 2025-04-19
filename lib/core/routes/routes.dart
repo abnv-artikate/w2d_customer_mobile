@@ -5,7 +5,10 @@ import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/login_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/explore_categories_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/scaffold_with_nav.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/search_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/user_profile_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/category_listing_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/home_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/product_screen.dart';
@@ -40,9 +43,21 @@ final GoRouter router = GoRouter(
           },
         ),
         GoRoute(
+          path: AppRoutes.exploreRoute,
+          builder: (BuildContext context, GoRouterState state) {
+            return ExploreCategoriesScreen();
+          },
+        ),
+        GoRoute(
           path: AppRoutes.listingRoute,
           builder: (BuildContext context, GoRouterState state) {
             return CategoryListingScreen();
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.profileRoute,
+          builder: (BuildContext context, GoRouterState state) {
+            return UserProfileScreen();
           },
         ),
       ],
@@ -52,6 +67,13 @@ final GoRouter router = GoRouter(
       path: AppRoutes.productRoute,
       builder: (BuildContext context, GoRouterState state) {
         return ProductScreen();
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.searchRoute,
+      builder: (BuildContext context, GoRouterState state) {
+        return SearchScreen();
       },
     ),
   ],
