@@ -77,7 +77,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       return InkWell(
                         onTap: () {
                           context.pop();
-                          context.push(AppRoutes.productRoute);
+                          context.push(AppRoutes.listingRoute);
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),

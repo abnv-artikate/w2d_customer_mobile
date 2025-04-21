@@ -36,4 +36,7 @@ abstract class RestClient {
 
   @POST(EndPoints.verifyOtp)
   Future<VerifyOtpModel> verifyOtp(@Body() Map<String, dynamic> body);
+
+  // @POST(EndPoints.createCustomer)
+  // Future<SuccessMessageModel> createCustomer(@Body() Map<String, dynamic> body);
 }

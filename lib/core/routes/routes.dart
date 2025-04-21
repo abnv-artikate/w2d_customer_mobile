@@ -5,12 +5,13 @@ import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/login_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cart_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/explore_categories_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/scaffold_with_nav.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/search_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/user_profile_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/category_listing_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/marketplace/home_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/home_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/product_screen.dart';
 import 'package:w2d_customer_mobile/injection_container.dart';
 
@@ -19,7 +20,7 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: AppRoutes.homeRoute,
+  initialLocation: AppRoutes.initial,
   routes: <RouteBase>[
     GoRoute(
       path: AppRoutes.initial,
@@ -49,9 +50,9 @@ final GoRouter router = GoRouter(
           },
         ),
         GoRoute(
-          path: AppRoutes.listingRoute,
+          path: AppRoutes.cartRoute,
           builder: (BuildContext context, GoRouterState state) {
-            return CategoryListingScreen();
+            return CartScreen();
           },
         ),
         GoRoute(
@@ -61,6 +62,13 @@ final GoRouter router = GoRouter(
           },
         ),
       ],
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.listingRoute,
+      builder: (BuildContext context, GoRouterState state) {
+        return CategoryListingScreen();
+      },
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/categories_listing_widget.dart';
 
 class ExploreCategoriesScreen extends StatelessWidget {
@@ -25,7 +27,11 @@ class ExploreCategoriesScreen extends StatelessWidget {
             childAspectRatio: 1.8,
           ),
           itemBuilder: (BuildContext context, int index) {
-            return CategoriesListingWidget();
+            return CategoriesListingWidget(
+              onTap: () {
+                context.push(AppRoutes.listingRoute);
+              },
+            );
           },
           itemCount: 25,
         ),

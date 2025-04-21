@@ -57,7 +57,7 @@ class _ScaffoldWithNavState extends State<ScaffoldWithNav> {
     List<String> screens = [
       AppRoutes.homeRoute,
       AppRoutes.exploreRoute,
-      AppRoutes.listingRoute,
+      AppRoutes.cartRoute,
       AppRoutes.profileRoute,
     ];
 

@@ -22,12 +22,20 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLogin = true;
   bool isVerify = false;
   String buttonText = "Continue";
+  final TextEditingController _emailCtrl = TextEditingController();
+  final TextEditingController _otpCtrl = TextEditingController();
+  final TextEditingController _nameCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailCtrl.dispose();
+    _otpCtrl.dispose();
+    _nameCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController emailCtrl = TextEditingController();
-    TextEditingController otpCtrl = TextEditingController();
-    TextEditingController nameCtrl = TextEditingController();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(toolbarHeight: 10),
@@ -58,7 +66,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _logo(),
-                  _inputForm(context, emailCtrl, otpCtrl, nameCtrl),
+                  _inputForm(
+                    context,
+                    emailCtrl: _emailCtrl,
+                    otpCtrl: _otpCtrl,
+                    nameCtrl: _nameCtrl,
+                  ),
                   _guestOrSignUp(context),
                 ],
               );
@@ -133,11 +146,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _inputForm(
-    BuildContext context,
-    TextEditingController emailCtrl,
-    TextEditingController otpCtrl,
-    TextEditingController nameCtrl,
-  ) {
+    BuildContext context, {
+    required TextEditingController emailCtrl,
+    required TextEditingController otpCtrl,
+    required TextEditingController nameCtrl,
+  }) {
     return Column(
       children: [
         TextField(

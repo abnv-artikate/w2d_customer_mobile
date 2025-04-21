@@ -2,6 +2,7 @@
 
 class EndPoints {
   /// Customer Endpoints
+  static const String createCustomer = '/customer/create/';
   static const String sendOtp = '/customer/send-otp';
   static const String verifyOtp = '/customer/verify-otp/';
   static const String tokenRefresh = '/customer/token/refresh/';
