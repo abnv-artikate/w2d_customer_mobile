@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
               }
 
               if (state is VerifyOtpSuccess) {
-                context.go(AppRoutes.homeRoute, extra: state.userEntity);
+                context.go(AppRoutes.initial, extra: state.userEntity);
               } else if (state is VerifyOtpError) {
                 widget.showErrorToast(context: context, message: state.error);
               }
@@ -137,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 50,
           width: MediaQuery.of(context).size.width,
           onTap: () {
-            context.go(AppRoutes.homeRoute);
+            context.go(AppRoutes.initial);
           },
         ),
         _termsAndCondition(),

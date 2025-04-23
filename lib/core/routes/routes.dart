@@ -22,15 +22,6 @@ final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: AppRoutes.initial,
   routes: <RouteBase>[
-    GoRoute(
-      path: AppRoutes.initial,
-      builder: (BuildContext context, GoRouterState state) {
-        return BlocProvider<AuthCubit>(
-          create: (context) => sl<AuthCubit>(),
-          child: LoginScreen(),
-        );
-      },
-    ),
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
       builder: (BuildContext context, GoRouterState state, Widget child) {
@@ -38,7 +29,7 @@ final GoRouter router = GoRouter(
       },
       routes: [
         GoRoute(
-          path: AppRoutes.homeRoute,
+          path: AppRoutes.initial,
           builder: (BuildContext context, GoRouterState state) {
             return HomeScreen();
           },
@@ -65,6 +56,16 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.loginRoute,
+      builder: (BuildContext context, GoRouterState state) {
+        return BlocProvider<AuthCubit>(
+          create: (context) => sl<AuthCubit>(),
+          child: LoginScreen(),
+        );
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
       path: AppRoutes.listingRoute,
       builder: (BuildContext context, GoRouterState state) {
         return CategoryListingScreen();
@@ -84,5 +85,12 @@ final GoRouter router = GoRouter(
         return SearchScreen();
       },
     ),
+    // GoRoute(
+    //   parentNavigatorKey: _rootNavigatorKey,
+    //   path: '/test',
+    //   builder: (BuildContext context, GoRouterState state) {
+    //     return GeolocatorWidget();
+    //   },
+    // ),
   ],
 );

@@ -26,9 +26,9 @@ class _BrandMallToggleWidgetState extends State<BrandMallToggleWidget> {
       child: AnimatedContainer(
         duration: animationDuration,
         padding: const EdgeInsets.all(4),
-        margin: const EdgeInsets.only(right: 10),
+        // margin: const EdgeInsets.only(right: 10),
         height: 40,
-        width: 80,
+        // width: 80,
         decoration: BoxDecoration(
           gradient:
               widget.isBrand

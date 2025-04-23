@@ -5,6 +5,7 @@ import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/product_item_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/location_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/search_widget.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
@@ -85,21 +86,36 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          BrandMallToggleWidget(
-            onTap: () {
-              setState(() {
-                isBrand = !isBrand;
-              });
-            },
-            isBrand: isBrand,
-          ),
+          // BrandMallToggleWidget(
+          //   onTap: () {
+          //     setState(() {
+          //       isBrand = !isBrand;
+          //     });
+          //   },
+          //   isBrand: isBrand,
+          // ),
+          LocationWidget(),
         ],
         bottom: PreferredSize(
           preferredSize: Size.zero,
-          child: SearchWidget(
-            onTap: () {
-              context.push(AppRoutes.searchRoute);
-            },
+          child: Row(
+            children: [
+              SearchWidget(
+                onTap: () {
+                  context.push(AppRoutes.searchRoute);
+                },
+              ),
+              Expanded(
+                child: BrandMallToggleWidget(
+                  onTap: () {
+                    setState(() {
+                      isBrand = !isBrand;
+                    });
+                  },
+                  isBrand: isBrand,
+                ),
+              ),
+            ],
           ),
         ),
       ),
