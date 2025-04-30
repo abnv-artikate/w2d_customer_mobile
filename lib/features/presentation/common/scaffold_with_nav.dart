@@ -26,8 +26,8 @@ class _ScaffoldWithNavState extends State<ScaffoldWithNav> {
         },
         backgroundColor: AppColors.white,
         elevation: 0.6,
-        shadowColor: AppColors.softWhite80,
-        indicatorColor: AppColors.softWhite71,
+        shadowColor: AppColors.worldGreen10,
+        indicatorColor: AppColors.worldGreen10,
         selectedIndex: navBarIndex,
         destinations: <Widget>[
           CustomNavigationDestination(

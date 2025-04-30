@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //   },
           //   isBrand: isBrand,
           // ),
-          LocationWidget(),
+          // LocationWidget(),
         ],
         bottom: PreferredSize(
           preferredSize: Size.zero,
@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return Container(
                 color: AppColors.transparent,
                 child: ProductItemWidget(
-                  width: MediaQuery.of(context).size.width * 0.45,
+                  width: MediaQuery.of(context).size.width * 0.45, imgUrl: '', itemName: '', salePrice: '', regularPrice: '',
                 ),
               );
             }),

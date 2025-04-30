@@ -12,20 +12,14 @@ final class SendOtpSuccess extends AuthState {
   SendOtpSuccess(this.message);
 }
 
-final class SendOtpError extends AuthState {
-  final String error;
-
-  SendOtpError(this.error);
-}
-
 final class VerifyOtpSuccess extends AuthState {
   final UserEntity userEntity;
 
   VerifyOtpSuccess(this.userEntity);
 }
 
-final class VerifyOtpError extends AuthState {
+final class AuthError extends AuthState {
   final String error;
 
-  VerifyOtpError(this.error);
+  AuthError(this.error);
 }

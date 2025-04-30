@@ -6,12 +6,14 @@ import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/login_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cart_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/explore_categories_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/scaffold_with_nav.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/search_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/user_profile_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/category_listing_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/home_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/product_screen.dart';
 import 'package:w2d_customer_mobile/injection_container.dart';
 
@@ -37,7 +39,10 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.exploreRoute,
           builder: (BuildContext context, GoRouterState state) {
-            return ExploreCategoriesScreen();
+            return BlocProvider<CommonCubit>(
+              create: (context) => sl<CommonCubit>(),
+              child: ExploreCategoriesScreen(),
+            );
           },
         ),
         GoRoute(
@@ -68,7 +73,10 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: AppRoutes.listingRoute,
       builder: (BuildContext context, GoRouterState state) {
-        return CategoryListingScreen();
+        return BlocProvider<CategoryCubit>(
+          create: (context) => sl<CategoryCubit>(),
+          child: CategoryListingScreen(categorySlug: state.extra as String),
+        );
       },
     ),
     GoRoute(

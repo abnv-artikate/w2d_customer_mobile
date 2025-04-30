@@ -8,5 +8,9 @@ class EndPoints {
   static const String tokenRefresh = '/customer/token/refresh/';
 
   /// categories Endpoints
+  static const String categories = '/categories/';
   static const String categoriesHierarchy = '/categories/hierarchy/';
+
+  /// Product Endpoints
+  static const String productView = '/product/view/';
 }

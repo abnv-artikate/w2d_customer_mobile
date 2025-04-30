@@ -33,11 +33,11 @@ class AuthCubit extends Cubit<AuthState> {
 
   FutureOr<void> _emitFailure(Failure failure) async {
     if (failure is ServerFailure) {
-      emit(SendOtpError(failure.message));
+      emit(AuthError(failure.message));
     } else if (failure is CacheFailure) {
-      emit(SendOtpError(failure.message));
+      emit(AuthError(failure.message));
     } else {
-      emit(SendOtpError(failure.message));
+      emit(AuthError(failure.message));
     }
   }
 }

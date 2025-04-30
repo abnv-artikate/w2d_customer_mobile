@@ -7,14 +7,26 @@ import 'package:w2d_customer_mobile/core/widgets/custom_filled_button_widget.dar
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
 class ProductItemWidget extends StatelessWidget {
-  final double width;
+  const ProductItemWidget({
+    super.key,
+    required this.width,
+    required this.imgUrl,
+    required this.itemName,
+    // required this.itemDescription,
+    required this.regularPrice,
+    required this.salePrice,
+  });
 
-  const ProductItemWidget({super.key, required this.width});
+  final double width;
+  final String imgUrl;
+  final String itemName;
+
+  // final String itemDescription;
+  final String regularPrice;
+  final String salePrice;
 
   @override
   Widget build(BuildContext context) {
-    final String img =
-        'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80';
     return Container(
       color: AppColors.transparent,
       padding: EdgeInsets.all(2),
@@ -26,7 +38,7 @@ class ProductItemWidget extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: Image.network(
-                img,
+                imgUrl,
                 fit: BoxFit.cover,
                 width: width,
                 errorBuilder: (context, widget, stack) {
@@ -55,11 +67,11 @@ class ProductItemWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Sofa 3+2+1 Set',
+                itemName,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               ),
               Text(
-                '(Grey, DIY (Do-It-Yourself)',
+                '',
                 style: TextStyle(
                   fontFamily: 'CormorantGaramond',
                   fontStyle: FontStyle.italic,
@@ -72,7 +84,7 @@ class ProductItemWidget extends StatelessWidget {
                   text: '',
                   children: <TextSpan>[
                     TextSpan(
-                      text: '\u{20B9}1499/-',
+                      text: '\u{20B9}$regularPrice',
                       style: TextStyle(
                         color: AppColors.black70,
                         decoration: TextDecoration.lineThrough,
@@ -83,7 +95,7 @@ class ProductItemWidget extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: ' \u{20B9}999/-',
+                      text: ' \u{20B9}$salePrice',
                       style: TextStyle(
                         fontFamily: 'CormorantGaramond',
                         fontSize: 20,

@@ -14,16 +14,31 @@ import 'package:w2d_customer_mobile/features/data/repositories/repository_impl.d
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/categories/categories_hierarchy_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  /// Cubit
   sl.registerLazySingleton<AuthCubit>(
     () => AuthCubit(
       sendOtpUseCase: sl<SendOtpUseCase>(),
       verifyOtpUseCase: sl<VerifyOtpUseCase>(),
     ),
+  );
+
+  sl.registerFactory<CommonCubit>(
+    () => CommonCubit(
+      categoriesHierarchyUseCase: sl<CategoriesHierarchyUseCase>(),
+    ),
+  );
+
+  sl.registerFactory<CategoryCubit>(
+    () => CategoryCubit(productCategoryUseCase: sl<ProductCategoryUseCase>()),
   );
 
   /// UseCases
@@ -32,6 +47,12 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<VerifyOtpUseCase>(
     () => VerifyOtpUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<CategoriesHierarchyUseCase>(
+    () => CategoriesHierarchyUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<ProductCategoryUseCase>(
+    () => ProductCategoryUseCase(sl<Repository>()),
   );
 
   /// Repositories

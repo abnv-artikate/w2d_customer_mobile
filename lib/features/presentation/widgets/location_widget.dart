@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 
 class LocationWidget extends StatefulWidget {
   const LocationWidget({super.key});
@@ -33,7 +32,10 @@ class _LocationWidgetState extends State<LocationWidget> {
         children: [
           Icon(LucideIcons.mapPin),
           SizedBox(width: 5),
-          Text(_location),
+          Text(
+            _location,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          ),
         ],
       ),
     );
@@ -63,7 +65,7 @@ class _LocationWidgetState extends State<LocationWidget> {
       Placemark place = placemarks[0];
 
       setState(() {
-        _location = "${place.locality}, ${place.country}";
+        _location = "${place.subLocality}, ${place.locality}";
       });
     } catch (e) {
       print(e);

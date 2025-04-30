@@ -50,13 +50,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 buttonText = "Verify";
                 isVerify = true;
                 isLogin = true;
-              } else if (state is SendOtpError) {
+              } else if (state is AuthError) {
                 widget.showErrorToast(context: context, message: state.error);
               }
 
               if (state is VerifyOtpSuccess) {
                 context.go(AppRoutes.initial, extra: state.userEntity);
-              } else if (state is VerifyOtpError) {
+              } else if (state is AuthError) {
                 widget.showErrorToast(context: context, message: state.error);
               }
             },

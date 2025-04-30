@@ -22,7 +22,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'ClassicoURW',
         scaffoldBackgroundColor: AppColors.white,
-        appBarTheme: AppBarTheme(color: AppColors.white),
+        appBarTheme: AppBarTheme(
+          color: AppColors.white,
+          surfaceTintColor: AppColors.white,
+        ),
         drawerTheme: DrawerThemeData(backgroundColor: AppColors.white),
         bottomAppBarTheme: BottomAppBarTheme(color: AppColors.white),
         useMaterial3: true,

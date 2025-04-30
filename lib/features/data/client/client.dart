@@ -4,12 +4,15 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:w2d_customer_mobile/core/utils/endpoint_constants.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/categories/category_hierarchy_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/success_message_model.dart';
 
 part 'client.g.dart';
 
 // Use below command to generate
-// flutter pub run build_runner build --delete-conflicting-outputs
+// dart run build_runner build -d
 
 @RestApi()
 abstract class RestClient {
@@ -28,6 +31,7 @@ abstract class RestClient {
     return _RestClient(dio);
   }
 
+  /// Auth Client
   @POST(EndPoints.sendOtp)
   Future<SuccessMessageModel> sendOtp({
     @Queries() required Map<String, dynamic> queries,
@@ -39,4 +43,20 @@ abstract class RestClient {
 
   // @POST(EndPoints.createCustomer)
   // Future<SuccessMessageModel> createCustomer(@Body() Map<String, dynamic> body);
+
+  /// Categories Client
+
+  @GET(EndPoints.categories)
+  Future<List<ProductCategoryListModel>> getProductCategoryListing(
+    @Queries() Map<String, dynamic> query,
+  );
+
+  @GET(EndPoints.categoriesHierarchy)
+  Future<CategoryHierarchyModel> getCategoryHierarchy();
+
+  /// Product Client
+  @POST(EndPoints.productView)
+  Future<ProductViewModel> getProductDetail(
+    @Queries() Map<String, dynamic> query,
+  );
 }
