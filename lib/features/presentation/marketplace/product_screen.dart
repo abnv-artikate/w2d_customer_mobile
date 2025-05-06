@@ -1,96 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/core/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/custom_filled_button_widget.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 
 class ProductScreen extends StatefulWidget {
-  const ProductScreen({super.key});
+  const ProductScreen({super.key, required this.productEntity});
+
+  final ProductViewEntity productEntity;
 
   @override
   State<ProductScreen> createState() => _ProductScreenState();
 }
 
 class _ProductScreenState extends State<ProductScreen> {
-  final String img =
-      'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
         leadingWidth: 80,
-        backgroundColor: AppColors.transparent,
         leading: _backButton(),
-        actions: [
-          Container(
-            margin: EdgeInsets.only(right: 20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              color: AppColors.white,
-            ),
-            child: IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.bookmark_border_outlined, size: 30),
-              // Image.asset(
-              //   Assets.iconsLikeOutlined,
-              //   color: AppColors.black,
-              //   height: 30,
-              //   width: 30,
-              // ),
-            ),
-          ),
-        ],
+        actions: [_likeButton()],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
+        shrinkWrap: true,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(20),
-              bottomLeft: Radius.circular(20),
-            ),
-            child: Image.network(
-              img,
-              fit: BoxFit.cover,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width,
-            ),
-          ),
-          SizedBox(height: 30),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Chair',
-                style: TextStyle(fontSize: 45, fontWeight: FontWeight.w700),
-              ),
-              Text(
-                '\u{20B9} 3500',
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.w700),
-              ),
-            ],
-          ),
-          Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              CustomFilledButtonWidget(
-                title: 'Proceed to buy',
-                color: AppColors.worldGreen,
-                height: 60,
-                width: MediaQuery.of(context).size.width * 0.48,
-                onTap: () {},
-              ),
-              CustomFilledButtonWidget(
-                title: 'Add to Cart',
-                color: AppColors.deepBlue,
-                height: 60,
-                width: MediaQuery.of(context).size.width * 0.48,
-                onTap: () {},
-              ),
-            ],
-          ),
+          _productDetailANdPrice(),
+          SizedBox(height: 10),
+          _wishlistAndCartButton(),
         ],
       ),
     );
@@ -108,8 +47,97 @@ class _ProductScreenState extends State<ProductScreen> {
           borderRadius: BorderRadius.circular(100),
           color: AppColors.white,
         ),
-        child: Center(child: Icon(Icons.chevron_left, size: 30)),
+        child: Center(child: Icon(LucideIcons.arrowLeft, size: 30)),
       ),
     );
+  }
+
+  _likeButton() {
+    return Container(
+      margin: EdgeInsets.only(right: 20),
+      child: IconButton(
+        onPressed: () {},
+        icon: Icon(LucideIcons.heart, size: 30),
+      ),
+    );
+  }
+
+  _productDetailANdPrice() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Image.network(
+          widget.productEntity.mainImage,
+          fit: BoxFit.cover,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.width,
+        ),
+        Text(
+          widget.productEntity.name,
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+        ),
+        Text(
+          widget.productEntity.shortDescription,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+        ),
+        Row(
+          children: [
+            Text(
+              '\u{20B9}${widget.productEntity.regularPrice}',
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.w700,
+                decoration: TextDecoration.lineThrough,
+                decorationColor: AppColors.softWhite80,
+                color: AppColors.softWhite80,
+              ),
+            ),
+            SizedBox(width: 10),
+            Text(
+              '\u{20B9}${widget.productEntity.salePrice}',
+              style: TextStyle(fontSize: 40, fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+        Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppColors.worldGreen10,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            '${_calculateDiscount()}% off',
+            style: TextStyle(fontSize: 18),
+          ),
+        ),
+      ],
+    );
+  }
+
+  _wishlistAndCartButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        BlankButtonWidget(
+          title: 'Add to Wishlist',
+          height: 60,
+          width: MediaQuery.of(context).size.width * 0.48,
+          onTap: () {},
+        ),
+        CustomFilledButtonWidget(
+          title: 'Add to Cart',
+          color: AppColors.worldGreen,
+          height: 60,
+          width: MediaQuery.of(context).size.width * 0.48,
+          onTap: () {},
+        ),
+      ],
+    );
+  }
+
+  int _calculateDiscount() {
+    double salePrice = double.parse(widget.productEntity.salePrice);
+    double regularPrice = double.parse(widget.productEntity.regularPrice);
+    return ((salePrice / regularPrice) * 100).ceil();
   }
 }

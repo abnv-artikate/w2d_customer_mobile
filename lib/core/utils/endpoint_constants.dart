@@ -12,5 +12,5 @@ class EndPoints {
   static const String categoriesHierarchy = '/categories/hierarchy/';
 
   /// Product Endpoints
-  static const String productView = '/product/view/';
+  static const String productView = '/product/view';
 }

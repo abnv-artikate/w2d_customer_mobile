@@ -18,7 +18,7 @@ class BlankButtonWidget extends StatelessWidget {
     required this.height,
     required this.onTap,
     this.fontSize = 24,
-    this.borderRadius = 100,
+    this.borderRadius = 8,
     this.verticalPadding = 4,
     this.horizontalPadding = 4,
   });

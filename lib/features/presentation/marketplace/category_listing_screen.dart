@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
+import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/core/widgets/product_item_widget.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 
 class CategoryListingScreen extends StatefulWidget {
@@ -19,9 +22,7 @@ class CategoryListingScreen extends StatefulWidget {
 class _CategoryListingScreenState extends State<CategoryListingScreen> {
   @override
   void initState() {
-    context.read<CategoryCubit>().getProductCategoryList(
-      ProductCategoryParams(categorySlug: widget.categorySlug),
-    );
+    _callCategoryListApi();
     super.initState();
   }
 
@@ -35,6 +36,14 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
         listener: (context, state) {
           if (state is CategoryLoaded) {
             productCategoryList = state.productCategoryListing;
+          } else if (state is CategoryError) {
+            widget.showErrorToast(context: context, message: state.error);
+          }
+
+          if (state is ProductViewLoaded) {
+            context
+                .push(AppRoutes.productRoute, extra: state.productEntity)
+                .then((_) => _callCategoryListApi());
           } else if (state is CategoryError) {
             widget.showErrorToast(context: context, message: state.error);
           }
@@ -56,6 +65,14 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                     itemName: productCategoryList[index].name,
                     regularPrice: productCategoryList[index].regularPrice,
                     salePrice: productCategoryList[index].salePrice,
+                    onViewTap: () {
+                      context.read<CategoryCubit>().getProductView(
+                        ProductViewParams(
+                          productId: productCategoryList[index].id,
+                        ),
+                      );
+                    },
+                    onCartTap: () {},
                   );
                 },
                 separatorBuilder: (context, index) {
@@ -65,6 +82,12 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
               );
         },
       ),
+    );
+  }
+
+  void _callCategoryListApi() {
+    context.read<CategoryCubit>().getProductCategoryList(
+      ProductCategoryParams(categorySlug: widget.categorySlug),
     );
   }
 }

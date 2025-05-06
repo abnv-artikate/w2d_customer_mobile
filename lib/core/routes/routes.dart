@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/login_screen.dart';
@@ -33,7 +34,10 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.initial,
           builder: (BuildContext context, GoRouterState state) {
-            return HomeScreen();
+            return BlocProvider<CategoryCubit>(
+              create: (context) => sl<CategoryCubit>(),
+              child: HomeScreen(),
+            );
           },
         ),
         GoRoute(
@@ -83,7 +87,10 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: AppRoutes.productRoute,
       builder: (BuildContext context, GoRouterState state) {
-        return ProductScreen();
+        return BlocProvider<CategoryCubit>(
+          create: (context) => sl<CategoryCubit>(),
+          child: ProductScreen(productEntity: state.extra as ProductViewEntity),
+        );
       },
     ),
     GoRoute(

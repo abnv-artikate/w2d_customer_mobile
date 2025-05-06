@@ -5,9 +5,7 @@ import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/categories_listing_widget.dart';
 
 class ExploreCategoriesScreen extends StatefulWidget {

@@ -98,10 +98,6 @@ class RepositoryConv {
     ProductViewModel model,
   ) {
     return ProductViewEntity(
-      type: model.type ?? "",
-      status: model.status ?? "",
-      message: model.message ?? "",
-      data: ProductViewData(
         id: model.data?.id ?? "",
         seller: SellerDetail(
           id: model.data?.seller?.id ?? -1,
@@ -145,29 +141,29 @@ class RepositoryConv {
         dimensions: ProductViewDimensionsEntity(
           width: DimensionValues(
             unit: model.data?.dimensions?.width?.unit ?? "",
-            value: model.data?.dimensions?.width?.value ?? "",
+            value: model.data?.dimensions?.width?.value ?? -1,
           ),
           height: DimensionValues(
             unit: model.data?.dimensions?.height?.unit ?? "",
-            value: model.data?.dimensions?.height?.value ?? "",
+            value: model.data?.dimensions?.height?.value ?? -1,
           ),
           length: DimensionValues(
             unit: model.data?.dimensions?.length?.unit ?? "",
-            value: model.data?.dimensions?.length?.value ?? "",
+            value: model.data?.dimensions?.length?.value ?? -1,
           ),
         ),
         packagingDimensions: ProductViewDimensionsEntity(
           width: DimensionValues(
             unit: model.data?.dimensions?.width?.unit ?? "",
-            value: model.data?.dimensions?.width?.value ?? "",
+            value: model.data?.dimensions?.width?.value ?? -1,
           ),
           height: DimensionValues(
             unit: model.data?.dimensions?.height?.unit ?? "",
-            value: model.data?.dimensions?.height?.value ?? "",
+            value: model.data?.dimensions?.height?.value ?? -1,
           ),
           length: DimensionValues(
             unit: model.data?.dimensions?.length?.unit ?? "",
-            value: model.data?.dimensions?.length?.value ?? "",
+            value: model.data?.dimensions?.length?.value ?? -1,
           ),
         ),
         packagingDetails:
@@ -176,15 +172,15 @@ class RepositoryConv {
                   (e) => ProductViewDimensionsEntity(
                     width: DimensionValues(
                       unit: model.data?.dimensions?.width?.unit ?? "",
-                      value: model.data?.dimensions?.width?.value ?? "",
+                      value: model.data?.dimensions?.width?.value ?? -1,
                     ),
                     height: DimensionValues(
                       unit: model.data?.dimensions?.height?.unit ?? "",
-                      value: model.data?.dimensions?.height?.value ?? "",
+                      value: model.data?.dimensions?.height?.value ?? -1,
                     ),
                     length: DimensionValues(
                       unit: model.data?.dimensions?.length?.unit ?? "",
-                      value: model.data?.dimensions?.length?.value ?? "",
+                      value: model.data?.dimensions?.length?.value ?? -1,
                     ),
                   ),
                 )
@@ -215,7 +211,6 @@ class RepositoryConv {
         isActive: model.data?.isActive ?? false,
         createdAt: model.data?.createdAt ?? "",
         lastUpdatedAt: model.data?.lastUpdatedAt ?? "",
-      ),
-    );
+      );
   }
 }

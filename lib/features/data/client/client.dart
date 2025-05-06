@@ -55,8 +55,8 @@ abstract class RestClient {
   Future<CategoryHierarchyModel> getCategoryHierarchy();
 
   /// Product Client
-  @POST(EndPoints.productView)
+  @GET('${EndPoints.productView}/{id}/')
   Future<ProductViewModel> getProductDetail(
-    @Queries() Map<String, dynamic> query,
+    @Path() String id,
   );
 }

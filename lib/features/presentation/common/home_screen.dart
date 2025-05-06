@@ -1,8 +1,14 @@
 import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
+import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/product_item_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/location_widget.dart';
@@ -61,6 +67,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int navBarIndex = 0;
   bool isBrand = false;
+  String _location = 'Loading...';
+  IconData _locationIcon = LucideIcons.mapPin;
+
+  @override
+  void initState() {
+    getLocation();
+    callBestSellersApi();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //   },
           //   isBrand: isBrand,
           // ),
-          // LocationWidget(),
+          LocationWidget(icon: _locationIcon, location: _location),
         ],
         bottom: PreferredSize(
           preferredSize: Size.zero,
@@ -159,16 +174,29 @@ class _HomeScreenState extends State<HomeScreen> {
             'BEST SELLERS',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
-          CarouselSlider(
-            options: _bestSellerCarouselOption,
-            items: List.generate(5, (_) {
-              return Container(
-                color: AppColors.transparent,
-                child: ProductItemWidget(
-                  width: MediaQuery.of(context).size.width * 0.45, imgUrl: '', itemName: '', salePrice: '', regularPrice: '',
-                ),
+          BlocConsumer<CategoryCubit, CategoryState>(
+            listener: (context, state) {
+              // TODO: implement listener
+            },
+            builder: (context, state) {
+              return CarouselSlider(
+                options: _bestSellerCarouselOption,
+                items: List.generate(5, (_) {
+                  return Container(
+                    color: AppColors.transparent,
+                    child: ProductItemWidget(
+                      width: MediaQuery.of(context).size.width * 0.45,
+                      imgUrl: '',
+                      itemName: '',
+                      salePrice: '',
+                      regularPrice: '',
+                      onViewTap: () {},
+                      onCartTap: () {},
+                    ),
+                  );
+                }),
               );
-            }),
+            },
           ),
         ],
       ),
@@ -181,6 +209,80 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(height: 20),
         Center(child: Text('//TODO: Popular categories here')),
       ],
+    );
+  }
+
+  Future<void> getLocation() async {
+    try {
+      // First check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        // Location services are not enabled
+        setState(() {
+          _locationIcon = LucideIcons.info;
+          _location =
+              'Location services are disabled. Please enable them in settings.';
+        });
+        return;
+      }
+
+      // Check permission status
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        // Request permission
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          // User denied permission
+          setState(() {
+            _locationIcon = LucideIcons.info;
+            _location =
+                'Location permission denied. Some features may not work properly.';
+          });
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        // User denied permission permanently
+        setState(() {
+          _location =
+              'Location permissions permanently denied. Please enable them in app settings.';
+        });
+        return;
+      }
+
+      // If we get here, permissions are granted
+      Position position = await Geolocator.getCurrentPosition();
+      _getAddressFromLatLng(position);
+    } catch (e) {
+      setState(() {
+        _locationIcon = LucideIcons.info;
+        _location = 'Error getting location: $e';
+      });
+    }
+  }
+
+  _getAddressFromLatLng(Position position) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      Placemark place = placemarks[0];
+
+      setState(() {
+        _locationIcon = LucideIcons.mapPin;
+        _location = "${place.subLocality}, ${place.locality}";
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void callBestSellersApi() {
+    context.read<CategoryCubit>().getProductCategoryList(
+      ProductCategoryParams(categorySlug: 'categorySlug'),
     );
   }
 }

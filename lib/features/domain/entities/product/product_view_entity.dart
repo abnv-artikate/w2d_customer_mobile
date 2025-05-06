@@ -1,21 +1,6 @@
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 
 class ProductViewEntity {
-  String type;
-  String status;
-  String message;
-  ProductViewData data;
-
-  ProductViewEntity({
-    required this.type,
-    required this.status,
-    required this.message,
-    required this.data,
-  });
-
-}
-
-class ProductViewData {
   String id;
   SellerDetail seller;
   ProductCategoryEntity category;
@@ -74,7 +59,7 @@ class ProductViewData {
   String createdAt;
   String lastUpdatedAt;
 
-  ProductViewData({
+  ProductViewEntity({
     required this.id,
     required this.seller,
     required this.category,
@@ -133,7 +118,6 @@ class ProductViewData {
     required this.createdAt,
     required this.lastUpdatedAt,
   });
-
 }
 
 class ProductViewDimensionsEntity {
@@ -148,27 +132,18 @@ class ProductViewDimensionsEntity {
     required this.length,
     this.weight,
   });
-
 }
 
 class DimensionValues {
   String unit;
-  String value;
+  double value;
 
-  DimensionValues({
-    required this.unit,
-    required this.value,
-  });
-
+  DimensionValues({required this.unit, required this.value});
 }
 
 class SellerDetail {
   int id;
   String businessName;
 
-  SellerDetail({
-    required this.id,
-    required this.businessName,
-  });
-
+  SellerDetail({required this.id, required this.businessName});
 }

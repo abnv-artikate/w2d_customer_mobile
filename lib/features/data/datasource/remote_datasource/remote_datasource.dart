@@ -23,7 +23,7 @@ abstract class RemoteDatasource {
   Future<CategoryHierarchyModel> getCategoriesHierarchyModel();
 
   /// Product Datasource
-  Future<ProductViewModel> getProductView(Map<String, dynamic> query);
+  Future<ProductViewModel> getProductView(String id);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
@@ -89,9 +89,9 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   }
 
   @override
-  Future<ProductViewModel> getProductView(Map<String, dynamic> query) async {
+  Future<ProductViewModel> getProductView(String id) async {
     try {
-      return await client.getProductDetail(query);
+      return await client.getProductDetail(id);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

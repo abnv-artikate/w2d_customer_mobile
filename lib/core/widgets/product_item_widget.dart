@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/core/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/custom_filled_button_widget.dart';
@@ -15,6 +13,8 @@ class ProductItemWidget extends StatelessWidget {
     // required this.itemDescription,
     required this.regularPrice,
     required this.salePrice,
+    required this.onViewTap,
+    required this.onCartTap,
   });
 
   final double width;
@@ -24,6 +24,8 @@ class ProductItemWidget extends StatelessWidget {
   // final String itemDescription;
   final String regularPrice;
   final String salePrice;
+  final VoidCallback onViewTap;
+  final VoidCallback onCartTap;
 
   @override
   Widget build(BuildContext context) {
@@ -117,9 +119,7 @@ class ProductItemWidget extends StatelessWidget {
                 borderRadius: 4,
                 height: 30,
                 width: width * 0.45,
-                onTap: () {
-                  context.push(AppRoutes.productRoute);
-                },
+                onTap: onViewTap,
               ),
               SizedBox(width: 5),
               Expanded(
@@ -130,9 +130,7 @@ class ProductItemWidget extends StatelessWidget {
                   borderRadius: 4,
                   height: 30,
                   width: width * 0.45,
-                  onTap: () {
-                    context.push(AppRoutes.listingRoute);
-                  },
+                  onTap: onCartTap,
                 ),
               ),
             ],

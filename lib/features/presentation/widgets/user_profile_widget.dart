@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
-import 'package:w2d_customer_mobile/generated/assets.dart';
 
 class UserProfileWidget extends StatelessWidget {
   const UserProfileWidget({super.key});

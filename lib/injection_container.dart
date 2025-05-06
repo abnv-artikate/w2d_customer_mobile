@@ -16,6 +16,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_useca
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/categories_hierarchy_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
@@ -38,7 +39,10 @@ Future<void> init() async {
   );
 
   sl.registerFactory<CategoryCubit>(
-    () => CategoryCubit(productCategoryUseCase: sl<ProductCategoryUseCase>()),
+    () => CategoryCubit(
+      productCategoryUseCase: sl<ProductCategoryUseCase>(),
+      productViewUseCase: sl<ProductViewUseCase>(),
+    ),
   );
 
   /// UseCases
@@ -53,6 +57,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<ProductCategoryUseCase>(
     () => ProductCategoryUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<ProductViewUseCase>(
+    () => ProductViewUseCase(sl<Repository>()),
   );
 
   /// Repositories

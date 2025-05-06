@@ -115,9 +115,7 @@ class RepositoryImpl extends Repository {
   Future<Either<Failure, ProductViewEntity>> getProductView({required ProductViewParams params}) async {
     try {
       if (await networkInfo.isConnected) {
-        final result = await remoteDatasource.getProductView({
-          "id": params.productId,
-        });
+        final result = await remoteDatasource.getProductView(params.productId);
 
         return Right(
           RepositoryConv.convertProductViewModelToEntity(result),

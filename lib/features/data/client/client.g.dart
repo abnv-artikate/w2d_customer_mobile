@@ -142,17 +142,16 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<ProductViewModel> getProductDetail(Map<String, dynamic> query) async {
+  Future<ProductViewModel> getProductDetail(String id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.addAll(query);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ProductViewModel>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
+      Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/product/view/',
+            '/product/view/${id}/',
             queryParameters: queryParameters,
             data: _data,
           )
