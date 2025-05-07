@@ -108,13 +108,13 @@ Future<void> init() async {
     ),
   );
 
-  /// Shared Preference
-
   /// Clients
   sl.registerLazySingleton<RestClient>(() => RestClient(dio));
 
-  /// Dependencies
+  /// Shared Preference
   final sharedPreference = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreference);
+
+  /// Network connection
   sl.registerLazySingleton<InternetConnection>(() => InternetConnection());
 }

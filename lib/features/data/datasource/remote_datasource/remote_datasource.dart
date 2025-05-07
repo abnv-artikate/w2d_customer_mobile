@@ -24,6 +24,9 @@ abstract class RemoteDatasource {
 
   /// Product Datasource
   Future<ProductViewModel> getProductView(String id);
+
+  ///
+  Future<SuccessMessageModel> cartSync(Map<String, dynamic> body);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
@@ -92,6 +95,17 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   Future<ProductViewModel> getProductView(String id) async {
     try {
       return await client.getProductDetail(id);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<SuccessMessageModel> cartSync(Map<String, dynamic> body) async {
+    try {
+      return await client.cartSync(body);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

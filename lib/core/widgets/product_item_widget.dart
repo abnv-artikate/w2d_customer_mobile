@@ -44,7 +44,10 @@ class ProductItemWidget extends StatelessWidget {
                 fit: BoxFit.cover,
                 width: width,
                 errorBuilder: (context, widget, stack) {
-                  return Center(child: Text('Image not available'));
+                  return SizedBox(
+                    height: 120,
+                    child: Center(child: Text('Image not available')),
+                  );
                 },
               ),
             ),

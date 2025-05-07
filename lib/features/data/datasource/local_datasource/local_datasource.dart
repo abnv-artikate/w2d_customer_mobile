@@ -12,6 +12,10 @@ abstract class LocalDatasource {
   String? getUserEmail();
 
   setUserEmail(String email);
+
+  String? getCartId();
+
+  setCartId(String cartId);
 }
 
 class LocalDataSourceImpl extends LocalDatasource {
@@ -47,5 +51,15 @@ class LocalDataSourceImpl extends LocalDatasource {
   @override
   setUserEmail(String email) {
     mySharedPref.saveUserEmail(email);
+  }
+
+  @override
+  String? getCartId() {
+    return mySharedPref.getCartId();
+  }
+
+  @override
+  setCartId(String cartId) {
+    mySharedPref.saveCartId(cartId);
   }
 }

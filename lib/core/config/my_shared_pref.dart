@@ -6,6 +6,7 @@ class MySharedPref {
   static const accessToken = "access_token";
   static const refreshToken = "refresh_token";
   static const userEmail = "user_email";
+  static const cartID = "cart_id";
 
   final SharedPreferences _pref;
 
@@ -33,6 +34,14 @@ class MySharedPref {
 
   String? getUserEmail() {
     return _pref.getString(userEmail);
+  }
+
+  void saveCartId(String cartId) {
+    _pref.setString(cartID, cartId);
+  }
+
+  String? getCartId() {
+    return _pref.getString(cartID);
   }
 
   void logout() {

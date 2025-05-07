@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/product_item_widget.dart';
@@ -73,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     getLocation();
-    callBestSellersApi();
     super.initState();
   }
 
@@ -212,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> getLocation() async {
+  Future<String> getLocation() async {
     try {
       // First check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -221,9 +219,9 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _locationIcon = LucideIcons.info;
           _location =
-              'Location services are disabled. Please enable them in settings.';
+              'Location services disabled';
         });
-        return;
+        return 'Location services are disabled. Please enable them in settings.';
       }
 
       // Check permission status
@@ -233,32 +231,38 @@ class _HomeScreenState extends State<HomeScreen> {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
           // User denied permission
+
           setState(() {
             _locationIcon = LucideIcons.info;
             _location =
-                'Location permission denied. Some features may not work properly.';
+                'permission denied';
           });
-          return;
+          return 'Location permission denied. Some features may not work properly.';
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
         // User denied permission permanently
         setState(() {
+          _locationIcon = LucideIcons.info;
           _location =
-              'Location permissions permanently denied. Please enable them in app settings.';
+              'permissions permanently denied';
         });
-        return;
+        return 'Location permissions permanently denied. Please enable them in app settings.';
       }
 
       // If we get here, permissions are granted
       Position position = await Geolocator.getCurrentPosition();
       _getAddressFromLatLng(position);
+
+      return '';
     } catch (e) {
       setState(() {
         _locationIcon = LucideIcons.info;
         _location = 'Error getting location: $e';
       });
+
+      return e.toString();
     }
   }
 
@@ -278,11 +282,5 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       print(e);
     }
-  }
-
-  void callBestSellersApi() {
-    context.read<CategoryCubit>().getProductCategoryList(
-      ProductCategoryParams(categorySlug: 'categorySlug'),
-    );
   }
 }

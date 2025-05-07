@@ -56,7 +56,9 @@ abstract class RestClient {
 
   /// Product Client
   @GET('${EndPoints.productView}/{id}/')
-  Future<ProductViewModel> getProductDetail(
-    @Path() String id,
-  );
+  Future<ProductViewModel> getProductDetail(@Path() String id);
+
+  /// Cart-Sync
+  @POST(EndPoints.cartSync)
+  Future<SuccessMessageModel> cartSync(@Body() Map<String, dynamic> body);
 }

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:uuid/v4.dart';
 import 'package:w2d_customer_mobile/core/error/exceptions.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
 import 'package:w2d_customer_mobile/core/network/network_info.dart';
@@ -13,6 +14,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 
@@ -112,19 +114,59 @@ class RepositoryImpl extends Repository {
   }
 
   @override
-  Future<Either<Failure, ProductViewEntity>> getProductView({required ProductViewParams params}) async {
+  Future<Either<Failure, ProductViewEntity>> getProductView({
+    required ProductViewParams params,
+  }) async {
     try {
       if (await networkInfo.isConnected) {
         final result = await remoteDatasource.getProductView(params.productId);
 
-        return Right(
-          RepositoryConv.convertProductViewModelToEntity(result),
-        );
+        return Right(RepositoryConv.convertProductViewModelToEntity(result));
       } else {
         return Left(ServerFailure(message: Constants.errorNoInternet));
       }
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     }
+  }
+
+  @override
+  Future<Either<Failure, String>> cartSync({
+    required CartSyncParams params,
+  }) async {
+    try {
+      if (await networkInfo.isConnected) {
+        String cartId = "";
+        if (localDatasource.getCartId() != null) {
+          cartId = localDatasource.getCartId()!;
+        } else {
+          localDatasource.setCartId(generateCartId());
+          cartId = localDatasource.getCartId()!;
+        }
+
+        final result = await remoteDatasource.cartSync({
+          "cart_id": cartId,
+          "items": [
+            {
+              "product_id": params.productId,
+              "quantity": params.quantity,
+              "variant_id": params.variantId,
+            },
+          ],
+        });
+
+        return Right(result.message ?? 'Add to Cart Success');
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  String generateCartId() {
+    UuidV4 newCartId = UuidV4();
+
+    return newCartId.toString();
   }
 }

@@ -6,6 +6,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/product/product_vie
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 
@@ -21,10 +22,11 @@ abstract class Repository {
   Future<Either<Failure, List<ProductCategoryListingEntity>>>
   getProductCategoryListing({required ProductCategoryParams params});
 
-  Future<Either<Failure, List<ProductCategoryEntity>>>
-  getCategoriesHierarchy();
+  Future<Either<Failure, List<ProductCategoryEntity>>> getCategoriesHierarchy();
 
   Future<Either<Failure, ProductViewEntity>> getProductView({
     required ProductViewParams params,
   });
+
+  Future<Either<Failure, String>> cartSync({required CartSyncParams params});
 }
