@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:w2d_customer_mobile/core/utils/endpoint_constants.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/category_hierarchy_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
@@ -47,7 +48,7 @@ abstract class RestClient {
   /// Categories Client
 
   @GET(EndPoints.categories)
-  Future<List<ProductCategoryListModel>> getProductCategoryListing(
+  Future<ProductCategoryListModel> getProductCategoryListing(
     @Queries() Map<String, dynamic> query,
   );
 
@@ -58,7 +59,14 @@ abstract class RestClient {
   @GET('${EndPoints.productView}/{id}/')
   Future<ProductViewModel> getProductDetail(@Path() String id);
 
-  /// Cart-Sync
+  /// Cart-Sync Client
   @POST(EndPoints.cartSync)
   Future<SuccessMessageModel> cartSync(@Body() Map<String, dynamic> body);
+
+  /// Cart Client
+  @GET(EndPoints.cart)
+  Future<CartModel> getCart(@Queries() Map<String, dynamic> queries);
+
+  /// Cargo Shipping Client
+  
 }

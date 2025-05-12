@@ -78,7 +78,7 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<List<ProductCategoryListModel>> getProductCategoryListing(
+  Future<ProductCategoryListModel> getProductCategoryListing(
     Map<String, dynamic> query,
   ) async {
     final _extra = <String, dynamic>{};
@@ -86,7 +86,7 @@ class _RestClient implements RestClient {
     queryParameters.addAll(query);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<List<ProductCategoryListModel>>(
+    final _options = _setStreamType<ProductCategoryListModel>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -96,17 +96,10 @@ class _RestClient implements RestClient {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<ProductCategoryListModel> _value;
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ProductCategoryListModel _value;
     try {
-      _value =
-          _result.data!
-              .map(
-                (dynamic i) => ProductCategoryListModel.fromJson(
-                  i as Map<String, dynamic>,
-                ),
-              )
-              .toList();
+      _value = ProductCategoryListModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -189,6 +182,34 @@ class _RestClient implements RestClient {
     late SuccessMessageModel _value;
     try {
       _value = SuccessMessageModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<CartModel> getCart(Map<String, dynamic> queries) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(queries);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<CartModel>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/cart/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late CartModel _value;
+    try {
+      _value = CartModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

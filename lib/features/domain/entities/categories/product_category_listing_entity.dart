@@ -1,8 +1,22 @@
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 
 class ProductCategoryListingEntity {
+  int count;
+  String next;
+  dynamic previous;
+  List<ResultEntity> results;
+
+  ProductCategoryListingEntity({
+    required this.count,
+    required this.next,
+    required this.previous,
+    required this.results,
+  });
+}
+
+class ResultEntity {
   String id;
-  String name;
+  String productName;
   String sku;
   String productType;
   String regularPrice;
@@ -10,13 +24,12 @@ class ProductCategoryListingEntity {
   ProductCategoryEntity category;
   BrandEntity brand;
   String salePrice;
-
-  // List<Null> reviews;
+  List<dynamic> reviews;
   SellerEntity seller;
 
-  ProductCategoryListingEntity({
+  ResultEntity({
     required this.id,
-    required this.name,
+    required this.productName,
     required this.sku,
     required this.productType,
     required this.regularPrice,
@@ -24,24 +37,8 @@ class ProductCategoryListingEntity {
     required this.category,
     required this.brand,
     required this.salePrice,
-    // this.reviews,
+    required this.reviews,
     required this.seller,
-  });
-}
-
-class AllowedAttributesEntity {
-  List<String> size;
-  List<String> color;
-  List<String> topNotes;
-  List<String> baseNotes;
-  List<String> heartNotes;
-
-  AllowedAttributesEntity({
-    required this.size,
-    required this.color,
-    required this.topNotes,
-    required this.baseNotes,
-    required this.heartNotes,
   });
 }
 
@@ -49,13 +46,7 @@ class BrandEntity {
   int id;
   String name;
 
-  // Null description;
-
-  BrandEntity({
-    required this.id,
-    required this.name,
-    // this.description
-  });
+  BrandEntity({required this.id, required this.name});
 }
 
 class SellerEntity {

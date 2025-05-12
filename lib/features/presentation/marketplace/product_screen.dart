@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/core/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
+import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({super.key, required this.productEntity});
@@ -30,6 +33,7 @@ class _ProductScreenState extends State<ProductScreen> {
           _productDetailANdPrice(),
           SizedBox(height: 10),
           _wishlistAndCartButton(),
+          SizedBox(height: 10),
         ],
       ),
     );
@@ -57,7 +61,7 @@ class _ProductScreenState extends State<ProductScreen> {
       margin: EdgeInsets.only(right: 20),
       child: IconButton(
         onPressed: () {},
-        icon: Icon(LucideIcons.heart, size: 30),
+        icon: Icon(LucideIcons.shoppingCart, size: 30),
       ),
     );
   }
@@ -78,15 +82,15 @@ class _ProductScreenState extends State<ProductScreen> {
         ),
         Text(
           widget.productEntity.shortDescription,
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
         Row(
           children: [
             Text(
               '\u{20B9}${widget.productEntity.regularPrice}',
               style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.w700,
+                fontSize: 35,
+                fontWeight: FontWeight.w600,
                 decoration: TextDecoration.lineThrough,
                 decorationColor: AppColors.softWhite80,
                 color: AppColors.softWhite80,
@@ -95,7 +99,7 @@ class _ProductScreenState extends State<ProductScreen> {
             SizedBox(width: 10),
             Text(
               '\u{20B9}${widget.productEntity.salePrice}',
-              style: TextStyle(fontSize: 40, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: 35, fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -107,7 +111,7 @@ class _ProductScreenState extends State<ProductScreen> {
           ),
           child: Text(
             '${_calculateDiscount()}% off',
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
           ),
         ),
       ],
@@ -129,7 +133,11 @@ class _ProductScreenState extends State<ProductScreen> {
           color: AppColors.worldGreen,
           height: 60,
           width: MediaQuery.of(context).size.width * 0.48,
-          onTap: () {},
+          onTap: () {
+            context.read<CategoryCubit>().cartSync(
+              CartSyncParams(productId: widget.productEntity.id, quantity: 1),
+            );
+          },
         ),
       ],
     );

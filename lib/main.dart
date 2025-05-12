@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
       title: Constants.appName,
       routerConfig: router,
       theme: ThemeData(
-        fontFamily: 'ClassicoURW',
         scaffoldBackgroundColor: AppColors.white,
         appBarTheme: AppBarTheme(
           color: AppColors.white,

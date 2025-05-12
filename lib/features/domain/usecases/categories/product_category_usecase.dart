@@ -5,13 +5,13 @@ import 'package:w2d_customer_mobile/features/domain/entities/categories/product_
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
 
 class ProductCategoryUseCase
-    extends UseCase<List<ProductCategoryListingEntity>, ProductCategoryParams> {
+    extends UseCase<ProductCategoryListingEntity, ProductCategoryParams> {
   final Repository _repository;
 
   ProductCategoryUseCase(this._repository);
 
   @override
-  Future<Either<Failure, List<ProductCategoryListingEntity>>> call(
+  Future<Either<Failure, ProductCategoryListingEntity>> call(
     ProductCategoryParams params,
   ) async {
     return await _repository.getProductCategoryListing(params: params);

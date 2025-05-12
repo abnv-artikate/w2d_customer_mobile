@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/get_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 
@@ -13,17 +15,21 @@ class CategoryCubit extends Cubit<CategoryState> {
   CategoryCubit({
     required this.productViewUseCase,
     required this.productCategoryUseCase,
+    required this.cartSyncUseCase,
+    required this.getCartUseCase,
   }) : super(CategoryInitial());
 
   final ProductCategoryUseCase productCategoryUseCase;
   final ProductViewUseCase productViewUseCase;
+  final CartSyncUseCase cartSyncUseCase;
+  final GetCartUseCase getCartUseCase;
 
   getProductCategoryList(ProductCategoryParams params) async {
     emit(CategoryLoading());
     final result = await productCategoryUseCase.call(params);
 
     result.fold((l) => _emitFailure(l), (data) {
-      emit(CategoryLoaded(productCategoryListing: data));
+      emit(CategoryLoaded(productCategoryListing: data.results));
     });
   }
 
@@ -33,6 +39,15 @@ class CategoryCubit extends Cubit<CategoryState> {
 
     result.fold((l) => _emitFailure(l), (data) {
       emit(ProductViewLoaded(productEntity: data));
+    });
+  }
+
+  cartSync(CartSyncParams params) async {
+    emit(CartSyncLoading());
+    final result = await cartSyncUseCase.call(params);
+
+    result.fold((l) => _emitFailure(l), (data) {
+      emit(CartSyncLoaded(message: data));
     });
   }
 

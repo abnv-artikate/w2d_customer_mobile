@@ -107,7 +107,13 @@ class _HomeScreenState extends State<HomeScreen> {
           //   },
           //   isBrand: isBrand,
           // ),
-          LocationWidget(icon: _locationIcon, location: _location),
+          LocationWidget(
+            icon: _locationIcon,
+            location: _location,
+            onTap: () {
+              getLocation();
+            },
+          ),
         ],
         bottom: PreferredSize(
           preferredSize: Size.zero,
@@ -218,10 +224,9 @@ class _HomeScreenState extends State<HomeScreen> {
         // Location services are not enabled
         setState(() {
           _locationIcon = LucideIcons.info;
-          _location =
-              'Location services disabled';
+          _location = 'Location services disabled';
         });
-        return 'Location services are disabled. Please enable them in settings.';
+        return 'Services are disabled';
       }
 
       // Check permission status
@@ -234,10 +239,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
           setState(() {
             _locationIcon = LucideIcons.info;
-            _location =
-                'permission denied';
+            _location = 'permission denied';
           });
-          return 'Location permission denied. Some features may not work properly.';
+          return 'Location permission denied';
         }
       }
 
@@ -245,10 +249,9 @@ class _HomeScreenState extends State<HomeScreen> {
         // User denied permission permanently
         setState(() {
           _locationIcon = LucideIcons.info;
-          _location =
-              'permissions permanently denied';
+          _location = 'permissions permanently denied';
         });
-        return 'Location permissions permanently denied. Please enable them in app settings.';
+        return 'Permissions permanently denied';
       }
 
       // If we get here, permissions are granted

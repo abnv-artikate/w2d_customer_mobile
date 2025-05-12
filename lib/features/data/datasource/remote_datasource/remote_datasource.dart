@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:w2d_customer_mobile/features/data/client/client.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/category_hierarchy_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
@@ -16,7 +17,7 @@ abstract class RemoteDatasource {
   Future<VerifyOtpModel> verifyOtp(Map<String, dynamic> body);
 
   /// Categories Datasource
-  Future<List<ProductCategoryListModel>> getProductCategoriesList(
+  Future<ProductCategoryListModel> getProductCategoriesList(
     Map<String, dynamic> query,
   );
 
@@ -25,8 +26,11 @@ abstract class RemoteDatasource {
   /// Product Datasource
   Future<ProductViewModel> getProductView(String id);
 
-  ///
+  /// Cart Sync Datasource
   Future<SuccessMessageModel> cartSync(Map<String, dynamic> body);
+
+  /// Cart Datasource
+  Future<CartModel> getCart(Map<String, dynamic> queries);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
@@ -79,7 +83,7 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   }
 
   @override
-  Future<List<ProductCategoryListModel>> getProductCategoriesList(
+  Future<ProductCategoryListModel> getProductCategoriesList(
     Map<String, dynamic> query,
   ) async {
     try {
@@ -106,6 +110,17 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   Future<SuccessMessageModel> cartSync(Map<String, dynamic> body) async {
     try {
       return await client.cartSync(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<CartModel> getCart(Map<String, dynamic> queries) async {
+    try {
+      return await client.getCart(queries);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

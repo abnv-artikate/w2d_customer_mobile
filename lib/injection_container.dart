@@ -8,12 +8,15 @@ import 'package:w2d_customer_mobile/core/config/my_shared_pref.dart';
 import 'package:w2d_customer_mobile/core/network/network_info.dart';
 import 'package:w2d_customer_mobile/core/utils/constants.dart';
 import 'package:w2d_customer_mobile/features/data/client/client.dart';
+import 'package:w2d_customer_mobile/features/data/client/shipping_client.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/remote_datasource/remote_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/repositories/repository_impl.dart';
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/get_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/categories_hierarchy_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
@@ -42,6 +45,8 @@ Future<void> init() async {
     () => CategoryCubit(
       productCategoryUseCase: sl<ProductCategoryUseCase>(),
       productViewUseCase: sl<ProductViewUseCase>(),
+      cartSyncUseCase: sl<CartSyncUseCase>(),
+      getCartUseCase: sl<GetCartUseCase>(),
     ),
   );
 
@@ -60,6 +65,12 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<ProductViewUseCase>(
     () => ProductViewUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<CartSyncUseCase>(
+    () => CartSyncUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<GetCartUseCase>(
+    () => GetCartUseCase(sl<Repository>()),
   );
 
   /// Repositories
@@ -88,15 +99,35 @@ Future<void> init() async {
   );
 
   /// Initializing Dio
-  final dio = Dio(
+  final w2dDio = Dio(
     BaseOptions(
-      baseUrl: Constants.baseUrl,
+      baseUrl: Constants.w2dBaseUrl,
       connectTimeout: const Duration(milliseconds: 500000),
       receiveTimeout: const Duration(milliseconds: 500000),
       sendTimeout: const Duration(milliseconds: 500000),
     ),
   );
-  dio.interceptors.add(
+  w2dDio.interceptors.add(
+    LogInterceptor(
+      request: true,
+      error: true,
+      requestHeader: true,
+      requestBody: true,
+      responseHeader: true,
+      responseBody: true,
+      logPrint: (value) => log(value.toString()),
+    ),
+  );
+
+  final shippingDio = Dio(
+    BaseOptions(
+      baseUrl: Constants.shippingBaseUrl,
+      connectTimeout: const Duration(milliseconds: 500000),
+      receiveTimeout: const Duration(milliseconds: 500000),
+      sendTimeout: const Duration(milliseconds: 500000),
+    ),
+  );
+  shippingDio.interceptors.add(
     LogInterceptor(
       request: true,
       error: true,
@@ -109,7 +140,8 @@ Future<void> init() async {
   );
 
   /// Clients
-  sl.registerLazySingleton<RestClient>(() => RestClient(dio));
+  sl.registerLazySingleton<RestClient>(() => RestClient(w2dDio));
+  sl.registerLazySingleton<ShippingClient>(() => ShippingClient(shippingDio));
 
   /// Shared Preference
   final sharedPreference = await SharedPreferences.getInstance();

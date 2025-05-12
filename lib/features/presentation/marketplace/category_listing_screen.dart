@@ -28,7 +28,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<ProductCategoryListingEntity> productCategoryList = [];
+    List<ResultEntity> productCategoryList = [];
     return Scaffold(
       // drawer: Drawer(child: _drawer()),
       appBar: AppBar(surfaceTintColor: AppColors.white),
@@ -62,7 +62,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                   return ProductItemWidget(
                     width: MediaQuery.of(context).size.width * 0.8,
                     imgUrl: productCategoryList[index].mainImage,
-                    itemName: productCategoryList[index].name,
+                    itemName: productCategoryList[index].productName,
                     regularPrice: productCategoryList[index].regularPrice,
                     salePrice: productCategoryList[index].salePrice,
                     onViewTap: () {

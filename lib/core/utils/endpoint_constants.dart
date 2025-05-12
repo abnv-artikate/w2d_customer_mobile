@@ -19,4 +19,14 @@ class EndPoints {
 
   /// Cart Sync Endpoint
   static const String cartSync = '/cart-sync/';
+
+  /// Cart Endpoints
+  static const String cart = '/cart/';
+
+  /// Shipping Endpoints
+  static const String getFreightQuote = '/get-freight-quote';
+  static const String selectFreightService = '/select-freight-service';
+  static const String calculateInsurance = '/calculate-insurance';
+  static const String confirmInsurance = '/confirm-insurance';
+  static const String addJob = '/confirm-job';
 }

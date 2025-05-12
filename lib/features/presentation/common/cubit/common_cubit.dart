@@ -9,10 +9,10 @@ import 'package:w2d_customer_mobile/features/domain/usecases/categories/categori
 part 'common_state.dart';
 
 class CommonCubit extends Cubit<CommonState> {
-  final CategoriesHierarchyUseCase categoriesHierarchyUseCase;
-
   CommonCubit({required this.categoriesHierarchyUseCase})
     : super(CommonInitial());
+
+  final CategoriesHierarchyUseCase categoriesHierarchyUseCase;
 
   getCategoriesList() async {
     emit(CommonLoading());

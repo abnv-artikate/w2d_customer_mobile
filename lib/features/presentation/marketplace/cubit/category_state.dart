@@ -7,7 +7,7 @@ final class CategoryInitial extends CategoryState {}
 final class CategoryLoading extends CategoryState {}
 
 final class CategoryLoaded extends CategoryState {
-  final List<ProductCategoryListingEntity> productCategoryListing;
+  final List<ResultEntity> productCategoryListing;
 
   CategoryLoaded({required this.productCategoryListing});
 }
@@ -18,6 +18,14 @@ final class ProductViewLoaded extends CategoryState {
   final ProductViewEntity productEntity;
 
   ProductViewLoaded({required this.productEntity});
+}
+
+final class CartSyncLoading extends CategoryState {}
+
+final class CartSyncLoaded extends CategoryState {
+  final String message;
+
+  CartSyncLoaded({required this.message});
 }
 
 final class CategoryError extends CategoryState {
