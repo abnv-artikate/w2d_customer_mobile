@@ -7,6 +7,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/login_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cart_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/explore_categories_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/scaffold_with_nav.dart';
@@ -52,7 +53,10 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.cartRoute,
           builder: (BuildContext context, GoRouterState state) {
-            return CartScreen();
+            return BlocProvider<CartCubit>(
+              create: (context) => sl<CartCubit>(),
+              child: CartScreen(),
+            );
           },
         ),
         GoRoute(

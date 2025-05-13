@@ -5,13 +5,10 @@ class CartModel {
   String? message;
   Data? data;
 
-  CartModel({
-    this.status,
-    this.message,
-    this.data,
-  });
+  CartModel({this.status, this.message, this.data});
 
-  factory CartModel.fromRawJson(String str) => CartModel.fromJson(json.decode(str));
+  factory CartModel.fromRawJson(String str) =>
+      CartModel.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
@@ -35,13 +32,7 @@ class Data {
   String? createdAt;
   List<Item>? items;
 
-  Data({
-    this.id,
-    this.customer,
-    this.sessionKey,
-    this.createdAt,
-    this.items,
-  });
+  Data({this.id, this.customer, this.sessionKey, this.createdAt, this.items});
 
   factory Data.fromRawJson(String str) => Data.fromJson(json.decode(str));
 
@@ -52,7 +43,10 @@ class Data {
     customer: json["customer"],
     sessionKey: json["session_key"],
     createdAt: json["created_at"],
-    items: json["items"] == null ? [] : List<Item>.from(json["items"]!.map((x) => Item.fromJson(x))),
+    items:
+        json["items"] == null
+            ? []
+            : List<Item>.from(json["items"]!.map((x) => Item.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -60,7 +54,8 @@ class Data {
     "customer": customer,
     "session_key": sessionKey,
     "created_at": createdAt,
-    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+    "items":
+        items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
   };
 }
 
@@ -138,9 +133,9 @@ class Product {
   int? purchaseLimit;
   dynamic commissionPercentage;
   String? weight;
-  Unit? weightUnit;
+  String? weightUnit;
   dynamic shippingWeight;
-  Unit? shippingWeightUnit;
+  String? shippingWeightUnit;
   Dimensions? dimensions;
   Dimensions? packagingDimensions;
   List<Dimensions>? packagingDetails;
@@ -167,8 +162,8 @@ class Product {
   String? countryOfOrigin;
   dynamic hsCode;
   bool? isActive;
-  DateTime? createdAt;
-  DateTime? lastUpdatedAt;
+  String? createdAt;
+  String? lastUpdatedAt;
   int? seller;
   Category? category;
   int? brand;
@@ -246,7 +241,10 @@ class Product {
     longDescription: json["long_description"],
     keyFeatures: json["key_features"],
     mainImage: json["main_image"],
-    gallery: json["gallery"] == null ? [] : List<String>.from(json["gallery"]!.map((x) => x)),
+    gallery:
+        json["gallery"] == null
+            ? []
+            : List<String>.from(json["gallery"]!.map((x) => x)),
     videoUrl: json["video_url"],
     regularPrice: json["regular_price"],
     localTransitFee: json["local_transit_fee"],
@@ -257,15 +255,29 @@ class Product {
     purchaseLimit: json["purchase_limit"],
     commissionPercentage: json["commission_percentage"],
     weight: json["weight"],
-    weightUnit: unitValues.map[json["weight_unit"]]!,
+    weightUnit: json["weight_unit"],
     shippingWeight: json["shipping_weight"],
-    shippingWeightUnit: unitValues.map[json["shipping_weight_unit"]]!,
-    dimensions: json["dimensions"] == null ? null : Dimensions.fromJson(json["dimensions"]),
-    packagingDimensions: json["packaging_dimensions"] == null ? null : Dimensions.fromJson(json["packaging_dimensions"]),
-    packagingDetails: json["packaging_details"] == null ? [] : List<Dimensions>.from(json["packaging_details"]!.map((x) => Dimensions.fromJson(x))),
+    shippingWeightUnit: json["shipping_weight_unit"],
+    dimensions:
+        json["dimensions"] == null
+            ? null
+            : Dimensions.fromJson(json["dimensions"]),
+    packagingDimensions:
+        json["packaging_dimensions"] == null
+            ? null
+            : Dimensions.fromJson(json["packaging_dimensions"]),
+    packagingDetails:
+        json["packaging_details"] == null
+            ? []
+            : List<Dimensions>.from(
+              json["packaging_details"]!.map((x) => Dimensions.fromJson(x)),
+            ),
     shippingMethods: json["shipping_methods"],
     shippingRegion: json["shipping_region"],
-    shippingCountries: json["shipping_countries"] == null ? [] : List<String>.from(json["shipping_countries"]!.map((x) => x)),
+    shippingCountries:
+        json["shipping_countries"] == null
+            ? []
+            : List<String>.from(json["shipping_countries"]!.map((x) => x)),
     handlingTime: json["handling_time"],
     returnsPolicy: json["returns_policy"],
     tags: json["tags"],
@@ -276,7 +288,12 @@ class Product {
     visibility: json["visibility"],
     specificCustomerGroups: json["specific_customer_groups"],
     lastUpdatedBy: json["last_updated_by"],
-    technicalSpecifications: json["technical_specifications"] == null ? null : TechnicalSpecifications.fromJson(json["technical_specifications"]),
+    technicalSpecifications:
+        json["technical_specifications"] == null
+            ? null
+            : TechnicalSpecifications.fromJson(
+              json["technical_specifications"],
+            ),
     hasVariant: json["has_variant"],
     woodenBoxPackaging: json["wooden_box_packaging"],
     isPerfume: json["is_perfume"],
@@ -286,10 +303,11 @@ class Product {
     countryOfOrigin: json["country_of_origin"],
     hsCode: json["hs_code"],
     isActive: json["is_active"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-    lastUpdatedAt: json["last_updated_at"] == null ? null : DateTime.parse(json["last_updated_at"]),
+    createdAt: json["created_at"],
+    lastUpdatedAt: json["last_updated_at"],
     seller: json["seller"],
-    category: json["category"] == null ? null : Category.fromJson(json["category"]),
+    category:
+        json["category"] == null ? null : Category.fromJson(json["category"]),
     brand: json["brand"],
   );
 
@@ -304,7 +322,8 @@ class Product {
     "long_description": longDescription,
     "key_features": keyFeatures,
     "main_image": mainImage,
-    "gallery": gallery == null ? [] : List<dynamic>.from(gallery!.map((x) => x)),
+    "gallery":
+        gallery == null ? [] : List<dynamic>.from(gallery!.map((x) => x)),
     "video_url": videoUrl,
     "regular_price": regularPrice,
     "local_transit_fee": localTransitFee,
@@ -315,15 +334,21 @@ class Product {
     "purchase_limit": purchaseLimit,
     "commission_percentage": commissionPercentage,
     "weight": weight,
-    "weight_unit": unitValues.reverse[weightUnit],
+    "weight_unit": weightUnit,
     "shipping_weight": shippingWeight,
-    "shipping_weight_unit": unitValues.reverse[shippingWeightUnit],
+    "shipping_weight_unit": shippingWeightUnit,
     "dimensions": dimensions?.toJson(),
     "packaging_dimensions": packagingDimensions?.toJson(),
-    "packaging_details": packagingDetails == null ? [] : List<dynamic>.from(packagingDetails!.map((x) => x.toJson())),
+    "packaging_details":
+        packagingDetails == null
+            ? []
+            : List<dynamic>.from(packagingDetails!.map((x) => x.toJson())),
     "shipping_methods": shippingMethods,
     "shipping_region": shippingRegion,
-    "shipping_countries": shippingCountries == null ? [] : List<dynamic>.from(shippingCountries!.map((x) => x)),
+    "shipping_countries":
+        shippingCountries == null
+            ? []
+            : List<dynamic>.from(shippingCountries!.map((x) => x)),
     "handling_time": handlingTime,
     "returns_policy": returnsPolicy,
     "tags": tags,
@@ -344,8 +369,8 @@ class Product {
     "country_of_origin": countryOfOrigin,
     "hs_code": hsCode,
     "is_active": isActive,
-    "created_at": createdAt?.toIso8601String(),
-    "last_updated_at": lastUpdatedAt?.toIso8601String(),
+    "created_at": createdAt,
+    "last_updated_at": lastUpdatedAt,
     "seller": seller,
     "category": category?.toJson(),
     "brand": brand,
@@ -367,7 +392,8 @@ class Category {
     this.allowedAttributes,
   });
 
-  factory Category.fromRawJson(String str) => Category.fromJson(json.decode(str));
+  factory Category.fromRawJson(String str) =>
+      Category.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
@@ -375,7 +401,10 @@ class Category {
     id: json["id"],
     name: json["name"],
     parent: json["parent"],
-    subcategories: json["subcategories"] == null ? [] : List<dynamic>.from(json["subcategories"]!.map((x) => x)),
+    subcategories:
+        json["subcategories"] == null
+            ? []
+            : List<dynamic>.from(json["subcategories"]!.map((x) => x)),
     allowedAttributes: json["allowed_attributes"],
   );
 
@@ -383,7 +412,10 @@ class Category {
     "id": id,
     "name": name,
     "parent": parent,
-    "subcategories": subcategories == null ? [] : List<dynamic>.from(subcategories!.map((x) => x)),
+    "subcategories":
+        subcategories == null
+            ? []
+            : List<dynamic>.from(subcategories!.map((x) => x)),
     "allowed_attributes": allowedAttributes,
   };
 }
@@ -394,14 +426,10 @@ class Dimensions {
   Height? length;
   Height? weight;
 
-  Dimensions({
-    this.width,
-    this.height,
-    this.length,
-    this.weight,
-  });
+  Dimensions({this.width, this.height, this.length, this.weight});
 
-  factory Dimensions.fromRawJson(String str) => Dimensions.fromJson(json.decode(str));
+  factory Dimensions.fromRawJson(String str) =>
+      Dimensions.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
@@ -421,53 +449,33 @@ class Dimensions {
 }
 
 class Height {
-  Unit? unit;
+  String? unit;
   String? value;
 
-  Height({
-    this.unit,
-    this.value,
-  });
+  Height({this.unit, this.value});
 
   factory Height.fromRawJson(String str) => Height.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory Height.fromJson(Map<String, dynamic> json) => Height(
-    unit: unitValues.map[json["unit"]]!,
-    value: json["value"],
-  );
+  factory Height.fromJson(Map<String, dynamic> json) =>
+      Height(unit: json["unit"], value: json["value"].toString());
 
-  Map<String, dynamic> toJson() => {
-    "unit": unitValues.reverse[unit],
-    "value": value,
-  };
+  Map<String, dynamic> toJson() => {"unit": unit, "value": value};
 }
-
-enum Unit {
-  CM,
-  KG,
-  UNDEFINED
-}
-
-final unitValues = EnumValues({
-  "cm": Unit.CM,
-  "kg": Unit.KG,
-  "undefined": Unit.UNDEFINED
-});
 
 class TechnicalSpecifications {
   TechnicalSpecifications();
 
-  factory TechnicalSpecifications.fromRawJson(String str) => TechnicalSpecifications.fromJson(json.decode(str));
+  factory TechnicalSpecifications.fromRawJson(String str) =>
+      TechnicalSpecifications.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory TechnicalSpecifications.fromJson(Map<String, dynamic> json) => TechnicalSpecifications(
-  );
+  factory TechnicalSpecifications.fromJson(Map<String, dynamic> json) =>
+      TechnicalSpecifications();
 
-  Map<String, dynamic> toJson() => {
-  };
+  Map<String, dynamic> toJson() => {};
 }
 
 class Variant {

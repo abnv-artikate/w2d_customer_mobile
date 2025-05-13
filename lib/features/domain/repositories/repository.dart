@@ -4,13 +4,20 @@ import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.da
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/shipping/select_freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/cart/get_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
 
 abstract class Repository {
   /// Auth Repositories
@@ -35,7 +42,22 @@ abstract class Repository {
   Future<Either<Failure, String>> cartSync({required CartSyncParams params});
 
   /// Cart Repositories
-  Future<Either<Failure, CartEntity>> getCart({
-    required GetCartParams params,
+  Future<Either<Failure, CartEntity>> getCart();
+
+  /// Shipping Repository
+  Future<Either<Failure, FreightQuoteEntity>> getFreightQuote({
+    required GetFreightQuoteParams params,
+  });
+
+  Future<Either<Failure, SelectFreightServiceEntity>> selectFreightService({
+    required SelectFreightServiceParams params,
+  });
+
+  Future<Either<Failure, CalculateInsuranceEntity>> calculateInsurance({
+    required CalculateInsuranceParams params,
+  });
+
+  Future<Either<Failure, ConfirmInsuranceEntity>> confirmInsurance({
+    required ConfirmInsuranceParams params,
   });
 }

@@ -283,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _location = "${place.subLocality}, ${place.locality}";
       });
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 }

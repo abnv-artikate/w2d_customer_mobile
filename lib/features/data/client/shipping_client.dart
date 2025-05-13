@@ -6,7 +6,7 @@ import 'package:w2d_customer_mobile/core/utils/endpoint_constants.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/calculate_insurance_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/confirm_insurance_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/freight_quote_model.dart';
-import 'package:w2d_customer_mobile/features/data/model/shipping/select_freight_quote_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/shipping/select_freight_service_model.dart';
 
 part 'shipping_client.g.dart';
 
@@ -27,6 +27,10 @@ abstract class ShippingClient {
         },
       ),
     );
+    dio.options.headers['content-type'] = 'application/json';
+    dio.options.headers['token'] =
+        '5784929a71_5c1c3b106_cd070e6a_1609b07_2d66eb_33689_8ef4_f2c_68_3_S2D_4_37_79d_a247_46736_9e047d_4219fd9_6aed26e1_634f3b202_6ac32fbd72';
+    dio.options.headers['authorization'] = 'Basic Og==';
     return _ShippingClient(dio);
   }
 
@@ -35,13 +39,19 @@ abstract class ShippingClient {
   Future<FreightQuoteModel> getFreightQuote(@Body() Map<String, dynamic> body);
 
   @POST(EndPoints.selectFreightService)
-  Future<SelectFreightQuoteModel> selectFreightService(@Body() Map<String, dynamic> body);
+  Future<SelectFreightServiceModel> selectFreightService(
+    @Body() Map<String, dynamic> body,
+  );
 
   @POST(EndPoints.calculateInsurance)
-  Future<CalculateInsuranceModel> calculateInsurance(@Body() Map<String, dynamic> body);
+  Future<CalculateInsuranceModel> calculateInsurance(
+    @Body() Map<String, dynamic> body,
+  );
 
   @POST(EndPoints.confirmInsurance)
-  Future<ConfirmInsuranceModel> confirmInsurance(@Body() Map<String, dynamic> body);
+  Future<ConfirmInsuranceModel> confirmInsurance(
+    @Body() Map<String, dynamic> body,
+  );
 
   // @POST(EndPoints.addJob)
   // Future addJob(@Body() Map<String, dynamic> body);

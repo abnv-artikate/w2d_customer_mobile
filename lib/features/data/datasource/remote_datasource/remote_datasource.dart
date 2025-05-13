@@ -1,10 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:w2d_customer_mobile/features/data/client/client.dart';
+import 'package:w2d_customer_mobile/features/data/client/shipping_client.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/category_hierarchy_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/shipping/calculate_insurance_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/shipping/confirm_insurance_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/shipping/freight_quote_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/shipping/select_freight_service_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/success_message_model.dart';
 
 abstract class RemoteDatasource {
@@ -31,12 +36,24 @@ abstract class RemoteDatasource {
 
   /// Cart Datasource
   Future<CartModel> getCart(Map<String, dynamic> queries);
+
+  /// Shipping Datasource
+  Future<FreightQuoteModel> getFreightQuote(Map<String, dynamic> body);
+
+  Future<SelectFreightServiceModel> selectFreightService(
+    Map<String, dynamic> body,
+  );
+
+  Future<CalculateInsuranceModel> calculateInsurance(Map<String, dynamic> body);
+
+  Future<ConfirmInsuranceModel> confirmInsurance(Map<String, dynamic> body);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
-  final RestClient client;
+  final W2DClient w2dClient;
+  final ShippingClient shippingClient;
 
-  RemoteDatasourceImpl({required this.client});
+  RemoteDatasourceImpl({required this.shippingClient, required this.w2dClient});
 
   // void _processDio(err) {
   //   if (err is DioException) {
@@ -52,7 +69,7 @@ class RemoteDatasourceImpl extends RemoteDatasource {
     required Map<String, dynamic> body,
   }) async {
     try {
-      return await client.sendOtp(queries: queries, body: body);
+      return await w2dClient.sendOtp(queries: queries, body: body);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {
@@ -63,7 +80,7 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   @override
   Future<VerifyOtpModel> verifyOtp(Map<String, dynamic> body) async {
     try {
-      return await client.verifyOtp(body);
+      return await w2dClient.verifyOtp(body);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {
@@ -74,7 +91,7 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   @override
   Future<CategoryHierarchyModel> getCategoriesHierarchyModel() async {
     try {
-      return await client.getCategoryHierarchy();
+      return await w2dClient.getCategoryHierarchy();
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {
@@ -87,7 +104,7 @@ class RemoteDatasourceImpl extends RemoteDatasource {
     Map<String, dynamic> query,
   ) async {
     try {
-      return await client.getProductCategoryListing(query);
+      return await w2dClient.getProductCategoryListing(query);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {
@@ -98,7 +115,7 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   @override
   Future<ProductViewModel> getProductView(String id) async {
     try {
-      return await client.getProductDetail(id);
+      return await w2dClient.getProductDetail(id);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {
@@ -109,7 +126,7 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   @override
   Future<SuccessMessageModel> cartSync(Map<String, dynamic> body) async {
     try {
-      return await client.cartSync(body);
+      return await w2dClient.cartSync(body);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {
@@ -120,7 +137,57 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   @override
   Future<CartModel> getCart(Map<String, dynamic> queries) async {
     try {
-      return await client.getCart(queries);
+      return await w2dClient.getCart(queries);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<CalculateInsuranceModel> calculateInsurance(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await shippingClient.calculateInsurance(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ConfirmInsuranceModel> confirmInsurance(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await shippingClient.confirmInsurance(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<FreightQuoteModel> getFreightQuote(Map<String, dynamic> body) async {
+    try {
+      return await shippingClient.getFreightQuote(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<SelectFreightServiceModel> selectFreightService(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await shippingClient.selectFreightService(body);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

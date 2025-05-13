@@ -1,11 +1,11 @@
-class SelectFreightQuoteEntity {
+class SelectFreightServiceEntity {
   int code;
   bool status;
   String info;
   String message;
   SelectFreightQuoteEntityData data;
 
-  SelectFreightQuoteEntity({
+  SelectFreightServiceEntity({
     required this.code,
     required this.status,
     required this.info,

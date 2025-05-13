@@ -51,7 +51,7 @@ class _ExploreCategoriesScreenState extends State<ExploreCategoriesScreen> {
               ? Center(child: Text('No Categories to show right now'))
               : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: ListView.builder(
+                child: ListView.separated(
                   shrinkWrap: true,
                   // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   //   crossAxisCount: 2,
@@ -59,15 +59,22 @@ class _ExploreCategoriesScreenState extends State<ExploreCategoriesScreen> {
                   //   crossAxisSpacing: 20,
                   //   childAspectRatio: 1.8,
                   // ),
+                  separatorBuilder: (BuildContext context, int index) {
+                    return SizedBox(height: 10);
+                  },
                   itemBuilder: (BuildContext context, int index) {
                     return CategoriesListingWidget(
                       name: categoryList[index].name,
                       onTap: () {
-                        if(categoryList[index].handle.isNotEmpty){
-                          context.push(AppRoutes.listingRoute,
-                              extra: categoryList[index].handle).then((_) {
-                            _callCategoriesListingAPi();
-                          });
+                        if (categoryList[index].handle.isNotEmpty) {
+                          context
+                              .push(
+                                AppRoutes.listingRoute,
+                                extra: categoryList[index].handle,
+                              )
+                              .then((_) {
+                                _callCategoriesListingAPi();
+                              });
                         }
                       },
                     );

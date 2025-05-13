@@ -17,8 +17,8 @@ class CartEntity {
 class CartItemEntity {
   int id;
   int cart;
+  ProductEntity product;
 
-  // ProductEntity product;
   // VariantEntity variant;
   int quantity;
   dynamic voucherCode;
@@ -29,7 +29,7 @@ class CartItemEntity {
   CartItemEntity({
     required this.id,
     required this.cart,
-    // required this.product,
+    required this.product,
     // required this.variant,
     required this.quantity,
     required this.voucherCode,
@@ -64,9 +64,9 @@ class ProductEntity {
   String weightUnit;
   dynamic shippingWeight;
   String shippingWeightUnit;
-  Dimensions dimensions;
-  Dimensions packagingDimensions;
-  List<Dimensions> packagingDetails;
+  ProductDimensions dimensions;
+  ProductDimensions packagingDimensions;
+  List<ProductDimensions> packagingDetails;
   String shippingMethods;
   String shippingRegion;
   List<String> shippingCountries;
@@ -90,10 +90,10 @@ class ProductEntity {
   String countryOfOrigin;
   dynamic hsCode;
   bool isActive;
-  DateTime createdAt;
-  DateTime lastUpdatedAt;
+  String createdAt;
+  String lastUpdatedAt;
   int seller;
-  Category category;
+  // Category category;
   int brand;
 
   ProductEntity({
@@ -150,7 +150,7 @@ class ProductEntity {
     required this.createdAt,
     required this.lastUpdatedAt,
     required this.seller,
-    required this.category,
+    // required this.category,
     required this.brand,
   });
 }
@@ -171,13 +171,13 @@ class Category {
   });
 }
 
-class Dimensions {
-  Height width;
-  Height height;
-  Height length;
-  Height weight;
+class ProductDimensions {
+  DimensionEntity width;
+  DimensionEntity height;
+  DimensionEntity length;
+  DimensionEntity weight;
 
-  Dimensions({
+  ProductDimensions({
     required this.width,
     required this.height,
     required this.length,
@@ -185,11 +185,11 @@ class Dimensions {
   });
 }
 
-class Height {
+class DimensionEntity {
   String unit;
   String value;
 
-  Height({required this.unit, required this.value});
+  DimensionEntity({required this.unit, required this.value});
 }
 
 class VariantEntity {

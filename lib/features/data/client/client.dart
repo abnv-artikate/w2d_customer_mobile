@@ -16,8 +16,8 @@ part 'client.g.dart';
 // dart run build_runner build -d
 
 @RestApi()
-abstract class RestClient {
-  factory RestClient(final Dio dio) {
+abstract class W2DClient {
+  factory W2DClient(final Dio dio) {
     dio.interceptors.add(
       InterceptorsWrapper(
         onError: (DioException e, ErrorInterceptorHandler handler) {
@@ -29,7 +29,7 @@ abstract class RestClient {
         },
       ),
     );
-    return _RestClient(dio);
+    return _W2DClient(dio);
   }
 
   /// Auth Client
@@ -68,5 +68,5 @@ abstract class RestClient {
   Future<CartModel> getCart(@Queries() Map<String, dynamic> queries);
 
   /// Cargo Shipping Client
-  
+
 }

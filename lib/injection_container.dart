@@ -20,7 +20,12 @@ import 'package:w2d_customer_mobile/features/domain/usecases/cart/get_cart_useca
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/categories_hierarchy_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 
@@ -49,6 +54,12 @@ Future<void> init() async {
       getCartUseCase: sl<GetCartUseCase>(),
     ),
   );
+  sl.registerFactory<CartCubit>(
+    () => CartCubit(
+      cartSyncUseCase: sl<CartSyncUseCase>(),
+      getCartItemUseCase: sl<GetCartUseCase>(),
+    ),
+  );
 
   /// UseCases
   sl.registerLazySingleton<SendOtpUseCase>(
@@ -72,6 +83,18 @@ Future<void> init() async {
   sl.registerLazySingleton<GetCartUseCase>(
     () => GetCartUseCase(sl<Repository>()),
   );
+  sl.registerLazySingleton<CalculateInsuranceUseCase>(
+    () => CalculateInsuranceUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<ConfirmInsuranceUseCase>(
+    () => ConfirmInsuranceUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<GetFreightQuoteUseCase>(
+    () => GetFreightQuoteUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<SelectFreightServiceUseCase>(
+    () => SelectFreightServiceUseCase(sl<Repository>()),
+  );
 
   /// Repositories
   sl.registerLazySingleton<Repository>(
@@ -87,7 +110,10 @@ Future<void> init() async {
     () => LocalDataSourceImpl(sl<MySharedPref>()),
   );
   sl.registerLazySingleton<RemoteDatasource>(
-    () => RemoteDatasourceImpl(client: sl<RestClient>()),
+    () => RemoteDatasourceImpl(
+      w2dClient: sl<W2DClient>(),
+      shippingClient: sl<ShippingClient>(),
+    ),
   );
 
   /// Core
@@ -140,7 +166,7 @@ Future<void> init() async {
   );
 
   /// Clients
-  sl.registerLazySingleton<RestClient>(() => RestClient(w2dDio));
+  sl.registerLazySingleton<W2DClient>(() => W2DClient(w2dDio));
   sl.registerLazySingleton<ShippingClient>(() => ShippingClient(shippingDio));
 
   /// Shared Preference

@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-class SelectFreightQuoteModel {
+class SelectFreightServiceModel {
   int? code;
   bool? status;
   String? info;
   String? message;
   SelectFreightQuoteModelData? data;
 
-  SelectFreightQuoteModel({
+  SelectFreightServiceModel({
     this.code,
     this.status,
     this.info,
@@ -15,11 +15,11 @@ class SelectFreightQuoteModel {
     this.data,
   });
 
-  factory SelectFreightQuoteModel.fromRawJson(String str) => SelectFreightQuoteModel.fromJson(json.decode(str));
+  factory SelectFreightServiceModel.fromRawJson(String str) => SelectFreightServiceModel.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory SelectFreightQuoteModel.fromJson(Map<String, dynamic> json) => SelectFreightQuoteModel(
+  factory SelectFreightServiceModel.fromJson(Map<String, dynamic> json) => SelectFreightServiceModel(
     code: json["code"],
     status: json["status"],
     info: json["info"],

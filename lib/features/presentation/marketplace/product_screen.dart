@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/core/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/custom_filled_button_widget.dart';
@@ -27,14 +28,21 @@ class _ProductScreenState extends State<ProductScreen> {
         leading: _backButton(),
         actions: [_likeButton()],
       ),
-      body: ListView(
-        shrinkWrap: true,
-        children: [
-          _productDetailANdPrice(),
-          SizedBox(height: 10),
-          _wishlistAndCartButton(),
-          SizedBox(height: 10),
-        ],
+      body: BlocListener<CategoryCubit, CategoryState>(
+        listener: (context, state) {
+          if (state is CartSyncLoaded) {
+            widget.showErrorToast(context: context, message: state.message);
+          }
+        },
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            _productDetailANdPrice(),
+            SizedBox(height: 10),
+            _wishlistAndCartButton(),
+            SizedBox(height: 10),
+          ],
+        ),
       ),
     );
   }

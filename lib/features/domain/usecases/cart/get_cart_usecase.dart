@@ -4,19 +4,19 @@ import 'package:w2d_customer_mobile/core/usecase/usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
 
-class GetCartUseCase extends UseCase<CartEntity, GetCartParams> {
+class GetCartUseCase extends UseCase<CartEntity, NoParams> {
   final Repository _repository;
 
   GetCartUseCase(this._repository);
 
   @override
-  Future<Either<Failure, CartEntity>> call(GetCartParams params) async {
-    return await _repository.getCart(params: params);
+  Future<Either<Failure, CartEntity>> call(NoParams params) async {
+    return await _repository.getCart();
   }
 }
 
 class GetCartParams {
   final String cartId;
 
-  GetCartParams({required this.cartId});
+  GetCartParams({this.cartId = ""});
 }
