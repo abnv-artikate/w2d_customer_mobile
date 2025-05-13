@@ -30,7 +30,7 @@ class _ExploreCategoriesScreenState extends State<ExploreCategoriesScreen> {
       appBar: AppBar(
         title: Text(
           'Categories',
-          style: TextStyle(fontSize: 40, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
       ),
@@ -53,12 +53,6 @@ class _ExploreCategoriesScreenState extends State<ExploreCategoriesScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: ListView.separated(
                   shrinkWrap: true,
-                  // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  //   crossAxisCount: 2,
-                  //   mainAxisSpacing: 30,
-                  //   crossAxisSpacing: 20,
-                  //   childAspectRatio: 1.8,
-                  // ),
                   separatorBuilder: (BuildContext context, int index) {
                     return SizedBox(height: 10);
                   },

@@ -53,29 +53,30 @@ class _CartScreenState extends State<CartScreen> {
               ? Center(
                 child: CircularProgressIndicator(color: AppColors.worldGreen),
               )
-              : Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: _checkoutButton(),
-                  ),
-                  cartItems.isEmpty
-                      ? Center(child: Text('No Items in Cart'))
-                      : ListView.separated(
-                        itemBuilder: (context, index) {
-                          return CartItemWidget(
-                            cartItem: cartItems[index],
-                            onCheckBoxTap: () {},
-                            onIncrementTap: () {},
-                            onDecrementTap: () {},
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return SizedBox(height: 10);
-                        },
-                        itemCount: cartItems.length,
-                      ),
-                ],
+              : cartItems.isEmpty
+              ? Center(child: Text('No Items in Cart'))
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return CartItemWidget(
+                          cartItem: cartItems[index],
+                          onCheckBoxTap: () {},
+                          onIncrementTap: () {},
+                          onDecrementTap: () {},
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return SizedBox(height: 10);
+                      },
+                      itemCount: cartItems.length,
+                    ),
+                    _checkoutButton(),
+                  ],
+                ),
               );
         },
       ),
@@ -83,23 +84,19 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _checkoutButton() {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100),
-          color: AppColors.worldGreen,
-          boxShadow: [BoxShadow(color: AppColors.black70, blurRadius: 4.0)],
-        ),
-        child: Text(
-          'Proceed to buy',
-          style: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.w500,
-            fontSize: 28,
-          ),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: AppColors.worldGreen,
+      ),
+      child: Text(
+        'Proceed to buy',
+        style: TextStyle(
+          color: AppColors.white,
+          fontWeight: FontWeight.w500,
+          fontSize: 28,
         ),
       ),
     );

@@ -63,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
             builder: (context, state) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _logo(),
                   _inputForm(
@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     otpCtrl: _otpCtrl,
                     nameCtrl: _nameCtrl,
                   ),
-                  _guestOrSignUp(context),
+                  // _guestOrSignUp(context),
                 ],
               );
             },
@@ -157,12 +157,12 @@ class _LoginScreenState extends State<LoginScreen> {
           controller: emailCtrl,
           decoration: InputDecoration(
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: AppColors.black70),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
-              borderSide: BorderSide(color: AppColors.black70),
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: AppColors.worldGreen, width: 2),
             ),
             hintText: 'Email',
             hintStyle: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),

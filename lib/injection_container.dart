@@ -43,6 +43,7 @@ Future<void> init() async {
   sl.registerFactory<CommonCubit>(
     () => CommonCubit(
       categoriesHierarchyUseCase: sl<CategoriesHierarchyUseCase>(),
+      localDatasource: sl<LocalDatasource>(),
     ),
   );
 

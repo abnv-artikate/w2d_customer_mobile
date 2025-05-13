@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
-import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/login_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cart_screen.dart';
@@ -62,7 +61,13 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.profileRoute,
           builder: (BuildContext context, GoRouterState state) {
-            return UserProfileScreen();
+            final bloc = BlocProvider.of<CommonCubit>(context);
+
+            if (bloc.isUserLoggedIn()) {
+              return UserProfileScreen();
+            } else {
+              return LoginScreen();
+            }
           },
         ),
       ],

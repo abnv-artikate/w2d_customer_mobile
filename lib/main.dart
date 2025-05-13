@@ -1,13 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:w2d_customer_mobile/core/routes/routes.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/injection_container.dart' as di;
+import 'package:w2d_customer_mobile/injection_container.dart';
 import 'core/utils/constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
-  runApp(const MyApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<CommonCubit>(
+          create: (context) => sl<CommonCubit>(),
+        ),
+        BlocProvider<AuthCubit>(
+          create: (context) => sl<AuthCubit>(),
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
