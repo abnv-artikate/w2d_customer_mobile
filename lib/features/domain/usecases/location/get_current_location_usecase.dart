@@ -3,9 +3,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
 
 class GetCurrentLocationUseCase {
-  final Repository repository;
-
-  GetCurrentLocationUseCase(this.repository);
 
   Future<Either<String, Position>> call() async {
     try {

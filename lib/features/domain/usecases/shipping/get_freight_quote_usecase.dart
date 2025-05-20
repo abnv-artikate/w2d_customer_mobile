@@ -55,10 +55,10 @@ class Items {
 }
 
 class Dimensions {
-  final int kiloGrams;
-  final int length;
-  final int width;
-  final int height;
+  final double kiloGrams;
+  final double length;
+  final double width;
+  final double height;
   final bool addWoodenPacking;
 
   Dimensions({

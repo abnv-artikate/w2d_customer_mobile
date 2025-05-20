@@ -1,12 +1,9 @@
 import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/product_item_widget.dart';
@@ -64,13 +61,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int navBarIndex = 0;
   bool isBrand = false;
-  String _location = 'Select Location';
-
-  @override
-  void initState() {
-    context.read<CommonCubit>().getCurrentLocation();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,25 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //   },
           //   isBrand: isBrand,
           // ),
-          BlocConsumer<CommonCubit, CommonState>(
-            listener: (context, state) {
-              if (state is GetLocationLoading) {
-                _location = "Fetching Location";
-              } else if (state is GetLocationLoaded) {
-                _getAddressFromLatLng(state.location);
-              } else if (state is CommonError) {
-                _location = state.error;
-              }
-            },
-            builder: (context, state) {
-              return LocationWidget(
-                location: _location,
-                onTap: () {
-                  context.read<CommonCubit>().getCurrentLocation();
-                },
-              );
-            },
-          ),
+          LocationWidget(onTap: () {}),
         ],
         bottom: PreferredSize(
           preferredSize: Size.zero,
@@ -223,22 +195,5 @@ class _HomeScreenState extends State<HomeScreen> {
         Center(child: Text('//TODO: Popular categories here')),
       ],
     );
-  }
-
-  _getAddressFromLatLng(Position position) async {
-    try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-
-      Placemark place = placemarks[0];
-
-      setState(() {
-        _location = "${place.subLocality}, ${place.locality}";
-      });
-    } catch (e) {
-      debugPrint(e.toString());
-    }
   }
 }

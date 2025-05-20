@@ -28,7 +28,9 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_fre
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
+import 'package:w2d_customer_mobile/generated/assets.dart';
 
 final sl = GetIt.instance;
 
@@ -62,6 +64,9 @@ Future<void> init() async {
       cartSyncUseCase: sl<CartSyncUseCase>(),
       getCartItemUseCase: sl<GetCartUseCase>(),
     ),
+  );
+  sl.registerFactory(
+    () => ShippingCubit(getFreightQuoteUseCase: sl<GetFreightQuoteUseCase>()),
   );
 
   /// UseCases
@@ -99,7 +104,7 @@ Future<void> init() async {
     () => SelectFreightServiceUseCase(sl<Repository>()),
   );
   sl.registerLazySingleton<GetCurrentLocationUseCase>(
-    () => GetCurrentLocationUseCase(sl<Repository>()),
+    () => GetCurrentLocationUseCase(),
   );
 
   /// Repositories
@@ -108,6 +113,7 @@ Future<void> init() async {
       localDatasource: sl<LocalDatasource>(),
       remoteDatasource: sl<RemoteDatasource>(),
       networkInfo: sl<NetworkInfo>(),
+      jsonFilePath: Assets.assetsCountryCodes,
     ),
   );
 

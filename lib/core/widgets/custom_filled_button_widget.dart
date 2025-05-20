@@ -8,6 +8,8 @@ class CustomFilledButtonWidget extends StatelessWidget {
   final double borderRadius;
   final double verticalPadding;
   final double horizontalPadding;
+  final double verticalMargin;
+  final double horizontalMargin;
   final double height;
   final double width;
   final VoidCallback onTap;
@@ -23,6 +25,8 @@ class CustomFilledButtonWidget extends StatelessWidget {
     this.borderRadius = 8,
     this.verticalPadding = 4,
     this.horizontalPadding = 4,
+    this.verticalMargin = 1,
+    this.horizontalMargin = 1,
   });
 
   @override
@@ -32,6 +36,10 @@ class CustomFilledButtonWidget extends StatelessWidget {
       child: Container(
         height: height,
         width: width,
+        margin: EdgeInsets.symmetric(
+          vertical: verticalMargin,
+          horizontal: horizontalMargin,
+        ),
         padding: EdgeInsets.symmetric(
           vertical: verticalPadding,
           horizontal: horizontalPadding,

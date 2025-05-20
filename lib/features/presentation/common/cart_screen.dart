@@ -14,6 +14,7 @@ import 'package:w2d_customer_mobile/features/presentation/widgets/cart_item_widg
 import 'package:w2d_customer_mobile/features/presentation/widgets/location_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_method_dropdown_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_method_list_item_widget.dart';
+import 'package:w2d_customer_mobile/injection_container.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -65,6 +66,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     callLocationApi();
+    callGetCartItemApi();
     super.initState();
   }
 
@@ -78,36 +80,13 @@ class _CartScreenState extends State<CartScreen> {
           'Cart',
           style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
         ),
-        actions: [
-          BlocConsumer<CommonCubit, CommonState>(
-            listener: (context, state) {
-              if (state is GetLocationLoading) {
-                location = "Fetching Location";
-              } else if (state is GetLocationLoaded) {
-                _currentLocation = state.location;
-                if (_currentLocation != null) {
-                  _getAddressFromLatLng(_currentLocation!);
-                }
-              } else if (state is CommonError) {
-                location = state.error;
-              }
-            },
-            builder: (context, state) {
-              return LocationWidget(
-                location: location,
-                onTap: () {
-                  callLocationApi();
-                },
-              );
-            },
-          ),
-        ],
+        actions: [LocationWidget(onTap: () {})],
       ),
       body: BlocConsumer<CartCubit, CartState>(
         listener: (context, state) {
           if (state is CartItemLoaded) {
             cartItems = state.cartItems;
-            callGetFreightQuoteApi(cartItems);
+            // callGetFreightQuoteApi(cartItems);
           } else if (state is CartError) {
             widget.showErrorToast(context: context, message: state.error);
           }
@@ -145,7 +124,8 @@ class _CartScreenState extends State<CartScreen> {
                           title: 'Proceed To Buy',
                           color: AppColors.worldGreen,
                           height: 50,
-                          width: MediaQuery.of(context).size.width,
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          horizontalMargin: 20,
                           onTap: () {},
                         ),
                       ],
@@ -178,72 +158,23 @@ class _CartScreenState extends State<CartScreen> {
   //   );
   // }
 
-  void callGetFreightQuoteApi(List<CartItemEntity> cartItems) {
-    context.read<ShippingCubit>().getFreightQuote(
-      GetFreightQuoteParams(
-        destinationCountry: _destinationCountry ?? "",
-        destinationCity: _destinationCity ?? "",
-        destinationLatitude: _currentLocation?.latitude.toString() ?? "",
-        destinationLongitude: _currentLocation?.longitude.toString() ?? "",
-        itemsGoods: _calculateGoodsValue(cartItems).toString(),
-        items:
-            cartItems.map((e) {
-              if (e.isChecked) {
-                return Items(
-                  itemDescription: e.product.productType,
-                  noOfPkgs: e.product.packagingDetails.length,
-                  attribute:
-                      e.product.isCosmetics
-                          ? "cosmetics"
-                          : e.product.isPerfume
-                          ? "perfumes"
-                          : e.product.containsBattery
-                          ? "battery"
-                          : e.product.containsMagnet
-                          ? "magnet"
-                          : "",
-                  hsCode: e.product.hsCode,
-                  dimensions:
-                      e.product.woodenBoxPackaging
-                          ? e.product.packagingDetails
-                              .map(
-                                (e) => Dimensions(
-                                  kiloGrams: int.parse(e.weight.value),
-                                  length: int.parse(e.weight.value),
-                                  width: int.parse(e.weight.value),
-                                  height: int.parse(e.weight.value),
-                                  addWoodenPacking: true,
-                                ),
-                              )
-                              .toList()
-                          : e.product.packagingDetails
-                              .map(
-                                (e) => Dimensions(
-                                  kiloGrams: int.parse(e.weight.value),
-                                  length: int.parse(e.weight.value),
-                                  width: int.parse(e.weight.value),
-                                  height: int.parse(e.weight.value),
-                                  addWoodenPacking: false,
-                                ),
-                              )
-                              .toList(),
-                );
-              }
-            }).toList(),
-      ),
-    );
-  }
-
   _showBreakdown(List<CartItemEntity> cartItems) {
     return Container(
-      decoration: BoxDecoration(),
+      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.worldGreen),
+        borderRadius: BorderRadius.circular(4),
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Estimated Total:'),
           Text("8345"),
           Row(
             children: [
               Text('Select shipping options:'),
+              Spacer(),
               ShippingMethodDropdownWidget(
                 shippingMethodText: "shippingMethod",
                 onTap: () {
@@ -256,29 +187,33 @@ class _CartScreenState extends State<CartScreen> {
           Row(
             children: [
               Text('Goods Value'),
+              Spacer(),
               Text("${_calculateGoodsValue(cartItems)}"),
             ],
           ),
-          Row(
-            children: [
-              Text('Platform Fee'),
-              Text("calculatePlatformFees(_calculateGoodsValue(cartItems))"),
-            ],
-          ),
+          Row(children: [Text('Platform Fee'), Spacer(), Text("234")]),
           Row(
             children: [
               Text('Local Transit Fee'),
+              Spacer(),
               Text("${_calculateLocalTransitFees(cartItems)}"),
             ],
           ),
           Row(
             children: [
               Text('Export Freight / Packing / Other Fees'),
+              Spacer(),
               Text('8304'),
             ],
           ),
-          Row(children: [Text('Dest Duty / Taxes / Other Fees'), Text('8304')]),
-          Row(children: [Text('Transit Insurance'), Text('8304')]),
+          Row(
+            children: [
+              Text('Dest Duty / Taxes / Other Fees'),
+              Spacer(),
+              Text('8304'),
+            ],
+          ),
+          Row(children: [Text('Transit Insurance'), Spacer(), Text('8304')]),
         ],
       ),
     );
@@ -372,6 +307,62 @@ class _CartScreenState extends State<CartScreen> {
     } catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  void callGetFreightQuoteApi(List<CartItemEntity> cartItems) {
+    context.read<ShippingCubit>().getFreightQuote(
+      GetFreightQuoteParams(
+        destinationCountry: _destinationCountry ?? "",
+        destinationCity: _destinationCity ?? "",
+        destinationLatitude: _currentLocation?.latitude.toString() ?? "",
+        destinationLongitude: _currentLocation?.longitude.toString() ?? "",
+        itemsGoods: _calculateGoodsValue(cartItems).toString(),
+        items:
+            cartItems.map((e) {
+              if (e.isChecked) {
+                return Items(
+                  itemDescription: e.product.productType,
+                  noOfPkgs: e.product.packagingDetails.length,
+                  attribute:
+                      e.product.isCosmetics
+                          ? "cosmetics"
+                          : e.product.isPerfume
+                          ? "perfumes"
+                          : e.product.containsBattery
+                          ? "battery"
+                          : e.product.containsMagnet
+                          ? "magnet"
+                          : "",
+                  hsCode: e.product.hsCode,
+                  dimensions:
+                      e.product.woodenBoxPackaging
+                          ? e.product.packagingDetails
+                              .map(
+                                (e) => Dimensions(
+                                  kiloGrams: double.parse(e.weight.value),
+                                  length: double.parse(e.length.value),
+                                  width: double.parse(e.width.value),
+                                  height: double.parse(e.height.value),
+                                  addWoodenPacking: true,
+                                ),
+                              )
+                              .toList()
+                          : e.product.packagingDetails
+                              .map(
+                                (e) => Dimensions(
+                                  kiloGrams: double.parse(e.weight.value),
+                                  length: double.parse(e.length.value),
+                                  width: double.parse(e.width.value),
+                                  height: double.parse(e.height.value),
+                                  addWoodenPacking: false,
+                                ),
+                              )
+                              .toList(),
+                );
+              }
+            }).toList(),
+      ),
+    );
   }
 
   void callGetCartItemApi() {
