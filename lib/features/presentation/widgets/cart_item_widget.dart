@@ -51,13 +51,13 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                       Text(
                         widget.cartItem.product.name,
                         style: TextStyle(
-                          fontSize: 26,
+                          fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       Text(
                         widget.cartItem.product.salePrice,
-                        style: TextStyle(fontSize: 25),
+                        style: TextStyle(fontSize: 18),
                       ),
                     ],
                   ),

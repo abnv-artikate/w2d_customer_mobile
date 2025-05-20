@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
 import 'package:w2d_customer_mobile/core/usecase/usecase.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/categories_hierarchy_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
 
 part 'common_state.dart';
 
@@ -13,9 +15,11 @@ class CommonCubit extends Cubit<CommonState> {
   CommonCubit({
     required this.localDatasource,
     required this.categoriesHierarchyUseCase,
+    required this.getCurrentLocationUseCase,
   }) : super(CommonInitial());
 
   final CategoriesHierarchyUseCase categoriesHierarchyUseCase;
+  final GetCurrentLocationUseCase getCurrentLocationUseCase;
   final LocalDatasource localDatasource;
 
   getCategoriesList() async {
@@ -25,6 +29,20 @@ class CommonCubit extends Cubit<CommonState> {
     result.fold((l) => _emitFailure(l), (r) {
       emit(CommonCategoriesLoaded(categoriesList: r));
     });
+  }
+
+  getCurrentLocation() async {
+    emit(GetLocationLoading());
+    final result = await getCurrentLocationUseCase.call();
+
+    result.fold(
+      (err) {
+        emit(GetLocationError(error: err));
+      },
+      (data) {
+        emit(GetLocationLoaded(location: data));
+      },
+    );
   }
 
   bool isUserLoggedIn() {

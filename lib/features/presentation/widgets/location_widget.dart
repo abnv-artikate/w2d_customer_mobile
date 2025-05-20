@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class LocationWidget extends StatelessWidget {
-  final IconData icon;
   final String location;
   final VoidCallback onTap;
 
   const LocationWidget({
     super.key,
-    required this.icon,
     required this.location,
     required this.onTap,
   });
@@ -21,7 +20,7 @@ class LocationWidget extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon),
+            Icon(LucideIcons.mapPin),
             SizedBox(width: 5),
             Text(
               location,

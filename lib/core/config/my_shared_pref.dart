@@ -7,6 +7,8 @@ class MySharedPref {
   static const refreshToken = "refresh_token";
   static const userEmail = "user_email";
   static const cartID = "cart_id";
+  static const latitudeKey = "latitude";
+  static const longitudeKey = "longitude";
 
   final SharedPreferences _pref;
 
@@ -42,6 +44,22 @@ class MySharedPref {
 
   String? getCartId() {
     return _pref.getString(cartID);
+  }
+
+  void saveLatitude(double latitude) {
+    _pref.setDouble(latitudeKey, latitude);
+  }
+
+  double? getLatitude() {
+    return _pref.getDouble(latitudeKey);
+  }
+
+  void saveLongitude(double longitude) {
+    _pref.setDouble(longitudeKey, longitude);
+  }
+
+  double? getLongitude() {
+    return _pref.getDouble(longitudeKey);
   }
 
   void logout() {

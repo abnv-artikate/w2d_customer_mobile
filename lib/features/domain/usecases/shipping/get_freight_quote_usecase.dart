@@ -19,17 +19,17 @@ class GetFreightQuoteUseCase
 }
 
 class GetFreightQuoteParams {
-  final String destinationCountry;
-  final String destinationCountryShortName;
-  final String destinationCity;
-  final String destinationLatitude;
-  final String destinationLongitude;
-  final String itemsGoods;
-  final List<Items> items;
+  final String? destinationCountry;
+  // final String destinationCountryShortName;
+  final String? destinationCity;
+  final String? destinationLatitude;
+  final String? destinationLongitude;
+  final String? itemsGoods;
+  final List<Items?> items;
 
   GetFreightQuoteParams({
     required this.destinationCountry,
-    required this.destinationCountryShortName,
+    // required this.destinationCountryShortName,
     required this.destinationCity,
     required this.destinationLatitude,
     required this.destinationLongitude,

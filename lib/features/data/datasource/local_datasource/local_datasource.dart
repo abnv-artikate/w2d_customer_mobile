@@ -16,6 +16,14 @@ abstract class LocalDatasource {
   String? getCartId();
 
   setCartId(String cartId);
+
+  // setLatitude(double latitude);
+  //
+  // double? getLatitude();
+  //
+  // setLongitude(double longitude);
+  //
+  // double? getLongitude();
 }
 
 class LocalDataSourceImpl extends LocalDatasource {
@@ -62,4 +70,24 @@ class LocalDataSourceImpl extends LocalDatasource {
   setCartId(String cartId) {
     mySharedPref.saveCartId(cartId);
   }
+
+  // @override
+  // double? getLatitude() {
+  //   return mySharedPref.getLatitude();
+  // }
+  //
+  // @override
+  // setLatitude(double latitude) {
+  //   mySharedPref.saveLatitude(latitude);
+  // }
+  //
+  // @override
+  // double? getLongitude() {
+  //   return mySharedPref.getLongitude();
+  // }
+  //
+  // @override
+  // setLongitude(double longitude) {
+  //   mySharedPref.saveLongitude(longitude);
+  // }
 }

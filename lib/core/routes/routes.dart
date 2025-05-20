@@ -34,8 +34,15 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.initial,
           builder: (BuildContext context, GoRouterState state) {
-            return BlocProvider<CategoryCubit>(
-              create: (context) => sl<CategoryCubit>(),
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<CategoryCubit>(
+                  create: (context) => sl<CategoryCubit>(),
+                ),
+                BlocProvider<CommonCubit>(
+                  create: (context) => sl<CommonCubit>(),
+                ),
+              ],
               child: HomeScreen(),
             );
           },

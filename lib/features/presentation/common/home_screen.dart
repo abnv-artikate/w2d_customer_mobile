@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/product_item_widget.dart';
@@ -38,9 +38,7 @@ final List<Widget> imageSliders =
         .toList();
 
 class HomeScreen extends StatefulWidget {
-  // final UserEntity userEntity;
-
-  const HomeScreen({super.key /*required this.userEntity*/});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -66,12 +64,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int navBarIndex = 0;
   bool isBrand = false;
-  String _location = 'Loading...';
-  IconData _locationIcon = LucideIcons.mapPin;
+  String _location = 'Select Location';
 
   @override
   void initState() {
-    getLocation();
+    context.read<CommonCubit>().getCurrentLocation();
     super.initState();
   }
 
@@ -107,11 +104,23 @@ class _HomeScreenState extends State<HomeScreen> {
           //   },
           //   isBrand: isBrand,
           // ),
-          LocationWidget(
-            icon: _locationIcon,
-            location: _location,
-            onTap: () {
-              getLocation();
+          BlocConsumer<CommonCubit, CommonState>(
+            listener: (context, state) {
+              if (state is GetLocationLoading) {
+                _location = "Fetching Location";
+              } else if (state is GetLocationLoaded) {
+                _getAddressFromLatLng(state.location);
+              } else if (state is CommonError) {
+                _location = state.error;
+              }
+            },
+            builder: (context, state) {
+              return LocationWidget(
+                location: _location,
+                onTap: () {
+                  context.read<CommonCubit>().getCurrentLocation();
+                },
+              );
             },
           ),
         ],
@@ -216,59 +225,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<String> getLocation() async {
-    try {
-      // First check if location services are enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        // Location services are not enabled
-        setState(() {
-          _locationIcon = LucideIcons.info;
-          _location = 'Location services disabled';
-        });
-        return 'Services are disabled';
-      }
-
-      // Check permission status
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        // Request permission
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          // User denied permission
-
-          setState(() {
-            _locationIcon = LucideIcons.info;
-            _location = 'permission denied';
-          });
-          return 'Location permission denied';
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        // User denied permission permanently
-        setState(() {
-          _locationIcon = LucideIcons.info;
-          _location = 'permissions permanently denied';
-        });
-        return 'Permissions permanently denied';
-      }
-
-      // If we get here, permissions are granted
-      Position position = await Geolocator.getCurrentPosition();
-      _getAddressFromLatLng(position);
-
-      return '';
-    } catch (e) {
-      setState(() {
-        _locationIcon = LucideIcons.info;
-        _location = 'Error getting location: $e';
-      });
-
-      return e.toString();
-    }
-  }
-
   _getAddressFromLatLng(Position position) async {
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
@@ -279,7 +235,6 @@ class _HomeScreenState extends State<HomeScreen> {
       Placemark place = placemarks[0];
 
       setState(() {
-        _locationIcon = LucideIcons.mapPin;
         _location = "${place.subLocality}, ${place.locality}";
       });
     } catch (e) {

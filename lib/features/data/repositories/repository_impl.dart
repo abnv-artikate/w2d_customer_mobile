@@ -173,6 +173,12 @@ class RepositoryImpl extends Repository {
     }
   }
 
+  String _generateCartId() {
+    UuidV4 newCartId = UuidV4();
+
+    return newCartId.toString();
+  }
+
   @override
   Future<Either<Failure, CartEntity>> getCart() async {
     try {
@@ -290,11 +296,5 @@ class RepositoryImpl extends Repository {
     } on ServerFailure catch (e) {
       return Left(ServerFailure(message: e.message));
     }
-  }
-
-  String _generateCartId() {
-    UuidV4 newCartId = UuidV4();
-
-    return newCartId.toString();
   }
 }
