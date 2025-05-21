@@ -1,8 +1,4 @@
-import 'dart:convert';
-
 import 'package:dartz/dartz.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:uuid/v4.dart';
 import 'package:w2d_customer_mobile/core/error/exceptions.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
@@ -14,7 +10,6 @@ import 'package:w2d_customer_mobile/features/data/repositories/repository_conv.d
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
-import 'package:w2d_customer_mobile/features/domain/entities/country_code_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
@@ -29,20 +24,17 @@ import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
 
 class RepositoryImpl extends Repository {
   final LocalDatasource localDatasource;
   final RemoteDatasource remoteDatasource;
   final NetworkInfo networkInfo;
-  final String jsonFilePath;
 
   RepositoryImpl({
     required this.localDatasource,
     required this.remoteDatasource,
     required this.networkInfo,
-    required this.jsonFilePath,
   });
 
   @override
@@ -253,38 +245,12 @@ class RepositoryImpl extends Repository {
 
   @override
   Future<Either<Failure, FreightQuoteEntity>> getFreightQuote({
-    required GetFreightQuoteParams params,
+    required Map<String, dynamic> params,
   }) async {
-    final List<CountryDetailEntity> countryDetails =
-        await fetchCountryShortNames();
-    String countryShortName = "";
-    if (params.destinationCountry != null) {
-      for (CountryDetailEntity entity in countryDetails) {
-        if (entity.countryName == params.destinationCountry) {
-          countryShortName = entity.countryCode;
-          break;
-        }
-      }
-    }
+
     try {
       if (await networkInfo.isConnected) {
-        final result = await remoteDatasource.getFreightQuote({
-          "user_details": {"user_email": "christine.rozario@world2doorcom"},
-          "quote_by": "MARKETPLACE",
-          "quote_by_email": "christine.rozario@world2door.com",
-          "origin_country": "United Arab Emirates",
-          "origin_country_short_name": "AE",
-          "origin_city": "Dubai",
-          "origin_latitude": 25.2048493,
-          "origin_longitude": 55.2707828,
-          "destination_country": params.destinationCountry,
-          "destination_country_short_name": countryShortName,
-          "destination_city": params.destinationCity,
-          "destination_latitude": params.destinationLatitude,
-          "destination_longitude": params.destinationLongitude,
-          "items_goods": params.itemsGoods,
-          "items": params.items,
-        });
+        final result = await remoteDatasource.getFreightQuote(params);
 
         return Right(
           RepositoryConv.convertGetFreightQuoteModelToEntity(result),
@@ -294,20 +260,6 @@ class RepositoryImpl extends Repository {
       }
     } on ServerFailure catch (e) {
       return Left(ServerFailure(message: e.message));
-    }
-  }
-
-  Future fetchCountryShortNames() async {
-    try {
-      final jsonString = await rootBundle.loadString(jsonFilePath);
-
-      final List<dynamic> jsonData = json.decode(jsonString);
-
-      return jsonData
-          .map((json) => CountryDetailEntity.fromJson(json))
-          .toList();
-    } catch (e) {
-      debugPrint("Error loading json file: ${e.toString()}");
     }
   }
 

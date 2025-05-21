@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
 import 'package:w2d_customer_mobile/core/usecase/usecase.dart';
@@ -39,10 +40,26 @@ class CommonCubit extends Cubit<CommonState> {
       (err) {
         emit(GetLocationError(error: err));
       },
-      (data) {
-        emit(GetLocationLoaded(location: data));
+      (data) async {
+        String location = await _getAddressFromLatLng(data);
+        emit(GetLocationLoaded(location: location));
       },
     );
+  }
+
+  Future<String> _getAddressFromLatLng(Position position) async {
+    try {
+      List<Placemark> placeMarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      Placemark place = placeMarks[0];
+
+      return "${place.subLocality}, ${place.locality}";
+    } catch (e) {
+      return e.toString();
+    }
   }
 
   bool isUserLoggedIn() {

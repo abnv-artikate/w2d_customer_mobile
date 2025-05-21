@@ -9,6 +9,8 @@ class MySharedPref {
   static const cartID = "cart_id";
   static const latitudeKey = "latitude";
   static const longitudeKey = "longitude";
+  static const destinationCity = "destination_city";
+  static const destinationCountry = "destination_country";
 
   final SharedPreferences _pref;
 
@@ -60,6 +62,22 @@ class MySharedPref {
 
   double? getLongitude() {
     return _pref.getDouble(longitudeKey);
+  }
+
+  void saveDestinationCity(String city) {
+    _pref.setString(destinationCity, city);
+  }
+
+  String? getDestinationCity() {
+    return _pref.getString(destinationCity);
+  }
+
+  void saveDestinationCountry(String country) {
+    _pref.setString(destinationCountry, country);
+  }
+
+  String? getDestinationCountry() {
+    return _pref.getString(destinationCountry);
   }
 
   void logout() {

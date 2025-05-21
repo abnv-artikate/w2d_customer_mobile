@@ -30,7 +30,6 @@ import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubi
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
-import 'package:w2d_customer_mobile/generated/assets.dart';
 
 final sl = GetIt.instance;
 
@@ -98,7 +97,7 @@ Future<void> init() async {
     () => ConfirmInsuranceUseCase(sl<Repository>()),
   );
   sl.registerLazySingleton<GetFreightQuoteUseCase>(
-    () => GetFreightQuoteUseCase(sl<Repository>()),
+    () => GetFreightQuoteUseCase(repository: sl<Repository>()),
   );
   sl.registerLazySingleton<SelectFreightServiceUseCase>(
     () => SelectFreightServiceUseCase(sl<Repository>()),
@@ -113,7 +112,6 @@ Future<void> init() async {
       localDatasource: sl<LocalDatasource>(),
       remoteDatasource: sl<RemoteDatasource>(),
       networkInfo: sl<NetworkInfo>(),
-      jsonFilePath: Assets.assetsCountryCodes,
     ),
   );
 

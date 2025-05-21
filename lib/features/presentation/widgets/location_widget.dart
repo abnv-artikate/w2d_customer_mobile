@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 
@@ -41,7 +39,7 @@ class _LocationWidgetState extends State<LocationWidget> {
                 if (state is GetLocationLoading) {
                   _location = "Fetching Location";
                 } else if (state is GetLocationLoaded) {
-                  _getAddressFromLatLng(state.location);
+                  _location = state.location;
                 } else if (state is CommonError) {
                   _location = state.error;
                 }
@@ -57,23 +55,6 @@ class _LocationWidgetState extends State<LocationWidget> {
         ),
       ),
     );
-  }
-
-  _getAddressFromLatLng(Position position) async {
-    try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-
-      Placemark place = placemarks[0];
-
-      setState(() {
-        _location = "${place.subLocality}, ${place.locality}";
-      });
-    } catch (e) {
-      debugPrint(e.toString());
-    }
   }
 
   void callLocationAPI() {

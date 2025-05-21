@@ -25,10 +25,11 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   int? _selectedShippingIndex;
-  String location = "Select Location";
-  Position? _currentLocation;
-  String? _destinationCountry;
-  String? _destinationCity;
+
+  // String location = "Select Location";
+  // Position? _currentLocation;
+  String _destinationCountry = "";
+  String _destinationCity = "";
 
   final List<Map<String, String>> shippingMethods = [
     {
@@ -65,7 +66,6 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void initState() {
-    callLocationApi();
     callGetCartItemApi();
     super.initState();
   }
@@ -299,71 +299,68 @@ class _CartScreenState extends State<CartScreen> {
 
       Placemark place = placemarks[0];
 
-      setState(() {
-        location = "${place.subLocality}, ${place.locality}";
-        _destinationCountry = place.country;
-        _destinationCity = place.locality;
-      });
+      // _destinationCountry = place.country;
+      // _destinationCity = place.locality;
     } catch (e) {
       debugPrint(e.toString());
     }
   }
 
-  void callGetFreightQuoteApi(List<CartItemEntity> cartItems) {
-    context.read<ShippingCubit>().getFreightQuote(
-      GetFreightQuoteParams(
-        destinationCountry: _destinationCountry ?? "",
-        destinationCity: _destinationCity ?? "",
-        destinationLatitude: _currentLocation?.latitude.toString() ?? "",
-        destinationLongitude: _currentLocation?.longitude.toString() ?? "",
-        itemsGoods: _calculateGoodsValue(cartItems).toString(),
-        items:
-            cartItems.map((e) {
-              if (e.isChecked) {
-                return Items(
-                  itemDescription: e.product.productType,
-                  noOfPkgs: e.product.packagingDetails.length,
-                  attribute:
-                      e.product.isCosmetics
-                          ? "cosmetics"
-                          : e.product.isPerfume
-                          ? "perfumes"
-                          : e.product.containsBattery
-                          ? "battery"
-                          : e.product.containsMagnet
-                          ? "magnet"
-                          : "",
-                  hsCode: e.product.hsCode,
-                  dimensions:
-                      e.product.woodenBoxPackaging
-                          ? e.product.packagingDetails
-                              .map(
-                                (e) => Dimensions(
-                                  kiloGrams: double.parse(e.weight.value),
-                                  length: double.parse(e.length.value),
-                                  width: double.parse(e.width.value),
-                                  height: double.parse(e.height.value),
-                                  addWoodenPacking: true,
-                                ),
-                              )
-                              .toList()
-                          : e.product.packagingDetails
-                              .map(
-                                (e) => Dimensions(
-                                  kiloGrams: double.parse(e.weight.value),
-                                  length: double.parse(e.length.value),
-                                  width: double.parse(e.width.value),
-                                  height: double.parse(e.height.value),
-                                  addWoodenPacking: false,
-                                ),
-                              )
-                              .toList(),
-                );
-              }
-            }).toList(),
-      ),
-    );
-  }
+  // void callGetFreightQuoteApi(List<CartItemEntity> cartItems) {
+  //   context.read<ShippingCubit>().getFreightQuote(
+  //     GetFreightQuoteParams(
+  //       destinationCountry: _destinationCountry,
+  //       destinationCity: _destinationCity,
+  //       destinationLatitude: _currentLocation?.latitude.toString() ?? "",
+  //       destinationLongitude: _currentLocation?.longitude.toString() ?? "",
+  //       itemsGoods: _calculateGoodsValue(cartItems).toString(),
+  //       items:
+  //           cartItems.map((e) {
+  //             if (e.isChecked) {
+  //               return Items(
+  //                 itemDescription: e.product.productType,
+  //                 noOfPkgs: e.product.packagingDetails.length,
+  //                 attribute:
+  //                     e.product.isCosmetics
+  //                         ? "cosmetics"
+  //                         : e.product.isPerfume
+  //                         ? "perfumes"
+  //                         : e.product.containsBattery
+  //                         ? "battery"
+  //                         : e.product.containsMagnet
+  //                         ? "magnet"
+  //                         : "",
+  //                 hsCode: e.product.hsCode,
+  //                 dimensions:
+  //                     e.product.woodenBoxPackaging
+  //                         ? e.product.packagingDetails
+  //                             .map(
+  //                               (e) => Dimensions(
+  //                                 kiloGrams: double.parse(e.weight.value),
+  //                                 length: double.parse(e.length.value),
+  //                                 width: double.parse(e.width.value),
+  //                                 height: double.parse(e.height.value),
+  //                                 addWoodenPacking: true,
+  //                               ),
+  //                             )
+  //                             .toList()
+  //                         : e.product.packagingDetails
+  //                             .map(
+  //                               (e) => Dimensions(
+  //                                 kiloGrams: double.parse(e.weight.value),
+  //                                 length: double.parse(e.length.value),
+  //                                 width: double.parse(e.width.value),
+  //                                 height: double.parse(e.height.value),
+  //                                 addWoodenPacking: false,
+  //                               ),
+  //                             )
+  //                             .toList(),
+  //               );
+  //             }
+  //           }).toList(),
+  //     ),
+  //   );
+  // }
 
   void callGetCartItemApi() {
     context.read<CartCubit>().getCartItems();

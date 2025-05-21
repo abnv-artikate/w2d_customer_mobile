@@ -16,7 +16,6 @@ import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
 
 abstract class Repository {
@@ -46,7 +45,7 @@ abstract class Repository {
 
   /// Shipping Repository
   Future<Either<Failure, FreightQuoteEntity>> getFreightQuote({
-    required GetFreightQuoteParams params,
+    required Map<String, dynamic> params,
   });
 
   Future<Either<Failure, SelectFreightServiceEntity>> selectFreightService({
