@@ -7,6 +7,7 @@ import 'package:w2d_customer_mobile/core/error/failure.dart';
 import 'package:w2d_customer_mobile/core/usecase/usecase.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/categories_hierarchy_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
 
@@ -41,25 +42,9 @@ class CommonCubit extends Cubit<CommonState> {
         emit(GetLocationError(error: err));
       },
       (data) async {
-        String location = await _getAddressFromLatLng(data);
-        emit(GetLocationLoaded(location: location));
+        emit(GetLocationLoaded(location: data));
       },
     );
-  }
-
-  Future<String> _getAddressFromLatLng(Position position) async {
-    try {
-      List<Placemark> placeMarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-
-      Placemark place = placeMarks[0];
-
-      return "${place.subLocality}, ${place.locality}";
-    } catch (e) {
-      return e.toString();
-    }
   }
 
   bool isUserLoggedIn() {

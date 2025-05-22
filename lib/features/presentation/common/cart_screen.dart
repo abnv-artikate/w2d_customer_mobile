@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/core/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/cart_item_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/location_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_method_dropdown_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_method_list_item_widget.dart';
-import 'package:w2d_customer_mobile/injection_container.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -25,11 +24,7 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   int? _selectedShippingIndex;
-
-  // String location = "Select Location";
-  // Position? _currentLocation;
-  String _destinationCountry = "";
-  String _destinationCity = "";
+  String address = "Tap to set delivery location";
 
   final List<Map<String, String>> shippingMethods = [
     {
@@ -80,15 +75,20 @@ class _CartScreenState extends State<CartScreen> {
           'Cart',
           style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
         ),
-        actions: [LocationWidget(onTap: () {})],
+        actions: [LocationWidget(onTap: () {}, address: address)],
       ),
       body: BlocConsumer<CartCubit, CartState>(
         listener: (context, state) {
           if (state is CartItemLoaded) {
             cartItems = state.cartItems;
             // callGetFreightQuoteApi(cartItems);
+            callLocationApi();
           } else if (state is CartError) {
             widget.showErrorToast(context: context, message: state.error);
+          }
+
+          if (state is GetLocationLoaded) {
+            address = "${state.location.city}, ${state.location.country}";
           }
         },
         builder: (context, state) {
@@ -170,7 +170,7 @@ class _CartScreenState extends State<CartScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Estimated Total:'),
-          Text("8345"),
+          Text("${_calculateEstimatedTotal(cartItems)}"),
           Row(
             children: [
               Text('Select shipping options:'),
@@ -191,7 +191,13 @@ class _CartScreenState extends State<CartScreen> {
               Text("${_calculateGoodsValue(cartItems)}"),
             ],
           ),
-          Row(children: [Text('Platform Fee'), Spacer(), Text("234")]),
+          Row(
+            children: [
+              Text('Platform Fee'),
+              Spacer(),
+              Text("${_calculatePlatformFees(cartItems)}"),
+            ],
+          ),
           Row(
             children: [
               Text('Local Transit Fee'),
@@ -203,17 +209,23 @@ class _CartScreenState extends State<CartScreen> {
             children: [
               Text('Export Freight / Packing / Other Fees'),
               Spacer(),
-              Text('8304'),
+              Text('${_calculateExportFreightPackingOtherFees()}'),
             ],
           ),
           Row(
             children: [
               Text('Dest Duty / Taxes / Other Fees'),
               Spacer(),
-              Text('8304'),
+              Text('${_calculateDestDutyTaxesOtherFees()}'),
             ],
           ),
-          Row(children: [Text('Transit Insurance'), Spacer(), Text('8304')]),
+          Row(
+            children: [
+              Text('Transit Insurance'),
+              Spacer(),
+              Text('${_calculateTransitInsurance()}'),
+            ],
+          ),
         ],
       ),
     );
@@ -257,6 +269,26 @@ class _CartScreenState extends State<CartScreen> {
                       },
                     ),
                   ),
+                  Row(
+                    children: [
+                      BlankButtonWidget(
+                        title: 'Cancel',
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        height: 50,
+                        onTap: () {
+                          context.pop();
+                        },
+                      ),
+                      Spacer(),
+                      CustomFilledButtonWidget(
+                        title: 'Select',
+                        color: AppColors.worldGreen,
+                        height: 50,
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
                 ],
               ),
             );
@@ -264,6 +296,15 @@ class _CartScreenState extends State<CartScreen> {
         );
       },
     );
+  }
+
+  double _calculateEstimatedTotal(List<CartItemEntity> cartItems) {
+    return _calculateGoodsValue(cartItems) +
+        _calculatePlatformFees(cartItems) +
+        _calculateLocalTransitFees(cartItems) +
+        _calculateExportFreightPackingOtherFees() +
+        _calculateDestDutyTaxesOtherFees() +
+        _calculateTransitInsurance();
   }
 
   double _calculateGoodsValue(List<CartItemEntity> cartItems) {
@@ -278,6 +319,10 @@ class _CartScreenState extends State<CartScreen> {
     return totalGoodsValue;
   }
 
+  double _calculatePlatformFees(List<CartItemEntity> cartItems) {
+    return 0.0;
+  }
+
   double _calculateLocalTransitFees(List<CartItemEntity> cartItems) {
     double totalTransitFee = 0.0;
 
@@ -290,87 +335,82 @@ class _CartScreenState extends State<CartScreen> {
     return totalTransitFee;
   }
 
-  _getAddressFromLatLng(Position position) async {
-    try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-
-      Placemark place = placemarks[0];
-
-      // _destinationCountry = place.country;
-      // _destinationCity = place.locality;
-    } catch (e) {
-      debugPrint(e.toString());
-    }
+  double _calculateExportFreightPackingOtherFees() {
+    return 0.0;
   }
 
-  // void callGetFreightQuoteApi(List<CartItemEntity> cartItems) {
-  //   context.read<ShippingCubit>().getFreightQuote(
-  //     GetFreightQuoteParams(
-  //       destinationCountry: _destinationCountry,
-  //       destinationCity: _destinationCity,
-  //       destinationLatitude: _currentLocation?.latitude.toString() ?? "",
-  //       destinationLongitude: _currentLocation?.longitude.toString() ?? "",
-  //       itemsGoods: _calculateGoodsValue(cartItems).toString(),
-  //       items:
-  //           cartItems.map((e) {
-  //             if (e.isChecked) {
-  //               return Items(
-  //                 itemDescription: e.product.productType,
-  //                 noOfPkgs: e.product.packagingDetails.length,
-  //                 attribute:
-  //                     e.product.isCosmetics
-  //                         ? "cosmetics"
-  //                         : e.product.isPerfume
-  //                         ? "perfumes"
-  //                         : e.product.containsBattery
-  //                         ? "battery"
-  //                         : e.product.containsMagnet
-  //                         ? "magnet"
-  //                         : "",
-  //                 hsCode: e.product.hsCode,
-  //                 dimensions:
-  //                     e.product.woodenBoxPackaging
-  //                         ? e.product.packagingDetails
-  //                             .map(
-  //                               (e) => Dimensions(
-  //                                 kiloGrams: double.parse(e.weight.value),
-  //                                 length: double.parse(e.length.value),
-  //                                 width: double.parse(e.width.value),
-  //                                 height: double.parse(e.height.value),
-  //                                 addWoodenPacking: true,
-  //                               ),
-  //                             )
-  //                             .toList()
-  //                         : e.product.packagingDetails
-  //                             .map(
-  //                               (e) => Dimensions(
-  //                                 kiloGrams: double.parse(e.weight.value),
-  //                                 length: double.parse(e.length.value),
-  //                                 width: double.parse(e.width.value),
-  //                                 height: double.parse(e.height.value),
-  //                                 addWoodenPacking: false,
-  //                               ),
-  //                             )
-  //                             .toList(),
-  //               );
-  //             }
-  //           }).toList(),
-  //     ),
-  //   );
-  // }
+  double _calculateDestDutyTaxesOtherFees() {
+    return 0.0;
+  }
+
+  double _calculateTransitInsurance() {
+    return 0.0;
+  }
+
+  void callGetFreightQuoteApi({
+    required List<CartItemEntity> cartItems,
+    required LocationEntity address,
+  }) {
+    context.read<ShippingCubit>().getFreightQuote(
+      GetFreightQuoteParams(
+        destinationCountry: address.country,
+        destinationCity: address.city,
+        destinationLatitude: address.latitude,
+        destinationLongitude: address.longitude,
+        itemsGoods: _calculateGoodsValue(cartItems).toString(),
+        items:
+            cartItems.map((e) {
+              if (e.isChecked) {
+                return Items(
+                  itemDescription: e.product.productType,
+                  noOfPkgs: e.product.packagingDetails.length,
+                  attribute:
+                      e.product.isCosmetics
+                          ? "cosmetics"
+                          : e.product.isPerfume
+                          ? "perfumes"
+                          : e.product.containsBattery
+                          ? "battery"
+                          : e.product.containsMagnet
+                          ? "magnet"
+                          : "",
+                  hsCode: e.product.hsCode,
+                  dimensions:
+                      e.product.woodenBoxPackaging
+                          ? e.product.packagingDetails
+                              .map(
+                                (e) => Dimensions(
+                                  kiloGrams: double.parse(e.weight.value),
+                                  length: double.parse(e.length.value),
+                                  width: double.parse(e.width.value),
+                                  height: double.parse(e.height.value),
+                                  addWoodenPacking: true,
+                                ),
+                              )
+                              .toList()
+                          : e.product.packagingDetails
+                              .map(
+                                (e) => Dimensions(
+                                  kiloGrams: double.parse(e.weight.value),
+                                  length: double.parse(e.length.value),
+                                  width: double.parse(e.width.value),
+                                  height: double.parse(e.height.value),
+                                  addWoodenPacking: false,
+                                ),
+                              )
+                              .toList(),
+                );
+              }
+            }).toList(),
+      ),
+    );
+  }
 
   void callGetCartItemApi() {
     context.read<CartCubit>().getCartItems();
   }
 
   void callLocationApi() {
-    context.read<CommonCubit>().getCurrentLocation();
+    context.read<CartCubit>().getCurrentLocation();
   }
-
-  // double _calculatePlatformFees(double goodsValue) {
-  //   return goodsValue
-  // }
 }

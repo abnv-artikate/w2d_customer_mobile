@@ -15,6 +15,9 @@ class GetCurrentLocationUseCase {
         locationSettings: LocationSettings(accuracy: LocationAccuracy.best),
       );
 
+      String city = "";
+      String country = "";
+
       try {
         List<Placemark> placemarks = await placemarkFromCoordinates(
           position.latitude,
@@ -22,6 +25,9 @@ class GetCurrentLocationUseCase {
         );
 
         Placemark place = placemarks[0];
+
+        city = place.locality ?? "";
+        country = place.country ?? "";
       } catch (e) {
         return Left(e.toString());
       }

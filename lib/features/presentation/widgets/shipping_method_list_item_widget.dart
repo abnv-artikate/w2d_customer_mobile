@@ -39,7 +39,11 @@ class _ShippingMethodListItemWidgetState
         ),
         child: Row(
           children: [
-            Checkbox(value: widget.isSelected, onChanged: (_) {}),
+            Checkbox(
+              value: widget.isSelected,
+              onChanged: (_) {},
+              activeColor: AppColors.worldGreen,
+            ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

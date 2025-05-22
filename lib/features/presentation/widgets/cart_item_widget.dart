@@ -53,11 +53,17 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Text(
                         widget.cartItem.product.salePrice,
                         style: TextStyle(fontSize: 18),
+                      ),
+                      _incrementWidget(
+                        number: widget.cartItem.quantity,
+                        onPlusTap: widget.onIncrementTap,
+                        onMinusTap: widget.onDecrementTap,
                       ),
                     ],
                   ),
@@ -70,15 +76,6 @@ class _CartItemWidgetState extends State<CartItemWidget> {
             child: InkWell(
               onTap: widget.onCheckBoxTap,
               child: _checkBox(widget.cartItem.isChecked),
-            ),
-          ),
-          Positioned(
-            bottom: 10,
-            right: 1,
-            child: _incrementWidget(
-              number: widget.cartItem.quantity,
-              onPlusTap: widget.onIncrementTap,
-              onMinusTap: widget.onDecrementTap,
             ),
           ),
         ],

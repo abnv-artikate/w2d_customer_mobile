@@ -17,15 +17,15 @@ class ShippingMethodDropdownWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10),
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           color: AppColors.softWhite80,
         ),
         child: Row(
           children: [
             Icon(LucideIcons.chevronDown),
+            SizedBox(width: 5),
             Text(
               shippingMethodText.isNotEmpty
                   ? shippingMethodText

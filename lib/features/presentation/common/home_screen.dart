@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //   },
           //   isBrand: isBrand,
           // ),
-          LocationWidget(onTap: () {}),
+          LocationWidget(onTap: () {}, address: ''),
         ],
         bottom: PreferredSize(
           preferredSize: Size.zero,

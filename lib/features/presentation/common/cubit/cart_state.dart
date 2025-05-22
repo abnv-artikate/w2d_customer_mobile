@@ -25,3 +25,17 @@ final class CartError extends CartState {
 
   CartError(this.error);
 }
+
+final class GetLocationLoading extends CartState {}
+
+final class GetLocationLoaded extends CartState {
+  final LocationEntity location;
+
+  GetLocationLoaded({required this.location});
+}
+
+final class GetLocationError extends CartState {
+  final String error;
+
+  GetLocationError({required this.error});
+}

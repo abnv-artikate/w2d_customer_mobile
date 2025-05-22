@@ -15,7 +15,7 @@ final class CommonCategoriesLoaded extends CommonState {
 final class GetLocationLoading extends CommonState {}
 
 final class GetLocationLoaded extends CommonState {
-  final String location;
+  final LocationEntity location;
 
   GetLocationLoaded({required this.location});
 }

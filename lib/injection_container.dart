@@ -62,6 +62,7 @@ Future<void> init() async {
     () => CartCubit(
       cartSyncUseCase: sl<CartSyncUseCase>(),
       getCartItemUseCase: sl<GetCartUseCase>(),
+      getCurrentLocationUseCase: sl<GetCurrentLocationUseCase>(),
     ),
   );
   sl.registerFactory(
