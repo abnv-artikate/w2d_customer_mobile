@@ -20,7 +20,7 @@ class GetFreightQuoteUseCase
   Future<Either<Failure, FreightQuoteEntity>> call(
     GetFreightQuoteParams params,
   ) async {
-    return await repository.getFreightQuote(params: params.toJson());
+    return await repository.getFreightQuote(params: await params.toJson());
   }
 }
 
@@ -29,7 +29,6 @@ class GetFreightQuoteParams {
   final String? destinationCity;
   final String? destinationLatitude;
   final String? destinationLongitude;
-  final String? itemsGoods;
   final List<Items?> items;
 
   GetFreightQuoteParams({
@@ -37,9 +36,29 @@ class GetFreightQuoteParams {
     required this.destinationCity,
     required this.destinationLatitude,
     required this.destinationLongitude,
-    required this.itemsGoods,
     required this.items,
   });
+
+  Future<Map<String, dynamic>> toJson() async {
+    return {
+      "user_details": {"user_email": "christine.rozario@world2door.com"},
+      "quote_by": "MARKETPLACE",
+      "quote_by_email": "christine.rozario@world2door.com",
+      "origin_country": "United Arab Emirates",
+      "origin_country_short_name": "AE",
+      "origin_city": "Dubai",
+      "origin_latitude": 25.2048493,
+      "origin_longitude": 55.2707828,
+      "destinationCountry": destinationCountry,
+      "destination_country_short_name": await getCountryShortName(
+        destinationCountry,
+      ),
+      "destinationCity": destinationCity,
+      "destinationLatitude": destinationLatitude,
+      "destinationLongitude": destinationLongitude,
+      "items": items.map((item) => item?.toJson()).toList(),
+    };
+  }
 
   Future<String> getCountryShortName(String destinationCountry) async {
     final List<CountryDetailEntity> countryDetails =
@@ -53,7 +72,7 @@ class GetFreightQuoteParams {
     return "";
   }
 
-  Future fetchCountryShortNames() async {
+  Future<List<CountryDetailEntity>> fetchCountryShortNames() async {
     try {
       final jsonString = await rootBundle.loadString(Assets.assetsCountryCodes);
 
@@ -64,27 +83,8 @@ class GetFreightQuoteParams {
           .toList();
     } catch (e) {
       debugPrint("Error loading json file: ${e.toString()}");
+      return [];
     }
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "user_details": {"user_email": "christine.rozario@world2door.com"},
-      "quote_by": "MARKETPLACE",
-      "quote_by_email": "christine.rozario@world2door.com",
-      "origin_country": "United Arab Emirates",
-      "origin_country_short_name": "AE",
-      "origin_city": "Dubai",
-      "origin_latitude": 25.2048493,
-      "origin_longitude": 55.2707828,
-      "destinationCountry": destinationCountry,
-      "destination_country_short_name": getCountryShortName(destinationCountry),
-      "destinationCity": destinationCity,
-      "destinationLatitude": destinationLatitude,
-      "destinationLongitude": destinationLongitude,
-      "itemsGoods": itemsGoods,
-      "items": items.map((item) => item?.toJson()).toList(),
-    };
   }
 }
 
@@ -93,6 +93,8 @@ class Items {
   final int noOfPkgs;
   final String attribute;
   final String hsCode;
+  final String itemsGoods;
+
   final List<Dimensions> dimensions;
 
   Items({
@@ -100,6 +102,7 @@ class Items {
     required this.noOfPkgs,
     required this.attribute,
     required this.hsCode,
+    required this.itemsGoods,
     required this.dimensions,
   });
 
@@ -109,6 +112,7 @@ class Items {
       "noOfPkgs": noOfPkgs,
       "attribute": attribute,
       "hsCode": hsCode,
+      "item_goods": itemsGoods,
       "dimensions": dimensions.map((dimension) => dimension.toJson()).toList(),
     };
   }

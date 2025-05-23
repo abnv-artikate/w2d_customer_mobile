@@ -41,19 +41,19 @@ class CartCubit extends Cubit<CartState> {
     });
   }
 
-  getCurrentLocation() async {
-    emit(GetLocationLoading());
-    final result = await getCurrentLocationUseCase.call();
-
-    result.fold(
-      (err) {
-        emit(GetLocationError(error: err));
-      },
-      (data) async {
-        emit(GetLocationLoaded(location: data));
-      },
-    );
-  }
+  // getCurrentLocation() async {
+  //   emit(GetLocationLoading());
+  //   final result = await getCurrentLocationUseCase.call();
+  //
+  //   result.fold(
+  //     (err) {
+  //       emit(GetLocationError(error: err));
+  //     },
+  //     (data) async {
+  //       emit(GetLocationLoaded(location: data));
+  //     },
+  //   );
+  // }
 
   FutureOr<void> _emitFailure(Failure failure) async {
     if (failure is ServerFailure) {

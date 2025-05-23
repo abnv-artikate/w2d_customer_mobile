@@ -36,15 +36,31 @@ class _CartItemWidgetState extends State<CartItemWidget> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 10),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Image.network(
-                  widget.cartItem.product.mainImage,
-                  width: 80,
+                SizedBox(
                   height: 60,
-                  fit: BoxFit.contain,
+                  width: 80,
+                  child: Image.network(
+                    widget.cartItem.product.mainImage,
+                    width: 80,
+                    height: 60,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, obj, stackTrace) {
+                      return Container(
+                        height: 60,
+                        width: 80,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 10,
+                        ),
+                        child: Text("error: $stackTrace"),
+                      );
+                    },
+                  ),
                 ),
                 SizedBox(width: 10),
-                Flexible(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
