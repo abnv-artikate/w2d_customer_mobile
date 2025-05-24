@@ -56,6 +56,7 @@ class GetFreightQuoteParams {
       "destinationCity": destinationCity,
       "destinationLatitude": destinationLatitude,
       "destinationLongitude": destinationLongitude,
+      "referral_token": "",
       "items": items.map((item) => item?.toJson()).toList(),
     };
   }
@@ -95,7 +96,7 @@ class Items {
   final String hsCode;
   final String itemsGoods;
 
-  final List<Dimensions> dimensions;
+  final List<Dimensions?> dimensions;
 
   Items({
     required this.itemDescription,
@@ -107,13 +108,21 @@ class Items {
   });
 
   Map<String, dynamic> toJson() {
+    List<Map<String, dynamic>> localDimensions =
+        dimensions
+            .where(
+              (dimension) =>
+                  dimension != null && !dimension.areAllPropertiesZero(),
+            )
+            .map((dimension) => dimension!.toJson())
+            .toList();
     return {
       "itemDescription": itemDescription,
-      "noOfPkgs": noOfPkgs,
+      "noOfPkgs": localDimensions.length,
       "attribute": attribute,
       "hsCode": hsCode,
       "item_goods": itemsGoods,
-      "dimensions": dimensions.map((dimension) => dimension.toJson()).toList(),
+      "dimensions": localDimensions,
     };
   }
 }
@@ -132,6 +141,10 @@ class Dimensions {
     required this.height,
     required this.addWoodenPacking,
   });
+
+  bool areAllPropertiesZero() {
+    return length == 0 && width == 0 && height == 0 && kiloGrams == 0;
+  }
 
   Map<String, dynamic> toJson() {
     return {

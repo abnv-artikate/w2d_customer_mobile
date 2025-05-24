@@ -141,7 +141,7 @@ class _CartScreenState extends State<CartScreen> {
   _showBreakdown(List<CartItemEntity> cartItems) {
     return BlocConsumer<ShippingCubit, ShippingState>(
       listener: (context, state) {
-        if (state is ShippingLoaded) {
+        if (state is GetFreightQuoteLoaded) {
           freightQuoteEntityData = state.freightQuoteEntity.data;
         }
       },
@@ -476,28 +476,34 @@ class _CartScreenState extends State<CartScreen> {
                   hsCode: e.product.hsCode,
                   dimensions:
                       e.product.woodenBoxPackaging
-                          ? e.product.packagingDetails
-                              .map(
-                                (e) => Dimensions(
-                                  kiloGrams: double.parse(e.weight.value),
-                                  length: double.parse(e.length.value),
-                                  width: double.parse(e.width.value),
-                                  height: double.parse(e.height.value),
-                                  addWoodenPacking: true,
-                                ),
-                              )
-                              .toList()
-                          : e.product.packagingDetails
-                              .map(
-                                (e) => Dimensions(
-                                  kiloGrams: double.parse(e.weight.value),
-                                  length: double.parse(e.length.value),
-                                  width: double.parse(e.width.value),
-                                  height: double.parse(e.height.value),
-                                  addWoodenPacking: false,
-                                ),
-                              )
-                              .toList(),
+                          ? e.product.packagingDetails.map((e) {
+                            if (double.parse(e.weight.value) != 0.0 &&
+                                double.parse(e.width.value) != 0.0 &&
+                                double.parse(e.height.value) != 0.0 &&
+                                double.parse(e.length.value) != 0.0) {
+                              return Dimensions(
+                                kiloGrams: double.parse(e.weight.value),
+                                length: double.parse(e.length.value),
+                                width: double.parse(e.width.value),
+                                height: double.parse(e.height.value),
+                                addWoodenPacking: true,
+                              );
+                            }
+                          }).toList()
+                          : e.product.packagingDetails.map((e) {
+                            if (double.parse(e.weight.value) != 0.0 &&
+                                double.parse(e.width.value) != 0.0 &&
+                                double.parse(e.height.value) != 0.0 &&
+                                double.parse(e.length.value) != 0.0) {
+                              return Dimensions(
+                                kiloGrams: double.parse(e.weight.value),
+                                length: double.parse(e.length.value),
+                                width: double.parse(e.width.value),
+                                height: double.parse(e.height.value),
+                                addWoodenPacking: false,
+                              );
+                            }
+                          }).toList(),
                 );
               }
             }).toList(),

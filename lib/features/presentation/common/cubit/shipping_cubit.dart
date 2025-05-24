@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
-import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 
@@ -18,7 +17,7 @@ class ShippingCubit extends Cubit<ShippingState> {
     final result = await getFreightQuoteUseCase.call(params);
 
     result.fold((l) => _emitFailure(l), (data) {
-      emit(ShippingLoaded(freightQuoteEntity: data));
+      emit(GetFreightQuoteLoaded(freightQuoteEntity: data));
     });
   }
 
