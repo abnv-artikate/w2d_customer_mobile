@@ -60,7 +60,16 @@ class _CartScreenState extends State<CartScreen> {
               }
             },
             builder: (context, state) {
-              return LocationWidget(onTap: () {}, address: address);
+              return LocationWidget(
+                onTap: () {
+                  callLocationApi();
+                  widget.showErrorToast(
+                    context: context,
+                    message: "Implement set location feature",
+                  );
+                },
+                address: address,
+              );
             },
           ),
         ],
@@ -81,15 +90,6 @@ class _CartScreenState extends State<CartScreen> {
           } else if (state is CartError) {
             widget.showErrorToast(context: context, message: state.error);
           }
-
-          // if (state is GetLocationLoading) {
-          //   address = "Loading Location";
-          // } else if (state is GetLocationLoaded) {
-          //   address = "${state.location.city}, ${state.location.country}";
-          //   location = state.location;
-          // } else if (state is GetLocationError) {
-          //   widget.showErrorToast(context: context, message: state.error);
-          // }
         },
         builder: (context, state) {
           return state is CartItemLoading
@@ -347,13 +347,13 @@ class _CartScreenState extends State<CartScreen> {
                             "${freightQuoteEntityData?.quoteLand.doorDelivery.totalAmount}",
                         transitEta:
                             "${freightQuoteEntityData?.quoteLand.doorDelivery.doorDeliveryTt}",
-                        isSelected: _selectedShippingIndex == 4,
+                        isSelected: _selectedShippingIndex == 5,
                         onTap: () {
                           setModalState(() {
-                            if (_selectedShippingIndex == 4) {
+                            if (_selectedShippingIndex == 5) {
                               _selectedShippingIndex = null;
                             } else {
-                              _selectedShippingIndex = 4;
+                              _selectedShippingIndex = 5;
                             }
                           });
                         },
@@ -410,6 +410,7 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   double _calculatePlatformFees(List<CartItemEntity> cartItems) {
+    // platformFee = 0.02 * (productSumTotal + shippingFees + insurance + destinationDuty);
     return 0.0;
   }
 

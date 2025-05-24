@@ -20,6 +20,22 @@ final class SelectFreightQuoteLoaded extends ShippingState {
   SelectFreightQuoteLoaded({required this.message});
 }
 
+final class CalculateInsuranceLoading extends ShippingState {}
+
+final class CalculateInsuranceLoaded extends ShippingState {
+  final String message;
+
+  CalculateInsuranceLoaded({required this.message});
+}
+
+final class ConfirmInsuranceLoading extends ShippingState {}
+
+final class ConfirmInsuranceLoaded extends ShippingState {
+  final String message;
+
+  ConfirmInsuranceLoaded({required this.message});
+}
+
 final class ShippingError extends ShippingState {
   final String message;
 

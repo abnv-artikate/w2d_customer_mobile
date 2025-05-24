@@ -61,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int navBarIndex = 0;
   bool isBrand = false;
+  String address = "";
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //   },
           //   isBrand: isBrand,
           // ),
-          LocationWidget(onTap: () {}, address: ''),
+          LocationWidget(onTap: () {}, address: address),
         ],
         bottom: PreferredSize(
           preferredSize: Size.zero,

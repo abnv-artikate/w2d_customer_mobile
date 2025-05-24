@@ -49,14 +49,11 @@ class GetFreightQuoteParams {
       "origin_city": "Dubai",
       "origin_latitude": 25.2048493,
       "origin_longitude": 55.2707828,
-      "destinationCountry": destinationCountry,
-      "destination_country_short_name": await getCountryShortName(
-        destinationCountry,
-      ),
-      "destinationCity": destinationCity,
-      "destinationLatitude": destinationLatitude,
-      "destinationLongitude": destinationLongitude,
-      "referral_token": "",
+      "destination_country": destinationCountry,
+      "destination_country_short_name": await getCountryShortName(destinationCountry),
+      "destination_city": destinationCity,
+      "destination_latitude": destinationLatitude,
+      "destination_longitude": destinationLongitude,
       "items": items.map((item) => item?.toJson()).toList(),
     };
   }
@@ -117,12 +114,12 @@ class Items {
             .map((dimension) => dimension!.toJson())
             .toList();
     return {
-      "itemDescription": itemDescription,
-      "noOfPkgs": localDimensions.length,
+      "items_goods": itemsGoods,
+      "item_description": itemDescription,
+      "no_of_pkgs": localDimensions.length,
       "attribute": attribute,
-      "hsCode": hsCode,
-      "item_goods": itemsGoods,
-      "dimensions": localDimensions,
+      "hs_code": hsCode,
+      "dimension": localDimensions,
     };
   }
 }
@@ -148,47 +145,45 @@ class Dimensions {
 
   Map<String, dynamic> toJson() {
     return {
-      "kiloGrams": kiloGrams,
+      "kilogram": kiloGrams,
       "length": length,
       "width": width,
       "height": height,
-      "addWoodenPacking": addWoodenPacking,
+      "add_wooden_packing": addWoodenPacking,
     };
   }
 }
 
 // {
-//   "user_details": {
-//     "user_email": "christine.rozario@world2doorcom"
-//   },
-//   "quote_by": "MARKETPLACE",
-//   "quote_by_email": "christine.rozario@world2door.com",
-//   "origin_country": "United Arab Emirates",
-//   "origin_country_short_name": "AE",
-//   "origin_city": "Dubai",
-//   "origin_latitude": 25.2048493,
-//   "origin_longitude": 55.2707828,
-//   "destination_country": "India",
-//   "destination_country_short_name": "IN",
-//   "destination_city": "Mumbai",
-//   "destination_latitude": 19.0759837,
-//   "destination_longitude": 72.8776559,
-//   "items_goods": 2500,
-//   "items": [
-//     {
-//       "item_description": "tv1",
-//       "no_of_pkgs": 1,
-//       "attribute": "battery",
-//       "hs_code": "123456",
-//       "dimension": [
+//     "user_details": {
+//         "user_email": "christine.rozario@world2door.com",
+//     },
+//     "quote_by":"MARKETPLACE",
+//     "quote_by_email":"christine.rozario@world2door.com",
+//     "origin_country": "United Arab Emirates",
+//     "origin_country_short_name": "AE",
+//     "origin_city": "Dubai",
+//     "origin_latitude": 25.2048493,
+//     "origin_longitude": 55.2707828,
+//     "destination_country": "India",
+//     "destination_country_short_name": "IN",
+//     "destination_city": "Mumbai",
+//     "destination_latitude": 19.0759837,
+//     "destination_longitude": 72.8776559,
+//     "items": [
 //         {
-//           "kilogram": 100,
-//           "length": 100,
-//           "width": 100,
-//           "height": 100,
-//           "add_wooden_packing": true
+//        "items_goods": 2500,
+//             "item_description": "tv1",
+//             "no_of_pkgs": 1,
+//             "attribute" : "battery",
+//             "hs_code" : "123456",
+//             "dimension": [{
+//                 "kilogram": 100,
+//                 "length": 100,
+//                 "width": 100,
+//                 "height": 100,
+//                 "add_wooden_packing" : true
+//             }]
 //         }
-//       ]
-//     }
-//   ]
+//     ]
 // }
