@@ -40,7 +40,7 @@ class CalculateInsuranceModelData {
   int? goodsValue;
   int? freightAmount;
   int? insuranceAmt;
-  String? totalDutyTax;
+  dynamic totalDutyTax;
   int? netTotal;
 
   CalculateInsuranceModelData({

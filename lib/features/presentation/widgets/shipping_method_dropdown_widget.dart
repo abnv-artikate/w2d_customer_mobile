@@ -17,7 +17,7 @@ class ShippingMethodDropdownWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        padding: EdgeInsets.all(4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
           color: AppColors.softWhite80,
@@ -29,7 +29,7 @@ class ShippingMethodDropdownWidget extends StatelessWidget {
             Text(
               shippingMethodText.isNotEmpty
                   ? shippingMethodText
-                  : "Select shipping method",
+                  : "Select Shipping Method",
             ),
           ],
         ),

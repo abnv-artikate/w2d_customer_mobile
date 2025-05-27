@@ -12,15 +12,18 @@ class CalculateInsuranceEntity {
     required this.message,
     required this.data,
   });
-
 }
 
 class CalculateInsuranceEntityData {
-  int goodsValue;
-  int freightAmount;
-  int insuranceAmt;
-  String totalDutyTax;
-  int netTotal;
+  double? goodsValue;
+  double? freightAmount;
+
+  // to be shown in transit insurance field
+  double? insuranceAmt;
+
+  // if the response is string show string in information form if response ids double show in dest duty/tax/other fees field
+  dynamic totalDutyTax;
+  double? netTotal;
 
   CalculateInsuranceEntityData({
     required this.goodsValue,
@@ -29,5 +32,4 @@ class CalculateInsuranceEntityData {
     required this.totalDutyTax,
     required this.netTotal,
   });
-
 }

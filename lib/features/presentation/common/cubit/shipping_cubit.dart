@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
@@ -46,7 +47,7 @@ class ShippingCubit extends Cubit<ShippingState> {
     final result = await calculateInsuranceUseCase.call(params);
 
     result.fold((l) => _emitFailure(l), (data) {
-      emit(CalculateInsuranceLoaded(message: data.message));
+      emit(CalculateInsuranceLoaded(insuranceEntity: data));
     });
   }
 

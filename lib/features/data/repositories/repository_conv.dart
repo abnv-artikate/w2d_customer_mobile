@@ -360,11 +360,11 @@ class RepositoryConv {
       info: model.info ?? "",
       message: model.message ?? "",
       data: CalculateInsuranceEntityData(
-        goodsValue: model.data?.goodsValue ?? -1,
-        freightAmount: model.data?.freightAmount ?? -1,
-        insuranceAmt: model.data?.insuranceAmt ?? -1,
-        totalDutyTax: model.data?.totalDutyTax ?? "",
-        netTotal: model.data?.netTotal ?? -1,
+        goodsValue: model.data?.goodsValue?.toDouble(),
+        freightAmount: model.data?.freightAmount?.toDouble(),
+        insuranceAmt: model.data?.insuranceAmt?.toDouble(),
+        totalDutyTax: model.data?.totalDutyTax,
+        netTotal: model.data?.netTotal?.toDouble(),
       ),
     );
   }

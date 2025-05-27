@@ -7,8 +7,12 @@ import 'package:w2d_customer_mobile/core/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
@@ -29,18 +33,19 @@ class _CartScreenState extends State<CartScreen> {
   String address = "Tap to set delivery location";
   LocationEntity? location;
   FreightQuoteEntityData? freightQuoteEntityData;
+  CalculateInsuranceEntity? calculateInsuranceEntity;
+  bool isTransitInsured = false;
+  List<CartItemEntity> cartItems = [];
 
   @override
   void initState() {
-    callLocationApi();
-    callGetCartItemApi();
+    _callLocationApi();
+    _callGetCartItemApi();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<CartItemEntity> cartItems = [];
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -62,7 +67,7 @@ class _CartScreenState extends State<CartScreen> {
             builder: (context, state) {
               return LocationWidget(
                 onTap: () {
-                  callLocationApi();
+                  _callLocationApi();
                   widget.showErrorToast(
                     context: context,
                     message: "Implement set location feature",
@@ -80,7 +85,7 @@ class _CartScreenState extends State<CartScreen> {
             cartItems = state.cartItems;
 
             if (location != null) {
-              callGetFreightQuoteApi(cartItems: cartItems, address: location!);
+              _callGetFreightQuoteApi(cartItems: cartItems, address: location!);
             } else {
               widget.showErrorToast(
                 context: context,
@@ -143,6 +148,12 @@ class _CartScreenState extends State<CartScreen> {
       listener: (context, state) {
         if (state is GetFreightQuoteLoaded) {
           freightQuoteEntityData = state.freightQuoteEntity.data;
+        } else if (state is SelectFreightQuoteLoaded) {
+          _callCalculateInsuranceApi(freightQuoteEntityData!.quoteToken);
+        } else if (state is CalculateInsuranceLoaded) {
+          calculateInsuranceEntity = state.insuranceEntity;
+        } else if (state is ShippingError) {
+          widget.showErrorToast(context: context, message: state.error);
         }
       },
       builder: (context, state) {
@@ -157,15 +168,32 @@ class _CartScreenState extends State<CartScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Estimated Total:'),
-              Text("${_calculateEstimatedTotal(cartItems)}"),
+              Text(_calculateEstimatedTotal(cartItems).toStringAsFixed(2)),
               Row(
                 children: [
                   Text('Select shipping options:'),
                   Spacer(),
                   ShippingMethodDropdownWidget(
-                    shippingMethodText: "shippingMethod",
+                    shippingMethodText: _getShippingMethodName(
+                      _selectedShippingIndex,
+                    ),
                     onTap: () {
-                      _shippingMethodBottomSheet();
+                      if (location != null) {
+                        if (freightQuoteEntityData != null) {
+                          _shippingMethodBottomSheet();
+                        } else {
+                          _callGetFreightQuoteApi(
+                            cartItems: cartItems,
+                            address: location!,
+                          );
+                        }
+                      } else {
+                        _callLocationApi();
+                        widget.showErrorToast(
+                          context: context,
+                          message: "Location not available. Please try again.",
+                        );
+                      }
                     },
                   ),
                 ],
@@ -175,39 +203,54 @@ class _CartScreenState extends State<CartScreen> {
                 children: [
                   Text('Goods Value'),
                   Spacer(),
-                  Text("${_calculateGoodsValue(cartItems)}"),
+                  Text(_calculateGoodsValue(cartItems).toStringAsFixed(2)),
                 ],
               ),
               Row(
                 children: [
                   Text('Platform Fee'),
                   Spacer(),
-                  Text("${_calculatePlatformFees(cartItems)}"),
+                  Text(_calculatePlatformFees(cartItems).toStringAsFixed(2)),
                 ],
               ),
               Row(
                 children: [
                   Text('Local Transit Fee'),
                   Spacer(),
-                  Text("${_calculateLocalTransitFees(cartItems)}"),
+                  Text(
+                    _calculateLocalTransitFees(cartItems).toStringAsFixed(2),
+                  ),
                 ],
               ),
               Row(
                 children: [
                   Text('Export Freight / Packing / Other Fees'),
                   Spacer(),
-                  Text('${_calculateExportFreightPackingOtherFees()}'),
+                  Text(
+                    _calculateExportFreightPackingOtherFees().toStringAsFixed(
+                      2,
+                    ),
+                  ),
                 ],
               ),
               Row(
                 children: [
                   Text('Dest Duty / Taxes / Other Fees'),
                   Spacer(),
-                  Text('${_calculateDestDutyTaxesOtherFees()}'),
+                  Text(""),
                 ],
               ),
               Row(
                 children: [
+                  Checkbox(
+                    activeColor: AppColors.worldGreen,
+                    value: isTransitInsured,
+                    onChanged: (val) {
+                      setState(() {
+                        isTransitInsured = val!;
+                      });
+                    },
+                  ),
                   Text('Transit Insurance'),
                   Spacer(),
                   Text('${_calculateTransitInsurance()}'),
@@ -371,11 +414,23 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       Spacer(),
                       CustomFilledButtonWidget(
-                        title: 'Select',
+                        title: 'Apply',
                         color: AppColors.worldGreen,
                         height: 50,
                         width: MediaQuery.of(context).size.width * 0.4,
-                        onTap: () {},
+                        onTap: () {
+                          if (_selectedShippingIndex != null) {
+                            _callSelectFreightServiceApi(
+                              freightQuoteEntityData!.quoteToken,
+                            );
+                            context.pop();
+                          } else {
+                            widget.showErrorToast(
+                              context: context,
+                              message: "Select shipping method",
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -411,7 +466,13 @@ class _CartScreenState extends State<CartScreen> {
 
   double _calculatePlatformFees(List<CartItemEntity> cartItems) {
     // platformFee = 0.02 * (productSumTotal + shippingFees + insurance + destinationDuty);
-    return 0.0;
+    return calculateInsuranceEntity == null
+        ? 0.0
+        : (0.02 *
+            (_calculateGoodsValue(cartItems) +
+                _calculateExportFreightPackingOtherFees() +
+                _calculateTransitInsurance() +
+                _calculateDestDutyTaxesOtherFees()));
   }
 
   double _calculateLocalTransitFees(List<CartItemEntity> cartItems) {
@@ -427,7 +488,7 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   double _calculateExportFreightPackingOtherFees() {
-    return 0.0;
+    return calculateInsuranceEntity?.data.freightAmount ?? 0.0;
   }
 
   double _calculateDestDutyTaxesOtherFees() {
@@ -435,18 +496,37 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   double _calculateTransitInsurance() {
-    return 0.0;
+    return calculateInsuranceEntity?.data.insuranceAmt ?? 0.0;
   }
 
-  void callGetCartItemApi() {
+  String _getShippingMethodName(int? shippingIndex) {
+    switch (shippingIndex) {
+      case 0:
+        return "Courier (air)";
+      case 1:
+        return "Air Freight (door)";
+      case 2:
+        return "Air Freight (port)";
+      case 3:
+        return "Sea Freight (door)";
+      case 4:
+        return "Sea Freight (port)";
+      case 5:
+        return "Land Freight (door)";
+      default:
+        return "Select Shipping Method";
+    }
+  }
+
+  void _callGetCartItemApi() {
     context.read<CartCubit>().getCartItems();
   }
 
-  void callLocationApi() {
-    context.read<CommonCubit>().getCurrentLocation();
+  void _callLocationApi() async {
+    await context.read<CommonCubit>().getCurrentLocation();
   }
 
-  void callGetFreightQuoteApi({
+  void _callGetFreightQuoteApi({
     required List<CartItemEntity> cartItems,
     required LocationEntity address,
   }) {
@@ -508,6 +588,52 @@ class _CartScreenState extends State<CartScreen> {
                 );
               }
             }).toList(),
+      ),
+    );
+  }
+
+  void _callSelectFreightServiceApi(String quoteToken) {
+    context.read<ShippingCubit>().selectFreightService(
+      SelectFreightServiceParams(
+        quoteToken: quoteToken,
+        selectedCourierType: _getCourierType(_selectedShippingIndex),
+      ),
+    );
+  }
+
+  String _getCourierType(int? shippingIndex) {
+    switch (shippingIndex) {
+      case 0:
+        return "DOORCOURIER";
+      case 1:
+        return "DOORAIR";
+      case 2:
+        return "PORTAIR";
+      case 3:
+        return "DOORSEA";
+      case 4:
+        return "PORTSEA";
+      case 5:
+        return "DOORLAND";
+      default:
+        return "";
+    }
+  }
+
+  void _callCalculateInsuranceApi(String quoteToken) {
+    context.read<ShippingCubit>().calculateInsurance(
+      CalculateInsuranceParams(quoteToken: quoteToken),
+    );
+  }
+
+  void _callConfirmInsuranceApi({
+    required String quoteToken,
+    required bool addInsurance,
+  }) {
+    context.read<ShippingCubit>().confirmInsurance(
+      ConfirmInsuranceParams(
+        quoteToken: quoteToken,
+        addInsurance: addInsurance,
       ),
     );
   }

@@ -66,7 +66,12 @@ Future<void> init() async {
     ),
   );
   sl.registerFactory(
-    () => ShippingCubit(getFreightQuoteUseCase: sl<GetFreightQuoteUseCase>()),
+    () => ShippingCubit(
+      getFreightQuoteUseCase: sl<GetFreightQuoteUseCase>(),
+      selectFreightServiceUseCase: sl<SelectFreightServiceUseCase>(),
+      calculateInsuranceUseCase: sl<CalculateInsuranceUseCase>(),
+      confirmInsuranceUseCase: sl<ConfirmInsuranceUseCase>(),
+    ),
   );
 
   /// UseCases

@@ -23,9 +23,9 @@ final class SelectFreightQuoteLoaded extends ShippingState {
 final class CalculateInsuranceLoading extends ShippingState {}
 
 final class CalculateInsuranceLoaded extends ShippingState {
-  final String message;
+  final CalculateInsuranceEntity insuranceEntity;
 
-  CalculateInsuranceLoaded({required this.message});
+  CalculateInsuranceLoaded({required this.insuranceEntity});
 }
 
 final class ConfirmInsuranceLoading extends ShippingState {}
@@ -37,7 +37,7 @@ final class ConfirmInsuranceLoaded extends ShippingState {
 }
 
 final class ShippingError extends ShippingState {
-  final String message;
+  final String error;
 
-  ShippingError(this.message);
+  ShippingError(this.error);
 }
