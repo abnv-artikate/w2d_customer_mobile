@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 
 class LocationWidget extends StatelessWidget {
   final VoidCallback onTap;
