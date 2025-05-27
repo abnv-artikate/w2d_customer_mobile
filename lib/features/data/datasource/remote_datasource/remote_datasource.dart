@@ -3,6 +3,7 @@ import 'package:w2d_customer_mobile/features/data/client/client.dart';
 import 'package:w2d_customer_mobile/features/data/client/shipping_client.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/category_hierarchy_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
@@ -36,6 +37,8 @@ abstract class RemoteDatasource {
 
   /// Cart Datasource
   Future<CartModel> getCart(Map<String, dynamic> queries);
+
+  Future<UpdatedCartModel> updateCart(Map<String, dynamic> body);
 
   /// Shipping Datasource
   Future<FreightQuoteModel> getFreightQuote(Map<String, dynamic> body);
@@ -138,6 +141,17 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   Future<CartModel> getCart(Map<String, dynamic> queries) async {
     try {
       return await w2dClient.getCart(queries);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<UpdatedCartModel> updateCart(Map<String, dynamic> body) async {
+    try {
+      return await w2dClient.updateCart(body);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

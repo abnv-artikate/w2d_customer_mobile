@@ -22,6 +22,7 @@ class EndPoints {
 
   /// Cart Endpoints
   static const String cart = '/cart/';
+  static const String cartUpdate = '/cart/update/';
 
   /// Shipping Endpoints
   static const String getFreightQuote = '/get-freight-quote';

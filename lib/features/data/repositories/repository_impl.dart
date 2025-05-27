@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:uuid/v4.dart';
 import 'package:w2d_customer_mobile/core/error/exceptions.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
@@ -8,6 +9,7 @@ import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/lo
 import 'package:w2d_customer_mobile/features/data/datasource/remote_datasource/remote_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/repositories/repository_conv.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/cart/updated_cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
@@ -20,6 +22,7 @@ import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
@@ -173,9 +176,11 @@ class RepositoryImpl extends Repository {
   }
 
   String _generateCartId() {
-    UuidV4 newCartId = UuidV4();
+    UuidV4 uuid = UuidV4();
 
-    return newCartId.toString();
+    String newCartId = uuid.generate();
+
+    return newCartId;
   }
 
   @override
@@ -183,15 +188,38 @@ class RepositoryImpl extends Repository {
     try {
       String cartId = "";
       if (localDatasource.getCartId() != null) {
-        cartId = localDatasource.getCartId()!;
+        cartId = localDatasource.getCartId()!.toString();
       } else {
         localDatasource.setCartId(_generateCartId());
-        cartId = localDatasource.getCartId()!;
+        cartId = localDatasource.getCartId()!.toString();
       }
       if (await networkInfo.isConnected) {
         final result = await remoteDatasource.getCart({"cart_id": cartId});
 
         return Right(RepositoryConv.convertCartModelToEntity(result));
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UpdatedCartEntity>> updateCart({
+    required UpdateCartParams params,
+  }) async {
+    // {"cart_id":1286,"product_id":"909f1459-1a4a-455b-9eb9-f8c1ae55c8e7","quantity":2,"checked":false}
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.updateCart({
+          "cart_id": params.cartId,
+          "product_id": params.productId,
+          "quantity": params.quantity,
+          "checked": params.checked,
+        });
+
+        return Right(RepositoryConv.convertUpdateCartModelToEntity(result));
       } else {
         return Left(ServerFailure(message: Constants.errorNoInternet));
       }
@@ -247,7 +275,6 @@ class RepositoryImpl extends Repository {
   Future<Either<Failure, FreightQuoteEntity>> getFreightQuote({
     required Map<String, dynamic> params,
   }) async {
-
     try {
       if (await networkInfo.isConnected) {
         final result = await remoteDatasource.getFreightQuote(params);

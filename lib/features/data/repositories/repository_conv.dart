@@ -1,6 +1,7 @@
 import 'package:w2d_customer_mobile/core/utils/decode_jwt.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/category_hierarchy_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
@@ -9,6 +10,7 @@ import 'package:w2d_customer_mobile/features/data/model/shipping/confirm_insuran
 import 'package:w2d_customer_mobile/features/data/model/shipping/freight_quote_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/select_freight_service_model.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/cart/updated_cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
@@ -348,6 +350,21 @@ class RepositoryConv {
               )
               .toList() ??
           [],
+    );
+  }
+
+  static UpdatedCartEntity convertUpdateCartModelToEntity(
+    UpdatedCartModel model,
+  ) {
+    return UpdatedCartEntity(
+      status: model.status ?? "",
+      message: model.message ?? "",
+      cartData: UpdatedCartData(
+        id: model.cartData?.id ?? -1,
+        customer: model.cartData?.customer,
+        sessionKey: model.cartData?.sessionKey ?? "",
+        createdAt: model.cartData?.createdAt ?? "",
+      ),
     );
   }
 

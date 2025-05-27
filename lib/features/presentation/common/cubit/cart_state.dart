@@ -20,6 +20,14 @@ final class CartItemLoaded extends CartState {
   CartItemLoaded({required this.cartItems});
 }
 
+final class UpdateCartLoading extends CartState {}
+
+final class UpdateCartLoaded extends CartState {
+  final String message;
+
+  UpdateCartLoaded({required this.message});
+}
+
 final class CartError extends CartState {
   final String error;
 

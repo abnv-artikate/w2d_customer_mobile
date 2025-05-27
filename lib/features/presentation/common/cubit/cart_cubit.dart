@@ -7,6 +7,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.da
 import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/get_cart_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
 
 part 'cart_state.dart';
@@ -16,11 +17,13 @@ class CartCubit extends Cubit<CartState> {
     required this.cartSyncUseCase,
     required this.getCartItemUseCase,
     required this.getCurrentLocationUseCase,
+    required this.updateCartUseCase,
   }) : super(CartInitial());
 
   final CartSyncUseCase cartSyncUseCase;
   final GetCartUseCase getCartItemUseCase;
   final GetCurrentLocationUseCase getCurrentLocationUseCase;
+  final UpdateCartUseCase updateCartUseCase;
 
   cartSync({required CartSyncParams params}) async {
     emit(CartSyncLoading());
@@ -38,6 +41,16 @@ class CartCubit extends Cubit<CartState> {
 
     result.fold((l) => _emitFailure(l), (data) {
       emit(CartItemLoaded(cartItems: data.items));
+    });
+  }
+
+  updateCart(UpdateCartParams params) async {
+    emit(UpdateCartLoading());
+
+    final result = await updateCartUseCase.call(params);
+
+    result.fold((l) => _emitFailure(l), (data) {
+      emit(UpdateCartLoaded(message: data.message));
     });
   }
 

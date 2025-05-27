@@ -4,16 +4,25 @@ import 'package:geolocator/geolocator.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
 
 class GetCurrentLocationUseCase {
-  Future<Either<String, LocationEntity>> call() async {
+  static const Duration _timeoutDuration = Duration(seconds: 10);
+
+  Future<Either<String, LocationEntity>> call({
+    LocationAccuracy accuracy = LocationAccuracy.medium,
+    bool includeAddress = true,
+    Duration? timeout,
+  }) async {
     try {
       final hasPermission = await _handlePermission();
       if (!hasPermission) {
-        throw Exception('Location permission denied');
+        return const Left('Location permission denied');
       }
 
       final position = await Geolocator.getCurrentPosition(
-        locationSettings: LocationSettings(accuracy: LocationAccuracy.best),
-      );
+        locationSettings: LocationSettings(
+          accuracy: accuracy,
+          distanceFilter: 10,
+        ),
+      ).timeout(timeout ?? _timeoutDuration);
 
       String city = "";
       String country = "";
@@ -22,14 +31,14 @@ class GetCurrentLocationUseCase {
         List<Placemark> placemarks = await placemarkFromCoordinates(
           position.latitude,
           position.longitude,
-        );
+        ).timeout(timeout ?? _timeoutDuration);
 
         Placemark place = placemarks[0];
 
-        city = place.locality ?? "";
+        city = place.locality ?? place.subAdministrativeArea ?? "";
         country = place.country ?? "";
       } catch (e) {
-        return Left(e.toString());
+        return Left("Address lookup failed : ${e.toString()}");
       }
 
       return Right(

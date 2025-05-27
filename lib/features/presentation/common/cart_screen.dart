@@ -9,6 +9,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.da
 import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
@@ -92,6 +93,8 @@ class _CartScreenState extends State<CartScreen> {
                 message: "No location access. Try Again",
               );
             }
+          } else if (state is UpdateCartLoaded) {
+            _callGetCartItemApi();
           } else if (state is CartError) {
             widget.showErrorToast(context: context, message: state.error);
           }
@@ -112,9 +115,30 @@ class _CartScreenState extends State<CartScreen> {
                       itemBuilder: (context, index) {
                         return CartItemWidget(
                           cartItem: cartItems[index],
-                          onCheckBoxTap: () {},
-                          onIncrementTap: () {},
-                          onDecrementTap: () {},
+                          onCheckBoxTap: () {
+                            _callUpdateCartApi(
+                              cartId: cartItems[index].id,
+                              productId: cartItems[index].product.id,
+                              quantity: cartItems[index].quantity,
+                              checked: !cartItems[index].isChecked,
+                            );
+                          },
+                          onIncrementTap: () {
+                            _callUpdateCartApi(
+                              cartId: cartItems[index].id,
+                              productId: cartItems[index].product.id,
+                              quantity: cartItems[index].quantity + 1,
+                              checked: cartItems[index].isChecked,
+                            );
+                          },
+                          onDecrementTap: () {
+                            _callUpdateCartApi(
+                              cartId: cartItems[index].id,
+                              productId: cartItems[index].product.id,
+                              quantity: cartItems[index].quantity - 1,
+                              checked: cartItems[index].isChecked,
+                            );
+                          },
                         );
                       },
                       separatorBuilder: (context, index) {
@@ -520,6 +544,22 @@ class _CartScreenState extends State<CartScreen> {
 
   void _callGetCartItemApi() {
     context.read<CartCubit>().getCartItems();
+  }
+
+  void _callUpdateCartApi({
+    required int cartId,
+    required String productId,
+    required int quantity,
+    required bool checked,
+  }) {
+    context.read<CartCubit>().updateCart(
+      UpdateCartParams(
+        cartId: cartId,
+        productId: productId,
+        quantity: quantity,
+        checked: checked,
+      ),
+    );
   }
 
   void _callLocationApi() async {

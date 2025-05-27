@@ -17,6 +17,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_useca
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/get_cart_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/categories_hierarchy_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
@@ -62,6 +63,7 @@ Future<void> init() async {
     () => CartCubit(
       cartSyncUseCase: sl<CartSyncUseCase>(),
       getCartItemUseCase: sl<GetCartUseCase>(),
+      updateCartUseCase: sl<UpdateCartUseCase>(),
       getCurrentLocationUseCase: sl<GetCurrentLocationUseCase>(),
     ),
   );
@@ -95,6 +97,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<GetCartUseCase>(
     () => GetCartUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<UpdateCartUseCase>(
+    () => UpdateCartUseCase(sl<Repository>()),
   );
   sl.registerLazySingleton<CalculateInsuranceUseCase>(
     () => CalculateInsuranceUseCase(sl<Repository>()),

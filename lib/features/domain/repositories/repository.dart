@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/cart/updated_cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
@@ -12,6 +13,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
@@ -42,6 +44,10 @@ abstract class Repository {
 
   /// Cart Repositories
   Future<Either<Failure, CartEntity>> getCart();
+
+  Future<Either<Failure, UpdatedCartEntity>> updateCart({
+    required UpdateCartParams params,
+  });
 
   /// Shipping Repository
   Future<Either<Failure, FreightQuoteEntity>> getFreightQuote({
