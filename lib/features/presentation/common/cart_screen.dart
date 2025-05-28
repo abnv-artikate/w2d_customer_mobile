@@ -570,66 +570,69 @@ class _CartScreenState extends State<CartScreen> {
     required List<CartItemEntity> cartItems,
     required LocationEntity address,
   }) {
-    context.read<ShippingCubit>().getFreightQuote(
-      GetFreightQuoteParams(
-        destinationCountry: address.country,
-        destinationCity: address.city,
-        destinationLatitude: address.latitude,
-        destinationLongitude: address.longitude,
-        items:
-            cartItems.map((e) {
-              if (e.isChecked) {
-                return Items(
-                  itemsGoods:
-                      "${double.parse(e.product.regularPrice) * e.quantity}",
-                  itemDescription: e.product.productType,
-                  noOfPkgs: e.product.packagingDetails.length,
-                  attribute:
-                      e.product.isCosmetics
-                          ? "cosmetics"
-                          : e.product.isPerfume
-                          ? "perfumes"
-                          : e.product.containsBattery
-                          ? "battery"
-                          : e.product.containsMagnet
-                          ? "magnet"
-                          : "",
-                  hsCode: e.product.hsCode,
-                  dimensions:
-                      e.product.woodenBoxPackaging
-                          ? e.product.packagingDetails.map((e) {
-                            if (double.parse(e.weight.value) != 0.0 &&
-                                double.parse(e.width.value) != 0.0 &&
-                                double.parse(e.height.value) != 0.0 &&
-                                double.parse(e.length.value) != 0.0) {
-                              return Dimensions(
-                                kiloGrams: double.parse(e.weight.value),
-                                length: double.parse(e.length.value),
-                                width: double.parse(e.width.value),
-                                height: double.parse(e.height.value),
-                                addWoodenPacking: true,
-                              );
-                            }
-                          }).toList()
-                          : e.product.packagingDetails.map((e) {
-                            if (double.parse(e.weight.value) != 0.0 &&
-                                double.parse(e.width.value) != 0.0 &&
-                                double.parse(e.height.value) != 0.0 &&
-                                double.parse(e.length.value) != 0.0) {
-                              return Dimensions(
-                                kiloGrams: double.parse(e.weight.value),
-                                length: double.parse(e.length.value),
-                                width: double.parse(e.width.value),
-                                height: double.parse(e.height.value),
-                                addWoodenPacking: false,
-                              );
-                            }
-                          }).toList(),
-                );
-              }
-            }).toList(),
-      ),
-    );
+    List<Items?> items =
+        cartItems.map((e) {
+          if (e.isChecked) {
+            return Items(
+              itemsGoods:
+                  "${double.parse(e.product.regularPrice) * e.quantity}",
+              itemDescription: e.product.productType,
+              noOfPkgs: e.product.packagingDetails.length,
+              attribute:
+                  e.product.isCosmetics
+                      ? "cosmetics"
+                      : e.product.isPerfume
+                      ? "perfumes"
+                      : e.product.containsBattery
+                      ? "battery"
+                      : e.product.containsMagnet
+                      ? "magnet"
+                      : "",
+              hsCode: e.product.hsCode,
+              dimensions:
+                  e.product.woodenBoxPackaging
+                      ? e.product.packagingDetails.map((e) {
+                        if (double.parse(e.weight.value) != 0.0 &&
+                            double.parse(e.width.value) != 0.0 &&
+                            double.parse(e.height.value) != 0.0 &&
+                            double.parse(e.length.value) != 0.0) {
+                          return Dimensions(
+                            kiloGrams: double.parse(e.weight.value),
+                            length: double.parse(e.length.value),
+                            width: double.parse(e.width.value),
+                            height: double.parse(e.height.value),
+                            addWoodenPacking: true,
+                          );
+                        }
+                      }).toList()
+                      : e.product.packagingDetails.map((e) {
+                        if (double.parse(e.weight.value) != 0.0 &&
+                            double.parse(e.width.value) != 0.0 &&
+                            double.parse(e.height.value) != 0.0 &&
+                            double.parse(e.length.value) != 0.0) {
+                          return Dimensions(
+                            kiloGrams: double.parse(e.weight.value),
+                            length: double.parse(e.length.value),
+                            width: double.parse(e.width.value),
+                            height: double.parse(e.height.value),
+                            addWoodenPacking: false,
+                          );
+                        }
+                      }).toList(),
+            );
+          }
+        }).toList();
+    if (items.isNotEmpty && items.nonNulls.toList().isNotEmpty) {
+      context.read<ShippingCubit>().getFreightQuote(
+        GetFreightQuoteParams(
+          destinationCountry: address.country,
+          destinationCity: address.city,
+          destinationLatitude: address.latitude,
+          destinationLongitude: address.longitude,
+          items: items,
+        ),
+      );
+    }
   }
 
   void _callSelectFreightServiceApi(String quoteToken) {

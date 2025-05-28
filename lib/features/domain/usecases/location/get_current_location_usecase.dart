@@ -22,7 +22,7 @@ class GetCurrentLocationUseCase {
           accuracy: accuracy,
           distanceFilter: 10,
         ),
-      ).timeout(timeout ?? _timeoutDuration);
+      );
 
       String city = "";
       String country = "";
@@ -31,7 +31,7 @@ class GetCurrentLocationUseCase {
         List<Placemark> placemarks = await placemarkFromCoordinates(
           position.latitude,
           position.longitude,
-        ).timeout(timeout ?? _timeoutDuration);
+        );
 
         Placemark place = placemarks[0];
 

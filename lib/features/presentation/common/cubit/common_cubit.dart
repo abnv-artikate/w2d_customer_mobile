@@ -39,7 +39,7 @@ class CommonCubit extends Cubit<CommonState> {
       (err) {
         emit(GetLocationError(error: err));
       },
-      (data) async {
+      (data) {
         emit(GetLocationLoaded(location: data));
       },
     );

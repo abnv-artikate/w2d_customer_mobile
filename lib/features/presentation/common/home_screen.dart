@@ -2,8 +2,10 @@ import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
 import 'package:w2d_customer_mobile/core/widgets/product_item_widget.dart';
@@ -59,9 +61,14 @@ class _HomeScreenState extends State<HomeScreen> {
     enableInfiniteScroll: false,
   );
 
-  int navBarIndex = 0;
   bool isBrand = false;
-  String address = "";
+  String address = "Tap to set delivery location";
+
+  @override
+  void initState() {
+    _callLocationApi();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +102,29 @@ class _HomeScreenState extends State<HomeScreen> {
           //   },
           //   isBrand: isBrand,
           // ),
-          LocationWidget(onTap: () {}, address: address),
+          BlocConsumer<CommonCubit, CommonState>(
+            listener: (context, state) {
+              if (state is GetLocationLoading) {
+                address = "Loading location";
+              } else if (state is GetLocationLoaded) {
+                address = "${state.location.city}, ${state.location.country}";
+              } else if (state is GetLocationError) {
+                widget.showErrorToast(context: context, message: state.error);
+              }
+            },
+            builder: (context, state) {
+              return LocationWidget(
+                onTap: () {
+                  _callLocationApi();
+                  widget.showErrorToast(
+                    context: context,
+                    message: "Implement set location feature",
+                  );
+                },
+                address: address,
+              );
+            },
+          ),
         ],
         bottom: PreferredSize(
           preferredSize: Size.zero,
@@ -196,5 +225,9 @@ class _HomeScreenState extends State<HomeScreen> {
         Center(child: Text('//TODO: Popular categories here')),
       ],
     );
+  }
+
+  void _callLocationApi() async {
+    await context.read<CommonCubit>().getCurrentLocation();
   }
 }
