@@ -117,7 +117,7 @@ class _CartScreenState extends State<CartScreen> {
                           cartItem: cartItems[index],
                           onCheckBoxTap: () {
                             _callUpdateCartApi(
-                              cartId: cartItems[index].id,
+                              cartId: cartItems[index].cart,
                               productId: cartItems[index].product.id,
                               quantity: cartItems[index].quantity,
                               checked: !cartItems[index].isChecked,
@@ -125,7 +125,7 @@ class _CartScreenState extends State<CartScreen> {
                           },
                           onIncrementTap: () {
                             _callUpdateCartApi(
-                              cartId: cartItems[index].id,
+                              cartId: cartItems[index].cart,
                               productId: cartItems[index].product.id,
                               quantity: cartItems[index].quantity + 1,
                               checked: cartItems[index].isChecked,
@@ -133,7 +133,7 @@ class _CartScreenState extends State<CartScreen> {
                           },
                           onDecrementTap: () {
                             _callUpdateCartApi(
-                              cartId: cartItems[index].id,
+                              cartId: cartItems[index].cart,
                               productId: cartItems[index].product.id,
                               quantity: cartItems[index].quantity - 1,
                               checked: cartItems[index].isChecked,
