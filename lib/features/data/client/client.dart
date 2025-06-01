@@ -8,6 +8,7 @@ import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/category_hierarchy_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/success_message_model.dart';
 
@@ -55,6 +56,9 @@ abstract class W2DClient {
 
   @GET(EndPoints.categoriesHierarchy)
   Future<CategoryHierarchyModel> getCategoryHierarchy();
+
+  @GET(EndPoints.collections)
+  Future<CollectionsModel> getCollections();
 
   /// Product Client
   @GET('${EndPoints.productView}/{id}/')

@@ -6,6 +6,20 @@ final class CommonInitial extends CommonState {}
 
 final class CommonLoading extends CommonState {}
 
+final class CollectionsLoading extends CommonState {}
+
+final class CollectionsLoaded extends CommonState {
+  final CollectionsEntity entity;
+
+  CollectionsLoaded({required this.entity});
+}
+
+final class CollectionsError extends CommonState {
+  final String error;
+
+  CollectionsError({required this.error});
+}
+
 final class CommonCategoriesLoaded extends CommonState {
   final List<ProductCategoryEntity> categoriesList;
 

@@ -4,6 +4,7 @@ import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/category_hierarchy_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/calculate_insurance_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/confirm_insurance_model.dart';
@@ -13,6 +14,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.da
 import 'package:w2d_customer_mobile/features/domain/entities/cart/updated_cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
@@ -93,6 +95,97 @@ class RepositoryConv {
               )
               .toList() ??
           [],
+    );
+  }
+
+  static CollectionsEntity convertCollectionsModelToEntity(
+    CollectionsModel model,
+  ) {
+    return CollectionsEntity(
+      count: model.count ?? -1,
+      next: model.next,
+      previous: model.previous,
+      results: CollectionsResultEntity(
+        status: model.results?.status ?? "",
+        message: model.results?.message ?? "",
+        data:
+            model.results?.data
+                ?.map(
+                  (e) => CollectionsResultDataEntity(
+                    id: e.id ?? "",
+                    products:
+                        e.products
+                            ?.map(
+                              (e) => CollectionsResultDataProductEntity(
+                                id: e.id ?? "",
+                                reviews: e.reviews ?? [],
+                                name: e.name ?? "",
+                                sku: e.sku ?? "",
+                                modelNumber: e.modelNumber ?? "",
+                                productType: e.productType ?? "",
+                                badge: e.badge ?? "",
+                                shortDescription: e.shortDescription ?? "",
+                                longDescription: e.longDescription ?? "",
+                                keyFeatures: e.keyFeatures,
+                                mainImage: e.mainImage ?? "",
+                                gallery: e.gallery ?? [],
+                                videoUrl: e.videoUrl,
+                                regularPrice: e.regularPrice ?? "",
+                                localTransitFee: e.localTransitFee ?? "",
+                                salePrice: e.salePrice ?? "",
+                                currency: e.currency,
+                                availableStock: e.availableStock ?? -1,
+                                lowStockAlert: e.lowStockAlert ?? -1,
+                                purchaseLimit: e.purchaseLimit ?? -1,
+                                commissionPercentage:
+                                    e.commissionPercentage ?? "",
+                                weight: e.weight ?? "",
+                                weightUnit: e.weightUnit ?? "",
+                                shippingWeight: e.shippingWeight,
+                                shippingWeightUnit: e.shippingWeightUnit ?? "",
+                                shippingMethods: e.shippingMethods ?? "",
+                                shippingRegion: e.shippingRegion ?? "",
+                                shippingCountries: e.shippingCountries ?? [],
+                                handlingTime: e.handlingTime ?? "",
+                                returnsPolicy: e.returnsPolicy ?? "",
+                                tags: e.tags ?? "",
+                                seoTitle: e.seoTitle,
+                                metaDescription: e.metaDescription ?? "",
+                                status: e.status ?? "",
+                                publishDate: e.publishDate,
+                                visibility: e.visibility ?? "",
+                                specificCustomerGroups:
+                                    e.specificCustomerGroups,
+                                lastUpdatedBy: e.lastUpdatedBy ?? false,
+                                hasVariant: e.hasVariant ?? false,
+                                woodenBoxPackaging:
+                                    e.woodenBoxPackaging ?? false,
+                                isPerfume: e.isPerfume ?? false,
+                                containsBattery: e.containsBattery ?? false,
+                                isCosmetics: e.isCosmetics ?? false,
+                                containsMagnet: e.containsMagnet ?? false,
+                                countryOfOrigin: e.countryOfOrigin ?? "",
+                                hsCode: e.hsCode ?? "",
+                                isActive: e.isActive ?? false,
+                                createdAt: e.createdAt ?? "",
+                                lastUpdatedAt: e.lastUpdatedAt ?? "",
+                              ),
+                            )
+                            .toList() ??
+                        [],
+                    name: e.name ?? "",
+                    slug: e.slug ?? "",
+                    collectionType: e.collectionType ?? "",
+                    description: e.description ?? "",
+                    backgroundImage: e.backgroundImage ?? "",
+                    isActive: e.isActive ?? false,
+                    createdAt: e.createdAt ?? "",
+                    updatedAt: e.updatedAt ?? "",
+                  ),
+                )
+                .toList() ??
+            [],
+      ),
     );
   }
 
@@ -233,7 +326,7 @@ class RepositoryConv {
                   discountAmount: e.discountAmount ?? "",
                   addedAt: e.addedAt ?? "",
                   isChecked: e.isChecked ?? true,
-                  product: ProductEntity(
+                  product: CartItemProductEntity(
                     id: e.product?.id ?? "",
                     name: e.product?.name ?? "",
                     sku: e.product?.sku ?? "",
@@ -258,7 +351,7 @@ class RepositoryConv {
                     weightUnit: e.product?.weightUnit ?? "",
                     shippingWeight: e.product?.shippingWeight,
                     shippingWeightUnit: e.product?.shippingWeightUnit ?? "",
-                    dimensions: ProductDimensions(
+                    dimensions: CartItemProductDimensionsEntity(
                       width: DimensionEntity(
                         unit: e.product?.dimensions?.width?.unit ?? "",
                         value: e.product?.dimensions?.width?.value ?? "",
@@ -276,7 +369,7 @@ class RepositoryConv {
                         value: e.product?.dimensions?.weight?.value ?? "",
                       ),
                     ),
-                    packagingDimensions: ProductDimensions(
+                    packagingDimensions: CartItemProductDimensionsEntity(
                       width: DimensionEntity(
                         unit: e.product?.dimensions?.width?.unit ?? "",
                         value: e.product?.dimensions?.width?.value ?? "",
@@ -297,7 +390,7 @@ class RepositoryConv {
                     packagingDetails:
                         e.product?.packagingDetails
                             ?.map(
-                              (e) => ProductDimensions(
+                              (e) => CartItemProductDimensionsEntity(
                                 width: DimensionEntity(
                                   unit: e.width?.unit ?? "",
                                   value: e.width?.value ?? "",

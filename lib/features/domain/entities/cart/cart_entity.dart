@@ -17,7 +17,7 @@ class CartEntity {
 class CartItemEntity {
   int id;
   int cart;
-  ProductEntity product;
+  CartItemProductEntity product;
 
   // VariantEntity variant;
   int quantity;
@@ -39,7 +39,7 @@ class CartItemEntity {
   });
 }
 
-class ProductEntity {
+class CartItemProductEntity {
   String id;
   String name;
   String sku;
@@ -64,9 +64,9 @@ class ProductEntity {
   String weightUnit;
   dynamic shippingWeight;
   String shippingWeightUnit;
-  ProductDimensions dimensions;
-  ProductDimensions packagingDimensions;
-  List<ProductDimensions> packagingDetails;
+  CartItemProductDimensionsEntity dimensions;
+  CartItemProductDimensionsEntity packagingDimensions;
+  List<CartItemProductDimensionsEntity> packagingDetails;
   String shippingMethods;
   String shippingRegion;
   List<String> shippingCountries;
@@ -96,7 +96,7 @@ class ProductEntity {
   // Category category;
   int brand;
 
-  ProductEntity({
+  CartItemProductEntity({
     required this.id,
     required this.name,
     required this.sku,
@@ -155,14 +155,14 @@ class ProductEntity {
   });
 }
 
-class Category {
+class CartItemProductCategoryEntity {
   int id;
   String name;
   int parent;
   List<dynamic> subcategories;
   dynamic allowedAttributes;
 
-  Category({
+  CartItemProductCategoryEntity({
     required this.id,
     required this.name,
     required this.parent,
@@ -171,13 +171,13 @@ class Category {
   });
 }
 
-class ProductDimensions {
+class CartItemProductDimensionsEntity {
   DimensionEntity width;
   DimensionEntity height;
   DimensionEntity length;
   DimensionEntity weight;
 
-  ProductDimensions({
+  CartItemProductDimensionsEntity({
     required this.width,
     required this.height,
     required this.length,

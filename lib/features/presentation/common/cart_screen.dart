@@ -68,11 +68,7 @@ class _CartScreenState extends State<CartScreen> {
             builder: (context, state) {
               return LocationWidget(
                 onTap: () {
-                  _callLocationApi();
-                  widget.showErrorToast(
-                    context: context,
-                    message: "Implement set location feature",
-                  );
+                  // _callLocationApi();
                 },
                 address: address,
               );
@@ -626,6 +622,7 @@ class _CartScreenState extends State<CartScreen> {
       context.read<ShippingCubit>().getFreightQuote(
         GetFreightQuoteParams(
           destinationCountry: address.country,
+          destinationCountryShortName: address.isoCountryCode,
           destinationCity: address.city,
           destinationLatitude: address.latitude,
           destinationLongitude: address.longitude,

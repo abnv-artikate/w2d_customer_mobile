@@ -11,6 +11,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.da
 import 'package:w2d_customer_mobile/features/domain/entities/cart/updated_cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
@@ -94,6 +95,23 @@ class RepositoryImpl extends Repository {
 
         return Right(
           RepositoryConv.convertCategoriesHierarchyModelToEntity(result),
+        );
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, CollectionsEntity>> getCollections() async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.getCollections();
+
+        return Right(
+          RepositoryConv.convertCollectionsModelToEntity(result),
         );
       } else {
         return Left(ServerFailure(message: Constants.errorNoInternet));

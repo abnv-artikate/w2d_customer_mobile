@@ -6,6 +6,7 @@ import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/category_hierarchy_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/calculate_insurance_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/confirm_insurance_model.dart';
@@ -28,6 +29,8 @@ abstract class RemoteDatasource {
   );
 
   Future<CategoryHierarchyModel> getCategoriesHierarchyModel();
+
+  Future<CollectionsModel> getCollections();
 
   /// Product Datasource
   Future<ProductViewModel> getProductView(String id);
@@ -95,6 +98,17 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   Future<CategoryHierarchyModel> getCategoriesHierarchyModel() async {
     try {
       return await w2dClient.getCategoryHierarchy();
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<CollectionsModel> getCollections() async {
+    try {
+      return await w2dClient.getCollections();
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

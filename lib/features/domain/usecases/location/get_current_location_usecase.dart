@@ -4,11 +4,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
 
 class GetCurrentLocationUseCase {
-  static const Duration _timeoutDuration = Duration(seconds: 10);
+  // static const Duration _timeoutDuration = Duration(seconds: 10);
 
   Future<Either<String, LocationEntity>> call({
     LocationAccuracy accuracy = LocationAccuracy.medium,
-    bool includeAddress = true,
     Duration? timeout,
   }) async {
     try {
@@ -24,27 +23,18 @@ class GetCurrentLocationUseCase {
         ),
       );
 
-      String city = "";
-      String country = "";
+      final List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
-      try {
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-          position.latitude,
-          position.longitude,
-        );
-
-        Placemark place = placemarks[0];
-
-        city = place.locality ?? place.subAdministrativeArea ?? "";
-        country = place.country ?? "";
-      } catch (e) {
-        return Left("Address lookup failed : ${e.toString()}");
-      }
+      Placemark place = placemarks[0];
 
       return Right(
         LocationEntity(
-          city: city,
-          country: country,
+          city: place.locality ?? place.subAdministrativeArea ?? "",
+          country: place.country ?? "",
+          isoCountryCode: place.isoCountryCode ?? "",
           latitude: position.latitude.toString(),
           longitude: position.longitude.toString(),
         ),

@@ -115,11 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context, state) {
               return LocationWidget(
                 onTap: () {
-                  _callLocationApi();
-                  widget.showErrorToast(
-                    context: context,
-                    message: "Implement set location feature",
-                  );
+                  // _callLocationApi();
                 },
                 address: address,
               );

@@ -4,6 +4,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.da
 import 'package:w2d_customer_mobile/features/domain/entities/cart/updated_cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
@@ -33,6 +34,8 @@ abstract class Repository {
   getProductCategoryListing({required ProductCategoryParams params});
 
   Future<Either<Failure, List<ProductCategoryEntity>>> getCategoriesHierarchy();
+
+  Future<Either<Failure, CollectionsEntity>> getCollections();
 
   /// Product Repositories
   Future<Either<Failure, ProductViewEntity>> getProductView({

@@ -5,8 +5,10 @@ import 'package:w2d_customer_mobile/core/error/failure.dart';
 import 'package:w2d_customer_mobile/core/usecase/usecase.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/categories_hierarchy_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/get_collections_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
 
 part 'common_state.dart';
@@ -16,10 +18,12 @@ class CommonCubit extends Cubit<CommonState> {
     required this.localDatasource,
     required this.categoriesHierarchyUseCase,
     required this.getCurrentLocationUseCase,
+    required this.getCollectionsUseCase,
   }) : super(CommonInitial());
 
   final CategoriesHierarchyUseCase categoriesHierarchyUseCase;
   final GetCurrentLocationUseCase getCurrentLocationUseCase;
+  final GetCollectionsUseCase getCollectionsUseCase;
   final LocalDatasource localDatasource;
 
   getCategoriesList() async {
@@ -29,6 +33,20 @@ class CommonCubit extends Cubit<CommonState> {
     result.fold((l) => _emitFailure(l), (r) {
       emit(CommonCategoriesLoaded(categoriesList: r));
     });
+  }
+
+  getCollections() async {
+    emit(CollectionsLoading());
+    final result = await getCollectionsUseCase.call(NoParams());
+
+    result.fold(
+      (l) {
+        emit(CollectionsError(error: l.message));
+      },
+      (data) {
+        emit(CollectionsLoaded(entity: data));
+      },
+    );
   }
 
   getCurrentLocation() async {

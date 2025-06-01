@@ -13,6 +13,7 @@ class EndPoints {
 
   /// Collections Endpoints
   static const String collectionsGetByName = '/collections/get-by-name/';
+  static const String collections = '/admin/collections/';
 
   /// Product Endpoints
   static const String productView = '/product/view';

@@ -1,14 +1,8 @@
-import "dart:convert";
-
 import "package:dartz/dartz.dart";
-import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:w2d_customer_mobile/core/error/failure.dart";
 import "package:w2d_customer_mobile/core/usecase/usecase.dart";
-import "package:w2d_customer_mobile/features/domain/entities/country_code_entity.dart";
 import "package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart";
 import "package:w2d_customer_mobile/features/domain/repositories/repository.dart";
-import "package:w2d_customer_mobile/generated/assets.dart";
 
 class GetFreightQuoteUseCase
     extends UseCase<FreightQuoteEntity, GetFreightQuoteParams> {
@@ -26,6 +20,7 @@ class GetFreightQuoteUseCase
 
 class GetFreightQuoteParams {
   final String destinationCountry;
+  final String destinationCountryShortName;
   final String? destinationCity;
   final String? destinationLatitude;
   final String? destinationLongitude;
@@ -33,6 +28,7 @@ class GetFreightQuoteParams {
 
   GetFreightQuoteParams({
     required this.destinationCountry,
+    required this.destinationCountryShortName,
     required this.destinationCity,
     required this.destinationLatitude,
     required this.destinationLongitude,
@@ -50,39 +46,12 @@ class GetFreightQuoteParams {
       "origin_latitude": 25.2048493,
       "origin_longitude": 55.2707828,
       "destination_country": destinationCountry,
-      "destination_country_short_name": await getCountryShortName(destinationCountry),
+      "destination_country_short_name": destinationCountryShortName,
       "destination_city": destinationCity,
       "destination_latitude": destinationLatitude,
       "destination_longitude": destinationLongitude,
       "items": items.map((item) => item?.toJson()).toList(),
     };
-  }
-
-  Future<String> getCountryShortName(String destinationCountry) async {
-    final List<CountryDetailEntity> countryDetails =
-        await fetchCountryShortNames();
-    for (CountryDetailEntity entity in countryDetails) {
-      if (entity.countryName == destinationCountry) {
-        return entity.countryCode;
-      }
-    }
-
-    return "";
-  }
-
-  Future<List<CountryDetailEntity>> fetchCountryShortNames() async {
-    try {
-      final jsonString = await rootBundle.loadString(Assets.assetsCountryCodes);
-
-      final List<dynamic> jsonData = json.decode(jsonString);
-
-      return jsonData
-          .map((json) => CountryDetailEntity.fromJson(json))
-          .toList();
-    } catch (e) {
-      debugPrint("Error loading json file: ${e.toString()}");
-      return [];
-    }
   }
 }
 
