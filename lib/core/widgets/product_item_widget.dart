@@ -41,8 +41,9 @@ class ProductItemWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               child: Image.network(
                 imgUrl,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 width: width,
+                height: width,
                 errorBuilder: (context, widget, stack) {
                   return SizedBox(
                     height: 120,
@@ -68,53 +69,40 @@ class ProductItemWidget extends StatelessWidget {
             ],
           ),
           SizedBox(height: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Text(
+            itemName,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Row(
             children: [
               Text(
-                itemName,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-              ),
-              Text(
-                '',
+                '\u{20B9}$regularPrice',
                 style: TextStyle(
+                  color: AppColors.black70,
+                  decoration: TextDecoration.lineThrough,
+                  decorationColor: AppColors.black,
                   fontFamily: 'CormorantGaramond',
-                  fontStyle: FontStyle.italic,
-                  fontSize: 16,
+                  fontSize: 20,
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              Text.rich(
-                TextSpan(
-                  text: '',
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: '\u{20B9}$regularPrice',
-                      style: TextStyle(
-                        color: AppColors.black70,
-                        decoration: TextDecoration.lineThrough,
-                        decorationColor: AppColors.black,
-                        fontFamily: 'CormorantGaramond',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    TextSpan(
-                      text: ' \u{20B9}$salePrice',
-                      style: TextStyle(
-                        fontFamily: 'CormorantGaramond',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
+              Text(
+                ' \u{20B9}$salePrice',
+                style: TextStyle(
+                  fontFamily: 'CormorantGaramond',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          // SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               BlankButtonWidget(
                 title: 'View',

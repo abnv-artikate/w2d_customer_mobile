@@ -9,9 +9,13 @@ final class CommonLoading extends CommonState {}
 final class CollectionsLoading extends CommonState {}
 
 final class CollectionsLoaded extends CommonState {
-  final CollectionsEntity entity;
+  final List<CollectionsResultDataEntity> brandMallCollections;
+  final List<CollectionsResultDataEntity> hiddenGemsCollections;
 
-  CollectionsLoaded({required this.entity});
+  CollectionsLoaded({
+    required this.brandMallCollections,
+    required this.hiddenGemsCollections,
+  });
 }
 
 final class CollectionsError extends CommonState {

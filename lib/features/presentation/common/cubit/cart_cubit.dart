@@ -44,7 +44,7 @@ class CartCubit extends Cubit<CartState> {
   }
 
   updateCart(UpdateCartParams params) async {
-    emit(UpdateCartLoading());
+    // emit(UpdateCartLoading());
 
     final result = await updateCartUseCase.call(params);
 

@@ -26,6 +26,9 @@ class CommonCubit extends Cubit<CommonState> {
   final GetCollectionsUseCase getCollectionsUseCase;
   final LocalDatasource localDatasource;
 
+  List<CollectionsResultDataEntity> brandMallCollections = [];
+  List<CollectionsResultDataEntity> hiddenGemsCollections = [];
+
   getCategoriesList() async {
     emit(CommonLoading());
     final result = await categoriesHierarchyUseCase(NoParams());
@@ -43,8 +46,21 @@ class CommonCubit extends Cubit<CommonState> {
       (l) {
         emit(CollectionsError(error: l.message));
       },
-      (data) {
-        emit(CollectionsLoaded(entity: data));
+      (res) {
+        for (CollectionsResultDataEntity item in res.results.data) {
+          if (item.name.startsWith("Brand Mall")) {
+            brandMallCollections.add(item);
+          } else {
+            hiddenGemsCollections.add(item);
+          }
+        }
+
+        emit(
+          CollectionsLoaded(
+            brandMallCollections: brandMallCollections,
+            hiddenGemsCollections: hiddenGemsCollections,
+          ),
+        );
       },
     );
   }

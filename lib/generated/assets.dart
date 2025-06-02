@@ -28,5 +28,10 @@ class Assets {
   static const String iconsW2DLogoAspirationalGold = 'assets/icons/W2D_logo_aspirational_gold.png';
   static const String iconsW2DLogoGreen = 'assets/icons/W2D_logo_green.png';
   static const String iconsW2DVerticalLogo = 'assets/icons/W2D_vertical_logo.png';
+  static const String imagesHiddenGemBanners1 = 'assets/images/HiddenGemBanners1.jpg';
+  static const String imagesHomepageBannersW2D08 = 'assets/images/HomepageBannersW2D08.png';
+  static const String imagesHomepageBannersW2D14 = 'assets/images/HomepageBannersW2D14.png';
+  static const String imagesHomepageBannersW2D15 = 'assets/images/HomepageBannersW2D15.png';
+  static const String imagesHomepageBannersW2D16 = 'assets/images/HomepageBannersW2D16.png';
 
 }

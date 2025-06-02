@@ -393,14 +393,14 @@ class Subcategory {
   String? name;
   int? parent;
   List<Category>? subcategories;
-  Map<String, List<String>>? allowedAttributes;
+  // Map<String, List<String>>? allowedAttributes;
 
   Subcategory({
     this.id,
     this.name,
     this.parent,
     this.subcategories,
-    this.allowedAttributes,
+    // this.allowedAttributes,
   });
 
   factory Subcategory.fromRawJson(String str) => Subcategory.fromJson(json.decode(str));
@@ -412,7 +412,7 @@ class Subcategory {
     name: json["name"],
     parent: json["parent"],
     subcategories: json["subcategories"] == null ? [] : List<Category>.from(json["subcategories"]!.map((x) => Category.fromJson(x))),
-    allowedAttributes: Map.from(json["allowed_attributes"]!).map((k, v) => MapEntry<String, List<String>>(k, List<String>.from(v.map((x) => x)))),
+    // allowedAttributes: Map.from(json["allowed_attributes"]!).map((k, v) => MapEntry<String, List<String>>(k, List<String>.from(v.map((x) => x)))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -420,7 +420,7 @@ class Subcategory {
     "name": name,
     "parent": parent,
     "subcategories": subcategories == null ? [] : List<dynamic>.from(subcategories!.map((x) => x.toJson())),
-    "allowed_attributes": Map.from(allowedAttributes!).map((k, v) => MapEntry<String, dynamic>(k, List<dynamic>.from(v.map((x) => x)))),
+    // "allowed_attributes": Map.from(allowedAttributes!).map((k, v) => MapEntry<String, dynamic>(k, List<dynamic>.from(v.map((x) => x)))),
   };
 }
 

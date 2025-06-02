@@ -50,6 +50,7 @@ flutter:
   assets:
     - assets/
     - assets/icons/
+    - assets/images/
 
 
 
