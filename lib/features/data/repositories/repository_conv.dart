@@ -2,7 +2,7 @@ import 'package:w2d_customer_mobile/core/utils/decode_jwt.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.dart';
-import 'package:w2d_customer_mobile/features/data/model/categories/category_hierarchy_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/categories/category_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
@@ -28,24 +28,31 @@ class RepositoryConv {
     return UserEntity(email: parsedJson['email']);
   }
 
-  static List<ProductCategoryEntity> convertCategoriesHierarchyModelToEntity(
-    CategoryHierarchyModel model,
+  static List<SubCategoriesEntity> convertCategoriesHierarchyModelToEntity(
+    CategoriesModel model,
   ) {
     return model.data
             ?.map(
-              (e) => ProductCategoryEntity(
-                id: -1,
+              (e) => SubCategoriesEntity(
                 name: e.name ?? "NotAvailable",
                 handle: e.handle ?? "",
-                parent: -1,
-                subCategories:
+                subcategories:
                     e.subcategories
                         ?.map(
-                          (e) => ProductSubCategoryEntity(
-                            id: -1,
-                            parent: -1,
+                          (e) => SubCategoriesEntity(
                             name: e.name ?? "NotAvailable",
                             handle: e.handle ?? "",
+                            subcategories:
+                                e.subcategories
+                                    ?.map(
+                                      (e) => SubCategoriesEntity(
+                                        name: e.name ?? "NotAvailable",
+                                        handle: e.handle ?? "",
+                                        subcategories: [],
+                                      ),
+                                    )
+                                    .toList() ??
+                                [],
                           ),
                         )
                         .toList() ??
@@ -73,12 +80,10 @@ class RepositoryConv {
                   productType: e.productType ?? "",
                   regularPrice: e.regularPrice ?? "",
                   mainImage: e.mainImage ?? "",
-                  category: ProductCategoryEntity(
-                    id: e.category?.id ?? -1,
+                  category: SubCategoriesEntity(
                     name: e.category?.name ?? "",
                     handle: "",
-                    parent: -1,
-                    subCategories: [],
+                    subcategories: [],
                   ),
                   brand: BrandEntity(
                     id: e.brand?.id ?? -1,
@@ -198,14 +203,10 @@ class RepositoryConv {
         id: model.data?.seller?.id ?? -1,
         businessName: model.data?.seller?.businessName ?? "",
       ),
-      category: ProductCategoryEntity(
-        id: -1,
-        parent: -1,
+      category: SubCategoriesEntity(
         name: model.data?.category?.name ?? "",
         handle: "",
-        subCategories: [
-          ProductSubCategoryEntity(id: -1, name: "", handle: "", parent: -1),
-        ],
+        subcategories: [],
       ),
       brand: model.data?.brand,
       reviews: model.data?.reviews ?? [],

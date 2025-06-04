@@ -18,14 +18,15 @@ class ExploreCategoriesScreen extends StatefulWidget {
 
 class _ExploreCategoriesScreenState extends State<ExploreCategoriesScreen> {
   @override
-  void didChangeDependencies() {
+  void initState() {
     _callCategoriesListingAPi();
-    super.didChangeDependencies();
+    super.initState();
   }
+
+  List<SubCategoriesEntity> categoryList = [];
 
   @override
   Widget build(BuildContext context) {
-    List<ProductCategoryEntity> categoryList = [];
     return Scaffold(
       appBar: AppBar(
         title: Text(

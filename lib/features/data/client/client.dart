@@ -6,7 +6,7 @@ import 'package:w2d_customer_mobile/core/utils/endpoint_constants.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.dart';
-import 'package:w2d_customer_mobile/features/data/model/categories/category_hierarchy_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/categories/category_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
@@ -55,7 +55,7 @@ abstract class W2DClient {
   );
 
   @GET(EndPoints.categoriesHierarchy)
-  Future<CategoryHierarchyModel> getCategoryHierarchy();
+  Future<CategoriesModel> getCategoryHierarchy();
 
   @GET(EndPoints.collections)
   Future<CollectionsModel> getCollections();

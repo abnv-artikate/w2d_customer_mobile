@@ -25,7 +25,7 @@ final class CollectionsError extends CommonState {
 }
 
 final class CommonCategoriesLoaded extends CommonState {
-  final List<ProductCategoryEntity> categoriesList;
+  final List<SubCategoriesEntity> categoriesList;
 
   CommonCategoriesLoaded({required this.categoriesList});
 }

@@ -33,7 +33,7 @@ abstract class Repository {
   Future<Either<Failure, ProductCategoryListingEntity>>
   getProductCategoryListing({required ProductCategoryParams params});
 
-  Future<Either<Failure, List<ProductCategoryEntity>>> getCategoriesHierarchy();
+  Future<Either<Failure, List<SubCategoriesEntity>>> getCategoriesHierarchy();
 
   Future<Either<Failure, CollectionsEntity>> getCollections();
 

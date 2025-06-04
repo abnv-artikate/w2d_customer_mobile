@@ -1,29 +1,23 @@
-class ProductCategoryEntity {
-  final int id;
-  final String name;
-  final String handle;
-  final int parent;
-  final List<ProductSubCategoryEntity> subCategories;
+class CategoriesEntity {
+  final String status;
+  final List<SubCategoriesEntity> data;
 
-  ProductCategoryEntity({
-    required this.id,
-    required this.name,
-    required this.handle,
-    required this.parent,
-    required this.subCategories,
+  CategoriesEntity({
+    required this.status,
+    required this.data,
   });
+
 }
 
-class ProductSubCategoryEntity {
-  final int id;
+class SubCategoriesEntity {
   final String name;
   final String handle;
-  final int parent;
+  final List<SubCategoriesEntity> subcategories;
 
-  ProductSubCategoryEntity({
-    required this.id,
-    required this.parent,
+  SubCategoriesEntity({
     required this.name,
     required this.handle,
+    required this.subcategories,
   });
+
 }

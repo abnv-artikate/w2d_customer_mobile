@@ -21,7 +21,7 @@ class ResultEntity {
   String productType;
   String regularPrice;
   String mainImage;
-  ProductCategoryEntity category;
+  SubCategoriesEntity category;
   BrandEntity brand;
   String salePrice;
   List<dynamic> reviews;

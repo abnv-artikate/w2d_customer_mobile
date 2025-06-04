@@ -3,7 +3,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/categories/categori
 class ProductViewEntity {
   String id;
   SellerDetail seller;
-  ProductCategoryEntity category;
+  SubCategoriesEntity category;
   dynamic brand;
   List<dynamic> reviews;
   List<dynamic> variations;

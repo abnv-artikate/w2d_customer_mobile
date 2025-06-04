@@ -87,7 +87,7 @@ class RepositoryImpl extends Repository {
   }
 
   @override
-  Future<Either<Failure, List<ProductCategoryEntity>>>
+  Future<Either<Failure, List<SubCategoriesEntity>>>
   getCategoriesHierarchy() async {
     try {
       if (await networkInfo.isConnected) {

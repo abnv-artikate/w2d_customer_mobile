@@ -5,13 +5,13 @@ import 'package:w2d_customer_mobile/features/domain/entities/categories/categori
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
 
 class CategoriesHierarchyUseCase
-    extends UseCase<List<ProductCategoryEntity>, NoParams> {
+    extends UseCase<List<SubCategoriesEntity>, NoParams> {
   final Repository _repository;
 
   CategoriesHierarchyUseCase(this._repository);
 
   @override
-  Future<Either<Failure, List<ProductCategoryEntity>>> call(
+  Future<Either<Failure, List<SubCategoriesEntity>>> call(
     NoParams params,
   ) async {
     return await _repository.getCategoriesHierarchy();
