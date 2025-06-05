@@ -1,8 +1,6 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:w2d_customer_mobile/core/utils/constants.dart';
 import 'package:w2d_customer_mobile/core/utils/endpoint_constants.dart';
