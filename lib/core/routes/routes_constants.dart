@@ -19,4 +19,7 @@ class AppRoutes {
 
   /// product detail route
   static const String productRoute = '/product_screen';
+
+  /// checkout screen route
+  static const String checkoutRoute = '/checkout_screen';
 }

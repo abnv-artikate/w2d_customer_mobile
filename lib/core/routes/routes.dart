@@ -5,6 +5,7 @@ import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/login_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/checkout/checkout_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cart_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
@@ -24,7 +25,7 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: AppRoutes.initial,
+  initialLocation: AppRoutes.checkoutRoute,
   routes: <RouteBase>[
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
@@ -122,12 +123,12 @@ final GoRouter router = GoRouter(
         return SearchScreen();
       },
     ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: '/test',
-    //   builder: (BuildContext context, GoRouterState state) {
-    //     return GeolocatorWidget();
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.checkoutRoute,
+      builder: (BuildContext context, GoRouterState state) {
+        return CheckoutScreen();
+      },
+    ),
   ],
 );

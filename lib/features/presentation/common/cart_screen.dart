@@ -208,7 +208,6 @@ class _CartScreenState extends State<CartScreen> {
                           );
                         }
                       } else {
-                        _callLocationApi();
                         widget.showErrorToast(
                           context: context,
                           message: "Location not available. Please try again.",

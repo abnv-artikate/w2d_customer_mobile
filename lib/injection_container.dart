@@ -69,7 +69,7 @@ Future<void> init() async {
       getCurrentLocationUseCase: sl<GetCurrentLocationUseCase>(),
     ),
   );
-  sl.registerFactory(
+  sl.registerFactory<ShippingCubit>(
     () => ShippingCubit(
       getFreightQuoteUseCase: sl<GetFreightQuoteUseCase>(),
       selectFreightServiceUseCase: sl<SelectFreightServiceUseCase>(),
@@ -118,7 +118,7 @@ Future<void> init() async {
   sl.registerLazySingleton<SelectFreightServiceUseCase>(
     () => SelectFreightServiceUseCase(sl<Repository>()),
   );
-  sl.registerLazySingleton<GetCurrentLocationUseCase>(
+  sl.registerFactory<GetCurrentLocationUseCase>(
     () => GetCurrentLocationUseCase(),
   );
 

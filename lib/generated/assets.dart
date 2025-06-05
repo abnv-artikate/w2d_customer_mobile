@@ -2,7 +2,6 @@
 class Assets {
   Assets._();
 
-  static const String assetsCountryCodes = 'assets/country_codes.json';
   static const String fontsCormorantGaramondBold = 'assets/fonts/CormorantGaramond-Bold.ttf';
   static const String fontsCormorantGaramondBoldItalic = 'assets/fonts/CormorantGaramond-BoldItalic.ttf';
   static const String fontsCormorantGaramondItalic = 'assets/fonts/CormorantGaramond-Italic.ttf';
