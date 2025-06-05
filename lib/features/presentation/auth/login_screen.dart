@@ -4,11 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
-import 'package:w2d_customer_mobile/core/widgets/blank_button_widget.dart';
-import 'package:w2d_customer_mobile/core/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
 class LoginScreen extends StatefulWidget {

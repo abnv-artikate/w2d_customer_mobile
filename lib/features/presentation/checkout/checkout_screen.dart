@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/custom_text_field.dart';
 
 class SavedAddress {
   final String id;
@@ -55,6 +58,30 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     ),
   ];
   String? selectedAddressId;
+  bool addNewAdd = false;
+
+  final TextEditingController _firstNameCtrl = TextEditingController();
+  final TextEditingController _lastNameCtrl = TextEditingController();
+  final TextEditingController _cityNameCtrl = TextEditingController();
+  final TextEditingController _countryNameCtrl = TextEditingController();
+
+  final FocusNode _firstNameNode = FocusNode();
+  final FocusNode _lastNameNode = FocusNode();
+  final FocusNode _cityNameNode = FocusNode();
+  final FocusNode _countryNameNode = FocusNode();
+
+  @override
+  void dispose() {
+    _firstNameCtrl.dispose();
+    _lastNameCtrl.dispose();
+    _cityNameCtrl.dispose();
+    _countryNameCtrl.dispose();
+    _firstNameNode.dispose();
+    _lastNameNode.dispose();
+    _cityNameNode.dispose();
+    _countryNameNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +99,28 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
               ),
               _savedAddress(),
+              if (!addNewAdd) ...[
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      addNewAdd = true;
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(),
+                    child: Text(
+                      "+ Add Address",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+              if (addNewAdd) ...[_addNewAddress()],
               _customerDetails(),
               _estimatedTotal(),
             ],
@@ -97,7 +146,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 color: isSelected ? Colors.blue : Colors.grey.shade300,
                 width: isSelected ? 2 : 1,
               ),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               color: isSelected ? Colors.blue.shade50 : Colors.white,
             ),
             child: RadioListTile<String>(
@@ -128,8 +177,78 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  _addNewAddress() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Receiver Details",
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
+          ),
+          CustomTextField(
+            ctrl: _firstNameCtrl,
+            hintText: 'First Name',
+            focusNode: _firstNameNode,
+            onTapOutside: (_) {
+              _firstNameNode.unfocus();
+            },
+          ),
+          SizedBox(height: 5),
+          CustomTextField(
+            ctrl: _lastNameCtrl,
+            hintText: 'Last Name',
+            focusNode: _lastNameNode,
+            onTapOutside: (_) {
+              _lastNameNode.unfocus();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   _customerDetails() {
-    return Container();
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Customer Details",
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
+          ),
+          CustomTextField(
+            ctrl: _firstNameCtrl,
+            hintText: 'First Name',
+            focusNode: _firstNameNode,
+            onTapOutside: (_) {
+              _firstNameNode.unfocus();
+            },
+          ),
+          SizedBox(height: 5),
+          CustomTextField(
+            ctrl: _lastNameCtrl,
+            hintText: 'Last Name',
+            focusNode: _lastNameNode,
+            onTapOutside: (_) {
+              _lastNameNode.unfocus();
+            },
+          ),
+          SizedBox(height: 5),
+          CustomFilledButtonWidget(
+            title: 'Save',
+            color: AppColors.worldGreen,
+            height: 50,
+            width: (MediaQuery.of(context).size.width),
+            onTap: () {},
+          ),
+        ],
+      ),
+    );
   }
 
   _estimatedTotal() {

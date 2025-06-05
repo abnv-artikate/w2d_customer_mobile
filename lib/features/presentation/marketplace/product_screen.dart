@@ -4,11 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
-import 'package:w2d_customer_mobile/core/widgets/blank_button_widget.dart';
-import 'package:w2d_customer_mobile/core/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({super.key, required this.productEntity});

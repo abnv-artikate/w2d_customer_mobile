@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
-import 'package:w2d_customer_mobile/core/widgets/blank_button_widget.dart';
-import 'package:w2d_customer_mobile/core/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
@@ -17,7 +15,9 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_fre
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/cart_item_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/location_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_method_dropdown_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_method_list_item_widget.dart';
