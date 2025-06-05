@@ -1,7 +1,10 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:go_router/go_router.dart';
+import 'package:logger/logger.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:w2d_customer_mobile/core/utils/constants.dart';
 import 'package:w2d_customer_mobile/core/utils/endpoint_constants.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
@@ -31,7 +34,7 @@ abstract class W2DClient {
         },
       ),
     );
-    return _W2DClient(dio);
+    return _W2DClient(dio, baseUrl: Constants.w2dBaseUrl);
   }
 
   /// Auth Client
