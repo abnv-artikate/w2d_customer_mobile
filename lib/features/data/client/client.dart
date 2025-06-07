@@ -11,6 +11,7 @@ import 'package:w2d_customer_mobile/features/data/model/categories/category_mode
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/search/search_result_autocomplete_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/success_message_model.dart';
 
 part 'client.g.dart';
@@ -75,4 +76,10 @@ abstract class W2DClient {
 
   @POST(EndPoints.cartUpdate)
   Future<UpdatedCartModel> updateCart(@Body() Map<String, dynamic> body);
+
+  /// Search Client
+  @GET(EndPoints.searchAutoComplete)
+  Future<SearchResultAutoCompleteModel> searchProductAutoComplete(
+    @Queries() Map<String, dynamic> queries,
+  );
 }

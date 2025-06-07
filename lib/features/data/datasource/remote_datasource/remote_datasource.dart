@@ -8,6 +8,7 @@ import 'package:w2d_customer_mobile/features/data/model/categories/category_mode
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/search/search_result_autocomplete_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/calculate_insurance_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/confirm_insurance_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/freight_quote_model.dart';
@@ -42,6 +43,11 @@ abstract class RemoteDatasource {
   Future<CartModel> getCart(Map<String, dynamic> queries);
 
   Future<UpdatedCartModel> updateCart(Map<String, dynamic> body);
+
+  /// Search Datasource
+  Future<SearchResultAutoCompleteModel> searchProductAutoComplete(
+    Map<String, dynamic> queries,
+  );
 
   /// Shipping Datasource
   Future<FreightQuoteModel> getFreightQuote(Map<String, dynamic> body);
@@ -166,6 +172,19 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   Future<UpdatedCartModel> updateCart(Map<String, dynamic> body) async {
     try {
       return await w2dClient.updateCart(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<SearchResultAutoCompleteModel> searchProductAutoComplete(
+    Map<String, dynamic> queries,
+  ) async {
+    try {
+      return await w2dClient.searchProductAutoComplete(queries);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

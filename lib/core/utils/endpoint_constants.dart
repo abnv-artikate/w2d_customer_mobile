@@ -25,6 +25,9 @@ class EndPoints {
   static const String cart = '/cart/';
   static const String cartUpdate = '/cart/update/';
 
+  /// Search Endpoints
+  static const String searchAutoComplete = '/products/search/autocomplete/';
+
   /// Shipping Endpoints
   static const String getFreightQuote = '/get-freight-quote';
   static const String selectFreightService = '/select-freight-service';

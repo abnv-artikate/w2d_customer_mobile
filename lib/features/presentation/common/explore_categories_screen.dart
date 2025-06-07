@@ -73,6 +73,7 @@ class _ExploreCategoriesScreenState extends State<ExploreCategoriesScreen> {
                         }
                       },
                     );
+                    // return ExpansionPanelList();
                   },
                   itemCount: categoryList.length,
                 ),

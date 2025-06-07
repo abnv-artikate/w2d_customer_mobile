@@ -24,6 +24,18 @@ final class CollectionsError extends CommonState {
   CollectionsError({required this.error});
 }
 
+final class SearchAutoCompleteLoaded extends CommonState {
+  final SearchResultAutoCompleteEntity entity;
+
+  SearchAutoCompleteLoaded({required this.entity});
+}
+
+final class SearchError extends CommonState {
+  final String error;
+
+  SearchError({required this.error});
+}
+
 final class CommonCategoriesLoaded extends CommonState {
   final List<SubCategoriesEntity> categoriesList;
 

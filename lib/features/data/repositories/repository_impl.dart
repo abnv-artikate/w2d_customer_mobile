@@ -13,6 +13,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/categories/categori
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/search/search_result_autocomplete_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
@@ -110,9 +111,7 @@ class RepositoryImpl extends Repository {
       if (await networkInfo.isConnected) {
         final result = await remoteDatasource.getCollections();
 
-        return Right(
-          RepositoryConv.convertCollectionsModelToEntity(result),
-        );
+        return Right(RepositoryConv.convertCollectionsModelToEntity(result));
       } else {
         return Left(ServerFailure(message: Constants.errorNoInternet));
       }
@@ -237,6 +236,24 @@ class RepositoryImpl extends Repository {
         });
 
         return Right(RepositoryConv.convertUpdateCartModelToEntity(result));
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, SearchResultAutoCompleteEntity>>
+  searchProductAutoComplete({required String params}) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.searchProductAutoComplete({
+          "q": params,
+        });
+
+        return Right(RepositoryConv.convertSearchResultModelToEntity(result));
       } else {
         return Left(ServerFailure(message: Constants.errorNoInternet));
       }

@@ -7,9 +7,11 @@ import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/lo
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/search/search_result_autocomplete_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/categories_hierarchy_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/get_collections_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/search/search_autocomplete_usecase.dart';
 
 part 'common_state.dart';
 
@@ -19,11 +21,13 @@ class CommonCubit extends Cubit<CommonState> {
     required this.categoriesHierarchyUseCase,
     required this.getCurrentLocationUseCase,
     required this.getCollectionsUseCase,
+    required this.searchProductAutoCompleteUseCase,
   }) : super(CommonInitial());
 
   final CategoriesHierarchyUseCase categoriesHierarchyUseCase;
   final GetCurrentLocationUseCase getCurrentLocationUseCase;
   final GetCollectionsUseCase getCollectionsUseCase;
+  final SearchProductAutoCompleteUseCase searchProductAutoCompleteUseCase;
   final LocalDatasource localDatasource;
 
   List<CollectionsResultDataEntity> brandMallCollections = [];
@@ -31,11 +35,24 @@ class CommonCubit extends Cubit<CommonState> {
 
   getCategoriesList() async {
     emit(CommonLoading());
-    final result = await categoriesHierarchyUseCase(NoParams());
+    final result = await categoriesHierarchyUseCase.call(NoParams());
 
     result.fold((l) => _emitFailure(l), (r) {
       emit(CommonCategoriesLoaded(categoriesList: r));
     });
+  }
+
+  search({required String query}) async {
+    final result = await searchProductAutoCompleteUseCase.call(query);
+
+    result.fold(
+      (l) {
+        emit(SearchError(error: l.message));
+      },
+      (data) {
+        emit(SearchAutoCompleteLoaded(entity: data));
+      },
+    );
   }
 
   getCollections() async {

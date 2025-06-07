@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/search/search_result_autocomplete_entity.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 
@@ -12,7 +15,13 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchCtrl = TextEditingController();
-  bool notEmpty = false;
+  SearchResultAutoCompleteEntity? searchResult;
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,50 +61,115 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 onChanged: (text) {
                   if (text.isNotEmpty) {
-                    setState(() {
-                      notEmpty = true;
-                    });
+                    callSearchApi(text);
                   } else {
-                    setState(() {
-                      notEmpty = false;
-                    });
+                    callSearchApi("");
                   }
                 },
               ),
-              if (notEmpty) ...[
-                SizedBox(height: 20),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.black70),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          context.pop();
-                          context.push(AppRoutes.listingRoute);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: Text(
-                            'Search Result',
-                            style: TextStyle(fontSize: 30),
-                          ),
+              SizedBox(height: 20),
+              BlocConsumer<CommonCubit, CommonState>(
+                listener: (context, state) {
+                  if (state is SearchAutoCompleteLoaded) {
+                    searchResult = state.entity;
+                  }
+                },
+                builder: (context, state) {
+                  return searchResult != null
+                      ? Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors.black70),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      );
-                    },
-                    itemCount: 200,
-                  ),
-                ),
-              ],
+                        child: Column(
+                          children: [
+                            searchResult!.productSuggestions.isNotEmpty
+                                ? ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 4,
+                                        horizontal: 8,
+                                      ),
+                                      margin: EdgeInsets.symmetric(vertical: 5),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          ClipRRect(
+                                            child: Image.network(
+                                              height: 50,
+                                              width: 50,
+                                              fit: BoxFit.contain,
+                                              searchResult!
+                                                  .productSuggestions[index]
+                                                  .mainImage,
+                                            ),
+                                          ),
+                                          SizedBox(width: 5),
+                                          Expanded(
+                                            child: Text(
+                                              searchResult
+                                                      ?.productSuggestions[index]
+                                                      .name ??
+                                                  "",
+                                              style: TextStyle(
+                                                overflow: TextOverflow.ellipsis,
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  itemCount:
+                                      searchResult?.productSuggestions.length,
+                                )
+                                : SizedBox(),
+                            searchResult!.searchTerms.isNotEmpty
+                                ? ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 4,
+                                        horizontal: 8,
+                                      ),
+                                      margin: EdgeInsets.symmetric(vertical: 5),
+                                      child: Text(
+                                        searchResult!.searchTerms[index],
+                                        style: TextStyle(
+                                          overflow: TextOverflow.ellipsis,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  itemCount: searchResult?.searchTerms.length,
+                                )
+                                : SizedBox(),
+                          ],
+                        ),
+                      )
+                      : SizedBox();
+                },
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void callSearchApi(String text) {
+    context.read<CommonCubit>().search(query: text);
   }
 }

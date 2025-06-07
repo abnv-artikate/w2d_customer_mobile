@@ -23,6 +23,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_
 import 'package:w2d_customer_mobile/features/domain/usecases/get_collections_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/search/search_autocomplete_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
@@ -49,6 +50,7 @@ Future<void> init() async {
       categoriesHierarchyUseCase: sl<CategoriesHierarchyUseCase>(),
       getCurrentLocationUseCase: sl<GetCurrentLocationUseCase>(),
       getCollectionsUseCase: sl<GetCollectionsUseCase>(),
+      searchProductAutoCompleteUseCase: sl<SearchProductAutoCompleteUseCase>(),
       localDatasource: sl<LocalDatasource>(),
     ),
   );
@@ -120,6 +122,9 @@ Future<void> init() async {
   );
   sl.registerFactory<GetCurrentLocationUseCase>(
     () => GetCurrentLocationUseCase(),
+  );
+  sl.registerFactory<SearchProductAutoCompleteUseCase>(
+    () => SearchProductAutoCompleteUseCase(sl<Repository>()),
   );
 
   /// Repositories

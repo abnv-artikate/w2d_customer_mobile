@@ -6,6 +6,7 @@ import 'package:w2d_customer_mobile/features/data/model/categories/category_mode
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/search/search_result_autocomplete_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/calculate_insurance_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/confirm_insurance_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/freight_quote_model.dart';
@@ -16,6 +17,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/categories/categori
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/search/search_result_autocomplete_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
@@ -589,6 +591,27 @@ class RepositoryConv {
           ),
         ),
       ),
+    );
+  }
+
+  static SearchResultAutoCompleteEntity convertSearchResultModelToEntity(
+    SearchResultAutoCompleteModel model,
+  ) {
+    return SearchResultAutoCompleteEntity(
+      status: model.status,
+      productSuggestions:
+          model.products
+              .map(
+                (e) => SuggestionClassEntity(
+                  id: e.id,
+                  name: e.name,
+                  sku: e.sku,
+                  mainImage: e.mainImage,
+                ),
+              )
+              .toList(),
+      searchTerms: model.searchTerms,
+      categoryName: model.categoryName,
     );
   }
 }
