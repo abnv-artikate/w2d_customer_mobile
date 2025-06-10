@@ -120,7 +120,10 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: AppRoutes.searchRoute,
       builder: (BuildContext context, GoRouterState state) {
-        return SearchScreen();
+        return BlocProvider<CategoryCubit>(
+          create: (context) => sl<CategoryCubit>(),
+          child: SearchScreen(),
+        );
       },
     ),
     GoRoute(

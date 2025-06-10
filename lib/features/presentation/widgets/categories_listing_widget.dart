@@ -3,12 +3,14 @@ import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 
 class CategoriesListingWidget extends StatelessWidget {
   final String name;
-  final VoidCallback onTap;
+  final bool isExpanded;
+  final VoidCallback? onTap;
 
   const CategoriesListingWidget({
     super.key,
     required this.name,
-    required this.onTap,
+    required this.isExpanded,
+    this.onTap,
   });
 
   @override
@@ -18,15 +20,15 @@ class CategoriesListingWidget extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.worldGreen, width: 2),
+          border: Border.all(
+            color: isExpanded ? AppColors.worldGreen : AppColors.deepBlue,
+            width: 2,
+          ),
         ),
         child: Center(
           child: Text(
             name,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
           ),
         ),
       ),

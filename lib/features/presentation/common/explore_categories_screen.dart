@@ -35,50 +35,102 @@ class _ExploreCategoriesScreenState extends State<ExploreCategoriesScreen> {
         ),
         centerTitle: true,
       ),
-      body: BlocConsumer<CommonCubit, CommonState>(
-        listener: (context, state) {
-          if (state is CommonCategoriesLoaded) {
-            categoryList = state.categoriesList;
-          } else if (state is CommonError) {
-            widget.showErrorToast(context: context, message: state.error);
-          }
-        },
-        builder: (context, state) {
-          return state is CommonLoading
-              ? Center(
-                child: CircularProgressIndicator(color: AppColors.worldGreen),
-              )
-              : categoryList.isEmpty
-              ? Center(child: Text('No Categories to show right now'))
-              : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  separatorBuilder: (BuildContext context, int index) {
-                    return SizedBox(height: 10);
-                  },
-                  itemBuilder: (BuildContext context, int index) {
-                    return CategoriesListingWidget(
-                      name: categoryList[index].name,
-                      onTap: () {
-                        if (categoryList[index].handle.isNotEmpty) {
-                          context
-                              .push(
-                                AppRoutes.listingRoute,
-                                extra: categoryList[index].handle,
-                              )
-                              .then((_) {
-                                _callCategoriesListingAPi();
-                              });
-                        }
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            BlocConsumer<CommonCubit, CommonState>(
+              listener: (context, state) {
+                if (state is CommonCategoriesLoaded) {
+                  categoryList = state.categoriesList;
+                } else if (state is CommonError) {
+                  widget.showErrorToast(context: context, message: state.error);
+                }
+              },
+              builder: (context, state) {
+                return state is CommonLoading
+                    ? Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.worldGreen,
+                      ),
+                    )
+                    : categoryList.isEmpty
+                    ? Center(child: Text('No Categories to show right now'))
+                    : ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: categoryList.length,
+                      itemBuilder: (context, index) {
+                        return ExpansionTile(
+                          showTrailingIcon: false,
+                          onExpansionChanged: (val) {
+                            setState(() {
+                              categoryList[index].isExpanded = val;
+                            });
+                          },
+                          title: CategoriesListingWidget(
+                            name: categoryList[index].name,
+                            isExpanded: categoryList[index].isExpanded,
+                          ),
+                          children:
+                              categoryList[index].subcategories.isNotEmpty
+                                  ? categoryList[index].subcategories
+                                      .map(
+                                        (e) => ExpansionTile(
+                                          showTrailingIcon: false,
+                                          leading: SizedBox(width: 15),
+                                          onExpansionChanged: (val) {
+                                            setState(() {
+                                              e.isExpanded = val;
+                                            });
+                                          },
+                                          title: CategoriesListingWidget(
+                                            name: e.name,
+                                            isExpanded: e.isExpanded,
+                                          ),
+                                          children:
+                                              e.subcategories.isNotEmpty
+                                                  ? e.subcategories
+                                                      .map(
+                                                        (e) => ExpansionTile(
+                                                          showTrailingIcon:
+                                                              false,
+                                                          leading: SizedBox(
+                                                            width: 55,
+                                                          ),
+                                                          title: CategoriesListingWidget(
+                                                            name: e.name,
+                                                            isExpanded:
+                                                                e.isExpanded,
+                                                            onTap: () {
+                                                              context
+                                                                  .push(
+                                                                    AppRoutes
+                                                                        .listingRoute,
+                                                                    extra:
+                                                                        categoryList[index]
+                                                                            .handle,
+                                                                  )
+                                                                  .then((_) {
+                                                                    _callCategoriesListingAPi();
+                                                                  });
+                                                            },
+                                                          ),
+                                                        ),
+                                                      )
+                                                      .toList()
+                                                  : [],
+                                        ),
+                                      )
+                                      .toList()
+                                  : [],
+                        );
                       },
                     );
-                    // return ExpansionPanelList();
-                  },
-                  itemCount: categoryList.length,
-                ),
-              );
-        },
+              },
+            ),
+            SizedBox(height: 50),
+          ],
+        ),
       ),
     );
   }

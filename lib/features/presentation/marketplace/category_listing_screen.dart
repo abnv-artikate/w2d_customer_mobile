@@ -66,11 +66,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                     regularPrice: productCategoryList[index].regularPrice,
                     salePrice: productCategoryList[index].salePrice,
                     onViewTap: () {
-                      context.read<CategoryCubit>().getProductView(
-                        ProductViewParams(
-                          productId: productCategoryList[index].id,
-                        ),
-                      );
+                      _callProductViewApi(productCategoryList[index].id);
                     },
                     onCartTap: () {},
                   );
@@ -88,6 +84,12 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
   void _callCategoryListApi() {
     context.read<CategoryCubit>().getProductCategoryList(
       ProductCategoryParams(categorySlug: widget.categorySlug),
+    );
+  }
+
+  void _callProductViewApi(String productId) {
+    context.read<CategoryCubit>().getProductView(
+      ProductViewParams(productId: productId),
     );
   }
 }
