@@ -4,11 +4,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
 
 class GetCurrentLocationUseCase {
-  // static const Duration _timeoutDuration = Duration(seconds: 10);
 
   Future<Either<String, LocationEntity>> call({
-    LocationAccuracy accuracy = LocationAccuracy.medium,
-    Duration? timeout,
+    LocationAccuracy accuracy = LocationAccuracy.reduced,
   }) async {
     try {
       final hasPermission = await _handlePermission();
@@ -19,7 +17,6 @@ class GetCurrentLocationUseCase {
       final position = await Geolocator.getCurrentPosition(
         locationSettings: LocationSettings(
           accuracy: accuracy,
-          distanceFilter: 10,
         ),
       );
 
@@ -45,10 +42,6 @@ class GetCurrentLocationUseCase {
   }
 
   Future<bool> _handlePermission() async {
-    // bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    // if (!serviceEnabled) {
-    //   return false;
-    // }
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {

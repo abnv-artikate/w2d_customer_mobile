@@ -101,12 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             builder: (context, state) {
               return address != null
-                  ? LocationWidget(
-                    onTap: () {
-                      // _callLocationApi();
-                    },
-                    address: address!,
-                  )
+                  ? LocationWidget(onTap: () {}, address: address!)
                   : SizedBox();
             },
           ),
@@ -140,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             _brandAndHiddenGems(),
             _bestSellers(),
-            _popularCategories(),
+            // _popularCategories(),
           ],
         ),
       ),
