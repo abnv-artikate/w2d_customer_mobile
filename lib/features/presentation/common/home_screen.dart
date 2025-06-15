@@ -25,7 +25,7 @@ final List<Widget> imageSliders =
         .map(
           (item) => Image.asset(
             item,
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
             height: 200,
             errorBuilder: (context, widget, stack) {
               return Center(child: Text('Image not available.'));
