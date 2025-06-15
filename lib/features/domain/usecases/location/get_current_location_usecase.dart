@@ -1,28 +1,41 @@
 import 'package:dartz/dartz.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart'
+    show Placemark, placemarkFromCoordinates;
+import 'package:location/location.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
 
 class GetCurrentLocationUseCase {
-
   Future<Either<String, LocationEntity>> call({
     LocationAccuracy accuracy = LocationAccuracy.reduced,
   }) async {
     try {
-      final hasPermission = await _handlePermission();
-      if (!hasPermission) {
-        return const Left('Location permission denied');
+      Location location = Location();
+
+      bool _serviceEnabled;
+      PermissionStatus _permissionGranted;
+      LocationData _locationData;
+
+      _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled) {
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
+          return Left("Location Service disabled");
+        }
       }
 
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: LocationSettings(
-          accuracy: accuracy,
-        ),
-      );
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          return Left("Location Service disabled");
+        }
+      }
+
+      _locationData = await location.getLocation();
 
       final List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
+        _locationData.latitude!,
+        _locationData.longitude!,
       );
 
       Placemark place = placemarks[0];
@@ -32,29 +45,12 @@ class GetCurrentLocationUseCase {
           city: place.locality ?? place.subAdministrativeArea ?? "",
           country: place.country ?? "",
           isoCountryCode: place.isoCountryCode ?? "",
-          latitude: position.latitude.toString(),
-          longitude: position.longitude.toString(),
+          latitude: _locationData.latitude.toString(),
+          longitude: _locationData.longitude.toString(),
         ),
       );
     } on Exception catch (e) {
       return Left(e.toString());
     }
-  }
-
-  Future<bool> _handlePermission() async {
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-
-      if (permission == LocationPermission.denied) {
-        return false;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      return false;
-    }
-
-    return true;
   }
 }
