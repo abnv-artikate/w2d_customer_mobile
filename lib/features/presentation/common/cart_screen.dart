@@ -12,6 +12,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
+import 'package:w2d_customer_mobile/features/presentation/checkout/checkout_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
@@ -59,10 +60,11 @@ class _CartScreenState extends State<CartScreen> {
           BlocConsumer<CommonCubit, CommonState>(
             listener: (context, state) {
               if (state is GetLocationLoading) {
-                address = "Loading location";
+                address = "Loading Location";
               } else if (state is GetLocationLoaded) {
                 location = state.location;
                 address = "${state.location.city}, ${state.location.country}";
+                _callGetFreightQuoteApi(cartItems: cartItems, address: location!);
               } else if (state is GetLocationError) {
                 widget.showErrorToast(context: context, message: state.error);
               }
@@ -206,12 +208,31 @@ class _CartScreenState extends State<CartScreen> {
                       borderRadius: 4,
                       onTap: () {
                         if (selectedShippingIndex == null) {
-                          _shippingMethodBottomSheet();
+                          if (freightQuoteEntityData != null &&
+                              location != null) {
+                            _shippingMethodBottomSheet();
+                          } else if (location != null) {
+                            _callGetFreightQuoteApi(
+                              cartItems: cartItems,
+                              address: location!,
+                            );
+                          } else {
+                            _callLocationApi();
+                          }
                         } else {
                           if (_callCheckUserLoginApi()) {
-                            context.push(AppRoutes.checkoutRoute);
+                            context.push(
+                              AppRoutes.checkoutRoute,
+                              extra: CheckOutScreenEntity(
+                                cartItems: cartItems,
+                                freightQuoteEntityData: freightQuoteEntityData,
+                                calculateInsuranceEntity:
+                                    calculateInsuranceEntity,
+                                isTransitInsured: isTransitInsured,
+                              ),
+                            );
                           } else {
-                            context.push(AppRoutes.loginRoute);
+                            context.push(AppRoutes.loginRoute, extra: true);
                           }
                         }
                       },

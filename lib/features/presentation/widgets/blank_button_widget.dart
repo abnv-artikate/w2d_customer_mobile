@@ -7,6 +7,8 @@ class BlankButtonWidget extends StatelessWidget {
   final double borderRadius;
   final double verticalPadding;
   final double horizontalPadding;
+  final double verticalMargin;
+  final double horizontalMargin;
   final double height;
   final double width;
   final VoidCallback onTap;
@@ -21,6 +23,8 @@ class BlankButtonWidget extends StatelessWidget {
     this.borderRadius = 8,
     this.verticalPadding = 4,
     this.horizontalPadding = 4,
+    this.horizontalMargin = 0,
+    this.verticalMargin = 0,
   });
 
   @override
@@ -31,6 +35,10 @@ class BlankButtonWidget extends StatelessWidget {
         height: height,
         width: width,
         padding: EdgeInsets.symmetric(
+          vertical: verticalPadding,
+          horizontal: horizontalPadding,
+        ),
+        margin: EdgeInsets.symmetric(
           vertical: verticalPadding,
           horizontal: horizontalPadding,
         ),

@@ -42,18 +42,20 @@ class ShippingBreakdownWidget extends StatelessWidget {
         children: [
           Text('Estimated Total:'),
           Text(_calculateEstimatedTotal(cartItems).toStringAsFixed(2)),
-          Row(
-            children: [
-              Text('Select shipping options:'),
-              Spacer(),
-              ShippingMethodDropdownWidget(
-                shippingMethodText: _getShippingMethodName(
-                  selectedShippingIndex,
+          if (freightQuoteEntityData != null) ...[
+            Row(
+              children: [
+                Text('Select shipping options:'),
+                Spacer(),
+                ShippingMethodDropdownWidget(
+                  shippingMethodText: _getShippingMethodName(
+                    selectedShippingIndex,
+                  ),
+                  onTap: onShippingMethodDropdownTap,
                 ),
-                onTap: onShippingMethodDropdownTap,
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
           Divider(),
           Row(
             children: [

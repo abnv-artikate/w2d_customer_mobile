@@ -12,7 +12,9 @@ import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final bool isCheckout;
+
+  const LoginScreen({super.key, required this.isCheckout});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -55,7 +57,12 @@ class _LoginScreenState extends State<LoginScreen> {
               }
 
               if (state is VerifyOtpSuccess) {
-                context.go(AppRoutes.initial, extra: state.userEntity);
+                if (widget.isCheckout) {
+                  context.pop();
+                  context.push(AppRoutes.checkoutRoute);
+                } else {
+                  context.go(AppRoutes.initial, extra: state.userEntity);
+                }
               } else if (state is AuthError) {
                 widget.showErrorToast(context: context, message: state.error);
               }
@@ -72,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     otpCtrl: _otpCtrl,
                     nameCtrl: _nameCtrl,
                   ),
-                  // _guestOrSignUp(context),
+                  _guestOrSignUp(context),
                 ],
               );
             },
@@ -181,11 +188,11 @@ class _LoginScreenState extends State<LoginScreen> {
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(color: AppColors.black70),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(color: AppColors.black70),
               ),
               hintText: 'OTP',
@@ -208,11 +215,11 @@ class _LoginScreenState extends State<LoginScreen> {
             controller: nameCtrl,
             decoration: InputDecoration(
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(color: AppColors.black70),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(color: AppColors.black70),
               ),
               hintText: 'Full Name',

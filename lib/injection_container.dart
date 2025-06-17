@@ -120,7 +120,7 @@ Future<void> init() async {
   sl.registerLazySingleton<SelectFreightServiceUseCase>(
     () => SelectFreightServiceUseCase(sl<Repository>()),
   );
-  sl.registerFactory<GetCurrentLocationUseCase>(
+  sl.registerLazySingleton<GetCurrentLocationUseCase>(
     () => GetCurrentLocationUseCase(),
   );
   sl.registerFactory<SearchProductAutoCompleteUseCase>(

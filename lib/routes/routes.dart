@@ -80,7 +80,7 @@ final GoRouter router = GoRouter(
             if (bloc.isUserLoggedIn()) {
               return UserProfileScreen();
             } else {
-              return LoginScreen();
+              return LoginScreen(isCheckout: false);
             }
           },
         ),
@@ -92,7 +92,7 @@ final GoRouter router = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         return BlocProvider<AuthCubit>(
           create: (context) => sl<AuthCubit>(),
-          child: LoginScreen(),
+          child: LoginScreen(isCheckout: state.extra as bool),
         );
       },
     ),
@@ -130,7 +130,12 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: AppRoutes.checkoutRoute,
       builder: (BuildContext context, GoRouterState state) {
-        return CheckoutScreen();
+        return BlocProvider<ShippingCubit>(
+          create: (context) => sl<ShippingCubit>(),
+          child: CheckoutScreen(
+            checkOutScreenEntity: state.extra as CheckOutScreenEntity,
+          ),
+        );
       },
     ),
   ],
