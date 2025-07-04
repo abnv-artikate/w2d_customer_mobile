@@ -64,7 +64,10 @@ class _CartScreenState extends State<CartScreen> {
               } else if (state is GetLocationLoaded) {
                 location = state.location;
                 address = "${state.location.city}, ${state.location.country}";
-                _callGetFreightQuoteApi(cartItems: cartItems, address: location!);
+                _callGetFreightQuoteApi(
+                  cartItems: cartItems,
+                  address: location!,
+                );
               } else if (state is GetLocationError) {
                 widget.showErrorToast(context: context, message: state.error);
               }
@@ -158,43 +161,46 @@ class _CartScreenState extends State<CartScreen> {
                         }
                       },
                       builder: (context, state) {
-                        return ShippingBreakdownWidget(
-                          cartItems: cartItems,
-                          location: location,
-                          freightQuoteEntityData: freightQuoteEntityData,
-                          calculateInsuranceEntity: calculateInsuranceEntity,
-                          selectedShippingIndex: selectedShippingIndex,
-                          isTransitInsured: isTransitInsured,
-                          onShippingMethodDropdownTap: () {
-                            if (location != null) {
-                              if (freightQuoteEntityData != null) {
-                                _shippingMethodBottomSheet();
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: ShippingBreakdownWidget(
+                            cartItems: cartItems,
+                            location: location,
+                            freightQuoteEntityData: freightQuoteEntityData,
+                            calculateInsuranceEntity: calculateInsuranceEntity,
+                            selectedShippingIndex: selectedShippingIndex,
+                            isTransitInsured: isTransitInsured,
+                            onShippingMethodDropdownTap: () {
+                              if (location != null) {
+                                if (freightQuoteEntityData != null) {
+                                  _shippingMethodBottomSheet();
+                                } else {
+                                  _callGetFreightQuoteApi(
+                                    cartItems: cartItems,
+                                    address: location!,
+                                  );
+                                }
                               } else {
-                                _callGetFreightQuoteApi(
-                                  cartItems: cartItems,
-                                  address: location!,
+                                widget.showErrorToast(
+                                  context: context,
+                                  message: "Fetching Location Data",
+                                );
+                                _callLocationApi();
+                              }
+                            },
+                            onTransitInsuranceTap: (bool? value) {
+                              setState(() {
+                                isTransitInsured = value!;
+                              });
+                              if (isTransitInsured) {
+                                _callConfirmInsuranceApi(
+                                  quoteToken: freightQuoteEntityData!.quoteToken,
+                                  addInsurance: isTransitInsured,
                                 );
                               }
-                            } else {
-                              widget.showErrorToast(
-                                context: context,
-                                message: "Fetching Location Data",
-                              );
-                              _callLocationApi();
-                            }
-                          },
-                          onTransitInsuranceTap: (bool? value) {
-                            setState(() {
-                              isTransitInsured = value!;
-                            });
-                            if (isTransitInsured) {
-                              _callConfirmInsuranceApi(
-                                quoteToken: freightQuoteEntityData!.quoteToken,
-                                addInsurance: isTransitInsured,
-                              );
-                            }
-                            ;
-                          },
+                              ;
+                            },
+                          ),
                         );
                       },
                     ),
@@ -233,6 +239,16 @@ class _CartScreenState extends State<CartScreen> {
                             );
                           } else {
                             context.push(AppRoutes.loginRoute, extra: true);
+                            context.push(
+                              AppRoutes.checkoutRoute,
+                              extra: CheckOutScreenEntity(
+                                cartItems: cartItems,
+                                freightQuoteEntityData: freightQuoteEntityData,
+                                calculateInsuranceEntity:
+                                    calculateInsuranceEntity,
+                                isTransitInsured: isTransitInsured,
+                              ),
+                            );
                           }
                         }
                       },
@@ -264,8 +280,14 @@ class _CartScreenState extends State<CartScreen> {
                     'Select Shipping Method',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
                   ),
-                  freightQuoteEntityData?.quoteCourier != null
-                      ? ShippingMethodListItemWidget(
+                  freightQuoteEntityData?.quoteCourier == null
+                      || freightQuoteEntityData
+                              ?.quoteCourier
+                              .doorDelivery
+                              .totalAmount ==
+                          -1
+                      ? SizedBox()
+                      : ShippingMethodListItemWidget(
                         label: "Courier (Air)",
                         serviceType: "Upto Door",
                         shippingFee:
@@ -282,10 +304,15 @@ class _CartScreenState extends State<CartScreen> {
                             }
                           });
                         },
-                      )
-                      : SizedBox(),
-                  freightQuoteEntityData?.quoteAir != null
-                      ? ShippingMethodListItemWidget(
+                      ),
+                  freightQuoteEntityData?.quoteAir == null
+                      || freightQuoteEntityData
+                              ?.quoteAir
+                              .doorDelivery
+                              .totalAmount ==
+                          -1
+                      ? SizedBox()
+                      : ShippingMethodListItemWidget(
                         label: "Air Freight",
                         serviceType: "Upto Door",
                         shippingFee:
@@ -302,10 +329,15 @@ class _CartScreenState extends State<CartScreen> {
                             }
                           });
                         },
-                      )
-                      : SizedBox(),
-                  freightQuoteEntityData?.quoteAir != null
-                      ? ShippingMethodListItemWidget(
+                      ),
+                  freightQuoteEntityData?.quoteAir == null
+                      || freightQuoteEntityData
+                              ?.quoteAir
+                              .portDelivery
+                              .totalAmount ==
+                          -1
+                      ? SizedBox()
+                      : ShippingMethodListItemWidget(
                         label: "Air Freight",
                         serviceType: "Upto Port",
                         shippingFee:
@@ -322,10 +354,15 @@ class _CartScreenState extends State<CartScreen> {
                             }
                           });
                         },
-                      )
-                      : SizedBox(),
-                  freightQuoteEntityData?.quoteSea != null
-                      ? ShippingMethodListItemWidget(
+                      ),
+                  freightQuoteEntityData?.quoteSea == null
+                      || freightQuoteEntityData
+                              ?.quoteSea
+                              .doorDelivery
+                              .totalAmount ==
+                          -1
+                      ? SizedBox()
+                      : ShippingMethodListItemWidget(
                         label: "Sea Freight",
                         serviceType: "Upto Door",
                         shippingFee:
@@ -342,10 +379,15 @@ class _CartScreenState extends State<CartScreen> {
                             }
                           });
                         },
-                      )
-                      : SizedBox(),
-                  freightQuoteEntityData?.quoteSea != null
-                      ? ShippingMethodListItemWidget(
+                      ),
+                  freightQuoteEntityData?.quoteSea == null
+                      || freightQuoteEntityData
+                              ?.quoteSea
+                              .portDelivery
+                              .totalAmount ==
+                          -1
+                      ? SizedBox()
+                      : ShippingMethodListItemWidget(
                         label: "Sea Freight",
                         serviceType: "Upto Port",
                         shippingFee:
@@ -362,10 +404,15 @@ class _CartScreenState extends State<CartScreen> {
                             }
                           });
                         },
-                      )
-                      : SizedBox(),
-                  freightQuoteEntityData?.quoteLand != null
-                      ? ShippingMethodListItemWidget(
+                      ),
+                  freightQuoteEntityData?.quoteLand == null
+                      || freightQuoteEntityData
+                              ?.quoteLand
+                              .doorDelivery
+                              .totalAmount ==
+                          -1
+                      ? SizedBox()
+                      : ShippingMethodListItemWidget(
                         label: "Land Freight",
                         serviceType: "Upto Door",
                         shippingFee:
@@ -382,8 +429,7 @@ class _CartScreenState extends State<CartScreen> {
                             }
                           });
                         },
-                      )
-                      : SizedBox(),
+                      ),
                   Row(
                     children: [
                       BlankButtonWidget(

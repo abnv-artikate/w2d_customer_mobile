@@ -34,4 +34,8 @@ class EndPoints {
   static const String calculateInsurance = '/calculate-insurance';
   static const String confirmInsurance = '/confirm-insurance';
   static const String addJob = '/confirm-job';
+
+  /// Telr Payment Endpoints
+  static const String createPayment = 'mobile.xml';
+  static const String confirmPayment = 'mobile_complete.xml';
 }

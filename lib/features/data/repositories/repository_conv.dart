@@ -11,6 +11,7 @@ import 'package:w2d_customer_mobile/features/data/model/shipping/calculate_insur
 import 'package:w2d_customer_mobile/features/data/model/shipping/confirm_insurance_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/freight_quote_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/select_freight_service_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_payment_response_model.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/updated_cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
@@ -22,6 +23,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/select_freight_quote_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 
 class RepositoryConv {
@@ -612,6 +614,17 @@ class RepositoryConv {
               .toList(),
       searchTerms: model.searchTerms,
       categoryName: model.categoryName,
+    );
+  }
+
+  static PaymentResponseEntity convertTelrPaymentReponseToEntity(
+    TelrPaymentResponseModel model,
+  ) {
+    return PaymentResponseEntity(
+      startUrl: model.startUrl,
+      closeUrl: model.closeUrl,
+      abortUrl: model.abortUrl,
+      transactionCode: model.code,
     );
   }
 }

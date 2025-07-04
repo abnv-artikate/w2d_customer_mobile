@@ -8,6 +8,7 @@ class CustomTextField extends StatefulWidget {
   final Color focusedBorderColor;
   final String hintText;
   final TapRegionCallback onTapOutside;
+  final TextInputType textInputType;
 
   const CustomTextField({
     super.key,
@@ -15,6 +16,7 @@ class CustomTextField extends StatefulWidget {
     required this.focusNode,
     this.enabledBorderColor = AppColors.softWhite71,
     this.focusedBorderColor = AppColors.worldGreen,
+    this.textInputType = TextInputType.text,
     required this.hintText,
     required this.onTapOutside,
   });
@@ -27,6 +29,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      keyboardType: widget.textInputType,
       focusNode: widget.focusNode,
       controller: widget.ctrl,
       decoration: InputDecoration(
@@ -46,7 +49,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         contentPadding: EdgeInsets.symmetric(horizontal: 22, vertical: 16),
       ),
-      cursorColor: AppColors.deepBlue,
+      // cursorColor: AppColors.deepBlue,
       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
       onTapOutside: widget.onTapOutside,
     );

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:w2d_customer_mobile/features/data/client/client.dart';
 import 'package:w2d_customer_mobile/features/data/client/shipping_client.dart';
+import 'package:w2d_customer_mobile/features/data/client/telr_payment_client.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.dart';
@@ -14,6 +15,11 @@ import 'package:w2d_customer_mobile/features/data/model/shipping/confirm_insuran
 import 'package:w2d_customer_mobile/features/data/model/shipping/freight_quote_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/select_freight_service_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/success_message_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_payment_request_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_payment_response_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/telr_payment/terl_confirm_payment_request_model.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
+import 'package:xml/xml.dart';
 
 abstract class RemoteDatasource {
   /// Auth Datasource
@@ -59,13 +65,25 @@ abstract class RemoteDatasource {
   Future<CalculateInsuranceModel> calculateInsurance(Map<String, dynamic> body);
 
   Future<ConfirmInsuranceModel> confirmInsurance(Map<String, dynamic> body);
+
+  /// Telr Payment Datasource
+  Future<TelrPaymentResponseModel> initiatePayment(
+    PaymentRequestEntity request,
+  );
+
+  Future<void> verifyPayment(String transCode);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
   final W2DClient w2dClient;
   final ShippingClient shippingClient;
+  final TelrPaymentClient telrPaymentClient;
 
-  RemoteDatasourceImpl({required this.shippingClient, required this.w2dClient});
+  RemoteDatasourceImpl({
+    required this.telrPaymentClient,
+    required this.shippingClient,
+    required this.w2dClient,
+  });
 
   // void _processDio(err) {
   //   if (err is DioException) {
@@ -235,6 +253,37 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   ) async {
     try {
       return await shippingClient.selectFreightService(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<TelrPaymentResponseModel> initiatePayment(
+    PaymentRequestEntity request,
+  ) async {
+    try {
+      final xmlBody = TelrPaymentRequestModel.toXml(request);
+      final response = await telrPaymentClient.initiateTelrPayment(xmlBody);
+      final telrResponse = TelrPaymentResponseModel.fromXml(response.data);
+
+      return telrResponse;
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> verifyPayment(String transCode) async {
+    try {
+      final xmlBody = TelrConfirmPaymentRequestModel.toXml(transCode);
+      final response = await telrPaymentClient.confirmTelrPayment(xmlBody);
+
+      print(response);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

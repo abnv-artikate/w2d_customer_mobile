@@ -18,6 +18,8 @@ import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/select_freight_quote_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
@@ -338,6 +340,39 @@ class RepositoryImpl extends Repository {
         return Right(
           RepositoryConv.convertSelectFreightServiceModelToEntity(result),
         );
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, PaymentResponseEntity>> initiatePayment(
+    PaymentRequestEntity request,
+  ) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.initiatePayment(request);
+
+        return Right(RepositoryConv.convertTelrPaymentReponseToEntity(result));
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> verifyPayment(String transCode) async {
+    try {
+      if (await networkInfo.isConnected) {
+        await remoteDatasource.verifyPayment(transCode);
+
+        return Right("Complete");
+
       } else {
         return Left(ServerFailure(message: Constants.errorNoInternet));
       }

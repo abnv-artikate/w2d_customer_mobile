@@ -9,6 +9,7 @@ import 'package:w2d_customer_mobile/core/network/network_info.dart';
 import 'package:w2d_customer_mobile/core/utils/constants.dart';
 import 'package:w2d_customer_mobile/features/data/client/client.dart';
 import 'package:w2d_customer_mobile/features/data/client/shipping_client.dart';
+import 'package:w2d_customer_mobile/features/data/client/telr_payment_client.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/remote_datasource/remote_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/repositories/repository_impl.dart';
@@ -22,6 +23,8 @@ import 'package:w2d_customer_mobile/features/domain/usecases/categories/categori
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/get_collections_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/payment/initiate_payment_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/payment/verify_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/search/search_autocomplete_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
@@ -29,6 +32,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_in
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
@@ -79,6 +83,12 @@ Future<void> init() async {
       confirmInsuranceUseCase: sl<ConfirmInsuranceUseCase>(),
     ),
   );
+  sl.registerFactory<PaymentCubit>(
+    () => PaymentCubit(
+      initiatePaymentUseCase: sl<InitiatePaymentUseCase>(),
+      verifyPaymentUseCase: sl<VerifyPaymentUseCase>(),
+    ),
+  );
 
   /// UseCases
   sl.registerLazySingleton<SendOtpUseCase>(
@@ -126,6 +136,12 @@ Future<void> init() async {
   sl.registerFactory<SearchProductAutoCompleteUseCase>(
     () => SearchProductAutoCompleteUseCase(sl<Repository>()),
   );
+  sl.registerLazySingleton<InitiatePaymentUseCase>(
+    () => InitiatePaymentUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<VerifyPaymentUseCase>(
+    () => VerifyPaymentUseCase(sl<Repository>()),
+  );
 
   /// Repositories
   sl.registerLazySingleton<Repository>(
@@ -144,6 +160,7 @@ Future<void> init() async {
     () => RemoteDatasourceImpl(
       w2dClient: sl<W2DClient>(),
       shippingClient: sl<ShippingClient>(),
+      telrPaymentClient: sl<TelrPaymentClient>(),
     ),
   );
 
@@ -196,9 +213,33 @@ Future<void> init() async {
     ),
   );
 
+  final telrPaymentDio = Dio(
+    BaseOptions(
+      baseUrl: Constants.telrPaymentBaseUrl,
+      headers: {'Content-Type': 'application/xml'},
+      connectTimeout: const Duration(milliseconds: 500000),
+      receiveTimeout: const Duration(milliseconds: 500000),
+      sendTimeout: const Duration(milliseconds: 500000),
+    ),
+  );
+  telrPaymentDio.interceptors.add(
+    LogInterceptor(
+      request: true,
+      error: true,
+      requestHeader: true,
+      requestBody: true,
+      responseHeader: true,
+      responseBody: true,
+      logPrint: (value) => log(value.toString()),
+    ),
+  );
+
   /// Clients
   sl.registerLazySingleton<W2DClient>(() => W2DClient(w2dDio));
   sl.registerLazySingleton<ShippingClient>(() => ShippingClient(shippingDio));
+  sl.registerLazySingleton<TelrPaymentClient>(
+    () => TelrPaymentClient(telrPaymentDio),
+  );
 
   /// Shared Preference
   final sharedPreference = await SharedPreferences.getInstance();

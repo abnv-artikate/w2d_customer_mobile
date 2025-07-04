@@ -31,7 +31,7 @@ class ShippingBreakdownWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       decoration: BoxDecoration(
         border: Border.all(color: AppColors.worldGreen),
