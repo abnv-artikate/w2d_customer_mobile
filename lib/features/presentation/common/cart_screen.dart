@@ -194,7 +194,8 @@ class _CartScreenState extends State<CartScreen> {
                               });
                               if (isTransitInsured) {
                                 _callConfirmInsuranceApi(
-                                  quoteToken: freightQuoteEntityData!.quoteToken,
+                                  quoteToken:
+                                      freightQuoteEntityData!.quoteToken,
                                   addInsurance: isTransitInsured,
                                 );
                               }
@@ -230,7 +231,7 @@ class _CartScreenState extends State<CartScreen> {
                             context.push(
                               AppRoutes.checkoutRoute,
                               extra: CheckOutScreenEntity(
-                                cartItems: cartItems,
+                                cartId: cartItems[0].cart.toString(),
                                 freightQuoteEntityData: freightQuoteEntityData,
                                 calculateInsuranceEntity:
                                     calculateInsuranceEntity,
@@ -242,7 +243,7 @@ class _CartScreenState extends State<CartScreen> {
                             context.push(
                               AppRoutes.checkoutRoute,
                               extra: CheckOutScreenEntity(
-                                cartItems: cartItems,
+                                cartId: cartItems[0].cart.toString(),
                                 freightQuoteEntityData: freightQuoteEntityData,
                                 calculateInsuranceEntity:
                                     calculateInsuranceEntity,
@@ -280,12 +281,12 @@ class _CartScreenState extends State<CartScreen> {
                     'Select Shipping Method',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
                   ),
-                  freightQuoteEntityData?.quoteCourier == null
-                      || freightQuoteEntityData
-                              ?.quoteCourier
-                              .doorDelivery
-                              .totalAmount ==
-                          -1
+                  freightQuoteEntityData?.quoteCourier == null ||
+                          freightQuoteEntityData
+                                  ?.quoteCourier
+                                  .doorDelivery
+                                  .totalAmount ==
+                              -1
                       ? SizedBox()
                       : ShippingMethodListItemWidget(
                         label: "Courier (Air)",
@@ -305,12 +306,12 @@ class _CartScreenState extends State<CartScreen> {
                           });
                         },
                       ),
-                  freightQuoteEntityData?.quoteAir == null
-                      || freightQuoteEntityData
-                              ?.quoteAir
-                              .doorDelivery
-                              .totalAmount ==
-                          -1
+                  freightQuoteEntityData?.quoteAir == null ||
+                          freightQuoteEntityData
+                                  ?.quoteAir
+                                  .doorDelivery
+                                  .totalAmount ==
+                              -1
                       ? SizedBox()
                       : ShippingMethodListItemWidget(
                         label: "Air Freight",
@@ -330,12 +331,12 @@ class _CartScreenState extends State<CartScreen> {
                           });
                         },
                       ),
-                  freightQuoteEntityData?.quoteAir == null
-                      || freightQuoteEntityData
-                              ?.quoteAir
-                              .portDelivery
-                              .totalAmount ==
-                          -1
+                  freightQuoteEntityData?.quoteAir == null ||
+                          freightQuoteEntityData
+                                  ?.quoteAir
+                                  .portDelivery
+                                  .totalAmount ==
+                              -1
                       ? SizedBox()
                       : ShippingMethodListItemWidget(
                         label: "Air Freight",
@@ -355,12 +356,12 @@ class _CartScreenState extends State<CartScreen> {
                           });
                         },
                       ),
-                  freightQuoteEntityData?.quoteSea == null
-                      || freightQuoteEntityData
-                              ?.quoteSea
-                              .doorDelivery
-                              .totalAmount ==
-                          -1
+                  freightQuoteEntityData?.quoteSea == null ||
+                          freightQuoteEntityData
+                                  ?.quoteSea
+                                  .doorDelivery
+                                  .totalAmount ==
+                              -1
                       ? SizedBox()
                       : ShippingMethodListItemWidget(
                         label: "Sea Freight",
@@ -380,12 +381,12 @@ class _CartScreenState extends State<CartScreen> {
                           });
                         },
                       ),
-                  freightQuoteEntityData?.quoteSea == null
-                      || freightQuoteEntityData
-                              ?.quoteSea
-                              .portDelivery
-                              .totalAmount ==
-                          -1
+                  freightQuoteEntityData?.quoteSea == null ||
+                          freightQuoteEntityData
+                                  ?.quoteSea
+                                  .portDelivery
+                                  .totalAmount ==
+                              -1
                       ? SizedBox()
                       : ShippingMethodListItemWidget(
                         label: "Sea Freight",
@@ -405,12 +406,12 @@ class _CartScreenState extends State<CartScreen> {
                           });
                         },
                       ),
-                  freightQuoteEntityData?.quoteLand == null
-                      || freightQuoteEntityData
-                              ?.quoteLand
-                              .doorDelivery
-                              .totalAmount ==
-                          -1
+                  freightQuoteEntityData?.quoteLand == null ||
+                          freightQuoteEntityData
+                                  ?.quoteLand
+                                  .doorDelivery
+                                  .totalAmount ==
+                              -1
                       ? SizedBox()
                       : ShippingMethodListItemWidget(
                         label: "Land Freight",
