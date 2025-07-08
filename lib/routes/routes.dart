@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/checkout/payment_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/orders/cubit/orders_cubit.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
@@ -137,9 +138,8 @@ final GoRouter router = GoRouter(
             BlocProvider<ShippingCubit>(
               create: (context) => sl<ShippingCubit>(),
             ),
-            BlocProvider<PaymentCubit>(
-              create: (context) => sl<PaymentCubit>(),
-            ),
+            BlocProvider<PaymentCubit>(create: (context) => sl<PaymentCubit>()),
+            BlocProvider<OrdersCubit>(create: (context) => sl<OrdersCubit>()),
           ],
           child: CheckoutScreen(
             checkOutScreenEntity: state.extra as CheckOutScreenEntity,

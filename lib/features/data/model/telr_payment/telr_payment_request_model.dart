@@ -58,33 +58,27 @@ class TelrPaymentRequestModel {
     final builder = xml.XmlBuilder();
     builder.processing('xml', 'version="1.0" encoding="UTF-8"');
     builder.element(
-      'mobile',
-      nest: () {
+      'mobile', nest: () {
         builder.element(
-          'store',
-          nest: () {
-            builder.text('19793');
+          'store', nest: () {
+            builder.text('32266');
           },
         );
         builder.element(
-          'key',
-          nest: () {
-            builder.text('zd46X-jKCwC@bTp3');
+          'key', nest: () {
+            builder.text('6xJfn#6r7N-xmNfL');
           },
         );
 
         builder.element(
-          'device',
-          nest: () {
+          'device', nest: () {
             builder.element(
-              'type',
-              nest: () {
+              'type', nest: () {
                 builder.text('iAndroid');
               },
             );
             builder.element(
-              'id',
-              nest: () {
+              'id', nest: () {
                 builder.text('36C0EC49-AA2F-47DC-A4D7-D9927A739F5F');
               },
             );
@@ -93,29 +87,24 @@ class TelrPaymentRequestModel {
 
         // app
         builder.element(
-          'app',
-          nest: () {
+          'app', nest: () {
             builder.element(
-              'name',
-              nest: () {
+              'name', nest: () {
                 builder.text('Telr');
               },
             );
             builder.element(
-              'version',
-              nest: () {
+              'version', nest: () {
                 builder.text('1.1.6');
               },
             );
             builder.element(
-              'user',
-              nest: () {
+              'user', nest: () {
                 builder.text('2');
               },
             );
             builder.element(
-              'id',
-              nest: () {
+              'id', nest: () {
                 builder.text('1237546345');
               },
             );
@@ -124,50 +113,42 @@ class TelrPaymentRequestModel {
 
         //tran
         builder.element(
-          'tran',
-          nest: () {
+          'tran', nest: () {
             builder.element(
-              'test',
-              nest: () {
+              'test', nest: () {
                 builder.text('1');
               },
             );
             builder.element(
-              'type',
-              nest: () {
+              'type', nest: () {
                 builder.text('auth');
               },
             );
             builder.element(
-              'class',
-              nest: () {
+              'class', nest: () {
                 builder.text('paypage');
               },
             );
             builder.element('cartid', nest: req.cartId);
             builder.element(
-              'description',
-              nest: () {
+              'description', nest: () {
                 builder.text('Test for Mobile API order');
               },
             );
             builder.element('currency', nest: req.currency);
             builder.element('amount', nest: req.amount);
             builder.element(
-              'language',
-              nest: () {
+              'language', nest: () {
                 builder.text('en');
               },
             );
             builder.element(
-              'firstref',
-              nest: () {
+              'firstref', nest: () {
                 builder.text('first');
               },
             );
             builder.element(
-              'ref',
-              nest: () {
+              'ref', nest: () {
                 builder.text('null');
               },
             );
@@ -176,15 +157,12 @@ class TelrPaymentRequestModel {
 
         //billing
         builder.element(
-          'billing',
-          nest: () {
+          'billing', nest: () {
             // name
             builder.element(
-              'name',
-              nest: () {
+              'name', nest: () {
                 builder.element(
-                  'title',
-                  nest: () {
+                  'title', nest: () {
                     builder.text('');
                   },
                 );
@@ -194,13 +172,11 @@ class TelrPaymentRequestModel {
             );
             // address
             builder.element(
-              'address',
-              nest: () {
+              'address', nest: () {
                 builder.element('line1', nest: req.street);
                 builder.element('city', nest: req.city);
                 builder.element(
-                  'region',
-                  nest: () {
+                  'region', nest: () {
                     builder.text('');
                   },
                 );

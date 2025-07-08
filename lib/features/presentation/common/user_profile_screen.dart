@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/user_profile_widget.dart';
+import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 
-class UserProfileScreen extends StatelessWidget {
+class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
 
+  @override
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
+}
+
+class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,12 +48,15 @@ class UserProfileScreen extends StatelessWidget {
             _profileListItem(
               title: 'Orders',
               onItemTap: () {},
-              iconData: LucideIcons.bookX,
+              iconData: LucideIcons.package,
             ),
             Divider(),
             _profileListItem(
               title: 'Logout',
-              onItemTap: () {},
+              onItemTap: () {
+                _callLogoutApi();
+                context.go(AppRoutes.initial);
+              },
               iconData: LucideIcons.logOut,
             ),
           ],
@@ -75,5 +86,9 @@ class UserProfileScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _callLogoutApi() {
+    context.read<CommonCubit>().logout();
   }
 }

@@ -18,6 +18,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/select_freight_quote_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/confirm_payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
@@ -27,6 +28,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_use
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/create_order_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
@@ -366,12 +368,30 @@ class RepositoryImpl extends Repository {
   }
 
   @override
-  Future<Either<Failure, String>> verifyPayment(String transCode) async {
+  Future<Either<Failure, ConfirmPaymentResponseEntity>> verifyPayment(String transCode) async {
     try {
       if (await networkInfo.isConnected) {
-        await remoteDatasource.verifyPayment(transCode);
+        final result = await remoteDatasource.verifyPayment(transCode);
 
-        return Right("Complete");
+        return Right(ConfirmPaymentResponseEntity.fromModel(result));
+
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> createOrder(CreateOrderParams params) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.createOrder(params.toJson());
+
+        print(result.toString());
+
+        return Right("Success");
 
       } else {
         return Left(ServerFailure(message: Constants.errorNoInternet));

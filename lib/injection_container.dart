@@ -23,6 +23,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/categories/categori
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/get_collections_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/create_order_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/initiate_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/verify_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
@@ -37,6 +38,7 @@ import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubi
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/orders/cubit/orders_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -88,6 +90,9 @@ Future<void> init() async {
       initiatePaymentUseCase: sl<InitiatePaymentUseCase>(),
       verifyPaymentUseCase: sl<VerifyPaymentUseCase>(),
     ),
+  );
+  sl.registerFactory<OrdersCubit>(
+    () => OrdersCubit(createOrderUseCase: sl<CreateOrderUseCase>()),
   );
 
   /// UseCases
@@ -141,6 +146,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<VerifyPaymentUseCase>(
     () => VerifyPaymentUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<CreateOrderUseCase>(
+    () => CreateOrderUseCase(sl<Repository>()),
   );
 
   /// Repositories

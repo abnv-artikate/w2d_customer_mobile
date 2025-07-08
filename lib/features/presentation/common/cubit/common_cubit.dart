@@ -100,6 +100,10 @@ class CommonCubit extends Cubit<CommonState> {
     return localDatasource.getUserEmail() != null;
   }
 
+  logout(){
+    localDatasource.logout();
+  }
+
   FutureOr<void> _emitFailure(Failure failure) async {
     if (failure is ServerFailure) {
       emit(CommonError(failure.message));

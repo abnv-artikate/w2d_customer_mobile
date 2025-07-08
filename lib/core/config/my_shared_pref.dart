@@ -82,5 +82,7 @@ class MySharedPref {
 
   void logout() {
     _pref.remove(accessToken);
+    _pref.remove(refreshToken);
+    _pref.remove(userEmail);
   }
 }

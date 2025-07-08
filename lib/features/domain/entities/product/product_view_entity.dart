@@ -35,7 +35,7 @@ class ProductViewEntity {
   List<ProductViewDimensionsEntity> packagingDetails;
   String shippingMethods;
   String shippingRegion;
-  List<String> shippingCountries;
+  List<dynamic> shippingCountries;
   String handlingTime;
   dynamic returnsPolicy;
   dynamic tags;

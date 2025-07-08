@@ -82,4 +82,7 @@ abstract class W2DClient {
   Future<SearchResultAutoCompleteModel> searchProductAutoComplete(
     @Queries() Map<String, dynamic> queries,
   );
+
+  @POST(EndPoints.createOrder)
+  Future createOrder(@Body() Map<String, dynamic> body);
 }

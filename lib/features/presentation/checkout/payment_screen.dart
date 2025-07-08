@@ -12,15 +12,11 @@ class PaymentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: WebViewWidget(
-          controller:
-              _controller
-                ..loadRequest(
-                  Uri.parse(url),
-                  method: LoadRequestMethod.post,
-                ),
-        ),
+      appBar: AppBar(title: Text('Payment Screen')),
+      body: WebViewWidget(
+        controller:
+            _controller
+              ..loadRequest(Uri.parse(url), method: LoadRequestMethod.post),
       ),
     );
   }

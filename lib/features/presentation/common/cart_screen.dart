@@ -13,6 +13,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_in
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/checkout/checkout_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
@@ -228,27 +229,38 @@ class _CartScreenState extends State<CartScreen> {
                           }
                         } else {
                           if (_callCheckUserLoginApi()) {
-                            context.push(
-                              AppRoutes.checkoutRoute,
-                              extra: CheckOutScreenEntity(
-                                cartId: cartItems[0].cart.toString(),
-                                freightQuoteEntityData: freightQuoteEntityData,
-                                calculateInsuranceEntity:
-                                    calculateInsuranceEntity,
-                                isTransitInsured: isTransitInsured,
-                              ),
-                            );
+                            context
+                                .push(
+                                  AppRoutes.checkoutRoute,
+                                  extra: CheckOutScreenEntity(
+                                    cartItems: cartItems,
+                                    freightQuoteEntityData:
+                                        freightQuoteEntityData,
+                                    calculateInsuranceEntity:
+                                        calculateInsuranceEntity,
+                                    isTransitInsured: isTransitInsured,
+                                    localTransitFee: _calculateLocalTransitFees(cartItems),
+                                  ),
+                                )
+                                .then((_) {
+                                  _callLocationApi();
+                                  _callGetCartItemApi();
+                                });
                           } else {
-                            context.push(AppRoutes.loginRoute, extra: true);
-                            context.push(
-                              AppRoutes.checkoutRoute,
-                              extra: CheckOutScreenEntity(
-                                cartId: cartItems[0].cart.toString(),
-                                freightQuoteEntityData: freightQuoteEntityData,
-                                calculateInsuranceEntity:
-                                    calculateInsuranceEntity,
-                                isTransitInsured: isTransitInsured,
-                              ),
+                            // context.push(AppRoutes.loginRoute, extra: true);
+                            // context.push(
+                            //   AppRoutes.checkoutRoute,
+                            //   extra: CheckOutScreenEntity(
+                            //     cartItems: cartItems,
+                            //     freightQuoteEntityData: freightQuoteEntityData,
+                            //     calculateInsuranceEntity:
+                            //         calculateInsuranceEntity,
+                            //     isTransitInsured: isTransitInsured,
+                            //   ),
+                            // );
+                            widget.showErrorToast(
+                              context: context,
+                              message: "you are not logged in !!!",
                             );
                           }
                         }
@@ -614,5 +626,17 @@ class _CartScreenState extends State<CartScreen> {
 
   bool _callCheckUserLoginApi() {
     return context.read<CommonCubit>().isUserLoggedIn();
+  }
+
+  double _calculateLocalTransitFees(List<CartItemEntity> cartItems) {
+    double totalTransitFee = 0.0;
+
+    for (CartItemEntity item in cartItems) {
+      if (item.isChecked) {
+        totalTransitFee += double.parse(item.product.localTransitFee);
+      }
+    }
+
+    return totalTransitFee;
   }
 }

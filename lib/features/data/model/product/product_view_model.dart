@@ -423,7 +423,7 @@ class Height {
 
   factory Height.fromJson(Map<String, dynamic> json) => Height(
     unit: json["unit"],
-    value: json["value"]?.toDouble(),
+    value: double.parse(json["value"]),
   );
 
   Map<String, dynamic> toJson() => {

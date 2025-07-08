@@ -11,6 +11,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/select_freight_quote_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/confirm_payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
@@ -19,6 +20,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_use
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/create_order_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/initiate_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/verify_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
@@ -91,5 +93,9 @@ abstract class Repository {
     PaymentRequestEntity request,
   );
 
-  Future<Either<Failure, String>> verifyPayment(String transCode);
+  Future<Either<Failure, ConfirmPaymentResponseEntity>> verifyPayment(
+    String transCode,
+  );
+
+  Future<Either<Failure, String>> createOrder(CreateOrderParams params);
 }

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/confirm_payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/initiate_payment_usecase.dart';
@@ -38,7 +39,7 @@ class PaymentCubit extends Cubit<PaymentState> {
         emit(VerifyPaymentError(error: l.message));
       },
       (r) {
-        emit(VerifyPaymentLoaded(message: r));
+        emit(VerifyPaymentLoaded(response: r));
       },
     );
   }

@@ -32,6 +32,8 @@ abstract class LocalDatasource {
   setDestinationCountry(String country);
 
   String? getDestinationCountry();
+
+  logout();
 }
 
 class LocalDataSourceImpl extends LocalDatasource {
@@ -97,6 +99,11 @@ class LocalDataSourceImpl extends LocalDatasource {
   @override
   setDestinationCountry(String country) {
     mySharedPref.saveDestinationCountry(country);
+  }
+
+  @override
+  logout() {
+    mySharedPref.logout();
   }
 
   // @override

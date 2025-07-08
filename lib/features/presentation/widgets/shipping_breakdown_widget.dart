@@ -7,7 +7,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_qu
 import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_method_dropdown_widget.dart';
 
 class ShippingBreakdownWidget extends StatelessWidget {
-  final List<CartItemEntity>? cartItems;
+  final List<CartItemEntity> cartItems;
   final LocationEntity? location;
   final int? selectedShippingIndex;
   final FreightQuoteEntityData? freightQuoteEntityData;
@@ -18,7 +18,7 @@ class ShippingBreakdownWidget extends StatelessWidget {
 
   const ShippingBreakdownWidget({
     super.key,
-    this.cartItems,
+    required this.cartItems,
     required this.onShippingMethodDropdownTap,
     required this.onTransitInsuranceTap,
     this.location,
@@ -41,7 +41,7 @@ class ShippingBreakdownWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Estimated Total:'),
-          Text(_calculateEstimatedTotal(cartItems!).toStringAsFixed(2)),
+          Text(_calculateEstimatedTotal(cartItems).toStringAsFixed(2)),
           if (freightQuoteEntityData != null) ...[
             Row(
               children: [

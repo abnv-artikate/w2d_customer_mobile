@@ -38,4 +38,7 @@ class EndPoints {
   /// Telr Payment Endpoints
   static const String createPayment = 'mobile.xml';
   static const String confirmPayment = 'mobile_complete.xml';
+
+  /// Order Endpoints
+  static const String createOrder = '/order/create/';
 }

@@ -7,12 +7,15 @@ import 'package:google_places_flutter/model/place_type.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/create_order_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/orders/cubit/orders_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_text_field.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_breakdown_widget.dart';
@@ -31,6 +34,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool addNewAdd = true;
   bool? isTransitInsured;
   String countryCode = "";
+  String orderRef = "";
 
   @override
   initState() {
@@ -44,8 +48,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final TextEditingController _streetCtrl = TextEditingController();
   final TextEditingController _completeAddCtrl = TextEditingController();
   final TextEditingController _cityCtrl = TextEditingController();
-  // final TextEditingController _stateCtrl = TextEditingController();
-  // final TextEditingController _countryCtrl = TextEditingController();
   final TextEditingController _pinCtrl = TextEditingController();
 
   final FocusNode _firstNameNode = FocusNode();
@@ -54,13 +56,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final FocusNode _emailNode = FocusNode();
   final FocusNode _streetNode = FocusNode();
   final FocusNode _completeAddNode = FocusNode();
-  // final FocusNode _cityNode = FocusNode();
-  // final FocusNode _stateNode = FocusNode();
-  // final FocusNode _countryNode = FocusNode();
   final FocusNode _pinNode = FocusNode();
 
   @override
   void dispose() {
+    super.dispose();
     _firstNameCtrl.dispose();
     _lastNameCtrl.dispose();
     _primaryPhoneCtrl.dispose();
@@ -68,8 +68,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     _streetCtrl.dispose();
     _completeAddCtrl.dispose();
     _cityCtrl.dispose();
-    // _stateCtrl.dispose();
-    // _countryCtrl.dispose();
     _pinCtrl.dispose();
     _firstNameNode.dispose();
     _lastNameNode.dispose();
@@ -77,35 +75,61 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     _emailNode.dispose();
     _streetNode.dispose();
     _completeAddNode.dispose();
-    // _cityNode.dispose();
-    // _stateNode.dispose();
-    // _countryNode.dispose();
     _pinNode.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Checkout Screen")),
-      body: BlocListener<PaymentCubit, PaymentState>(
-        listener: (context, state) {
-          if (state is InitiatePaymentLoaded) {
-            context
-                .push(AppRoutes.paymentRoute, extra: state.response.startUrl)
-                .then((_) {
-                  _callConfirmPaymentApi(state.response.transactionCode);
-                });
-          } else if (state is InitiatePaymentError) {
-            widget.showErrorToast(context: context, message: state.error);
-          }
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<PaymentCubit, PaymentState>(
+            listener: (context, state) {
+              if (state is InitiatePaymentLoaded) {
+                orderRef = state.response.transactionCode;
+                context
+                    .push(
+                      AppRoutes.paymentRoute,
+                      extra: state.response.startUrl,
+                    )
+                    .then((_) {
+                      _callConfirmPaymentApi(state.response.transactionCode);
+                    });
+              } else if (state is InitiatePaymentError) {
+                widget.showErrorToast(context: context, message: state.error);
+              }
 
-          if (state is VerifyPaymentLoaded) {
-            widget.showErrorToast(context: context, message: state.message);
-          } else if (state is VerifyPaymentError) {
-            widget.showErrorToast(context: context, message: state.error);
-          }
-        },
+              if (state is VerifyPaymentLoaded) {
+                if (state.response.status == 'A') {
+                  _callCreateOrderApi(
+                    tranRef: state.response.tranRef,
+                    orderRef: orderRef,
+                  );
+                } else {
+                  widget.showErrorToast(
+                    context: context,
+                    message: state.response.message,
+                  );
+                }
+              } else if (state is VerifyPaymentError) {
+                widget.showErrorToast(context: context, message: state.error);
+              }
+            },
+          ),
+          BlocListener<OrdersCubit, OrdersState>(
+            listener: (context, state) {
+              if (state is CreateOrderLoaded) {
+                context.pop();
+              } else if (state is CreateOrderError) {
+                widget.showErrorToast(
+                  context: context,
+                  message: "Error while creating order",
+                );
+              }
+            },
+          ),
+        ],
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10),
@@ -132,6 +156,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 //   ),
                 // ],
                 ShippingBreakdownWidget(
+                  cartItems: widget.checkOutScreenEntity.cartItems,
                   location: null,
                   freightQuoteEntityData: null,
                   calculateInsuranceEntity:
@@ -140,8 +165,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       isTransitInsured != null
                           ? isTransitInsured!
                           : widget.checkOutScreenEntity.isTransitInsured,
-                  onShippingMethodDropdownTap: () {
-                  },
+                  onShippingMethodDropdownTap: () {},
                   onTransitInsuranceTap: (bool? value) {
                     setState(() {
                       isTransitInsured = value!;
@@ -156,7 +180,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         addInsurance: isTransitInsured!,
                       );
                     }
-                    ;
                   },
                 ),
                 if (addNewAdd) ...[_addNewAddress()],
@@ -260,7 +283,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 lat,
                 lng,
               );
-              countryCode = placemarks[1].isoCountryCode!;
+              countryCode = placemarks[0].isoCountryCode!;
             },
             itemClick: (Prediction prediction) {
               _completeAddCtrl.text = prediction.description!;
@@ -303,7 +326,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             onTap: () {
               _callInitiatePaymentApi(
                 PaymentRequestEntity(
-                  cartId: widget.checkOutScreenEntity.cartId,
+                  cartId:
+                      widget.checkOutScreenEntity.cartItems[0].cart.toString(),
                   amount: '1000',
                   currency: 'AED',
                   firstName: _firstNameCtrl.text,
@@ -317,6 +341,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   phone: _primaryPhoneCtrl.text,
                 ),
               );
+              // _clearTextFields();
             },
           ),
         ],
@@ -402,18 +427,80 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   void _callConfirmPaymentApi(String transCode) {
     context.read<PaymentCubit>().verifyPayment(transCode);
   }
+
+  void _clearTextFields() {
+    _firstNameCtrl.clear();
+    _lastNameCtrl.clear();
+    _primaryPhoneCtrl.clear();
+    _emailCtrl.clear();
+    _streetCtrl.clear();
+    _completeAddCtrl.clear();
+    _cityCtrl.clear();
+    _pinCtrl.clear();
+  }
+
+  void _callCreateOrderApi({
+    required String tranRef,
+    required String orderRef,
+  }) {
+    context.read<OrdersCubit>().createOrder(
+      CreateOrderParams(
+        cartId: widget.checkOutScreenEntity.cartItems[0].cart.toString(),
+        addressId: 13,
+        quoteToken:
+            widget.checkOutScreenEntity.freightQuoteEntityData!.quoteToken,
+        transitInsurance:
+            widget
+                .checkOutScreenEntity
+                .calculateInsuranceEntity
+                ?.data
+                .insuranceAmt ??
+            0,
+        platformFee: 0,
+        destinationDuty: 0,
+        vat: 0,
+        localTransitFee: widget.checkOutScreenEntity.localTransitFee,
+        currency: "AED",
+        shippingCost:
+            widget
+                .checkOutScreenEntity
+                .calculateInsuranceEntity
+                ?.data
+                .freightAmount ??
+            0,
+        productPrice:
+            widget
+                .checkOutScreenEntity
+                .calculateInsuranceEntity
+                ?.data
+                .goodsValue ??
+            0,
+        sumTotal:
+            widget
+                .checkOutScreenEntity
+                .calculateInsuranceEntity
+                ?.data
+                .netTotal ??
+            0,
+        file: "",
+        orderRef: orderRef,
+      ),
+    );
+  }
 }
 
 class CheckOutScreenEntity {
-  final String cartId;
+  final List<CartItemEntity> cartItems;
   FreightQuoteEntityData? freightQuoteEntityData;
   CalculateInsuranceEntity? calculateInsuranceEntity;
+  double localTransitFee;
   final bool isTransitInsured;
 
   CheckOutScreenEntity({
-    required this.cartId,
+    required this.cartItems,
     this.freightQuoteEntityData,
     this.calculateInsuranceEntity,
+    required this.localTransitFee,
     required this.isTransitInsured,
   });
 }

@@ -15,6 +15,7 @@ import 'package:w2d_customer_mobile/features/data/model/shipping/confirm_insuran
 import 'package:w2d_customer_mobile/features/data/model/shipping/freight_quote_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/select_freight_service_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/success_message_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_confirm_payment_response_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_payment_request_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_payment_response_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/telr_payment/terl_confirm_payment_request_model.dart';
@@ -71,7 +72,9 @@ abstract class RemoteDatasource {
     PaymentRequestEntity request,
   );
 
-  Future<void> verifyPayment(String transCode);
+  Future<TelrConfirmPaymentResponseModel> verifyPayment(String transCode);
+
+  Future createOrder(Map<String, dynamic> body);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
@@ -266,10 +269,10 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   ) async {
     try {
       final xmlBody = TelrPaymentRequestModel.toXml(request);
-      final response = await telrPaymentClient.initiateTelrPayment(xmlBody);
-      final telrResponse = TelrPaymentResponseModel.fromXml(response.data);
+      final telrResponse = await telrPaymentClient.initiateTelrPayment(xmlBody);
+      final response = TelrPaymentResponseModel.fromXml(telrResponse.data);
 
-      return telrResponse;
+      return response;
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {
@@ -278,12 +281,30 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   }
 
   @override
-  Future<void> verifyPayment(String transCode) async {
+  Future<TelrConfirmPaymentResponseModel> verifyPayment(
+    String transCode,
+  ) async {
     try {
       final xmlBody = TelrConfirmPaymentRequestModel.toXml(transCode);
-      final response = await telrPaymentClient.confirmTelrPayment(xmlBody);
+      final telrResponse = await telrPaymentClient.confirmTelrPayment(xmlBody);
+      final response = TelrConfirmPaymentResponseModel.fromXml(
+        telrResponse.data,
+      );
 
-      print(response);
+      return response;
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future createOrder(Map<String, dynamic> body) async {
+    try {
+      final response = w2dClient.createOrder(body);
+
+      return response;
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {
