@@ -13,6 +13,7 @@ class Assets {
   static const String iconsHiddenGemsInactive = 'assets/icons/hidden_gems_inactive.png';
   static const String iconsLikeOutlined = 'assets/icons/like_outlined.png';
   static const String iconsReviewStartFilled = 'assets/icons/review_start_filled.png';
+  static const String iconsUAEDirhamSymbol = 'assets/icons/UAE_Dirham_Symbol.svg';
   static const String iconsW2DHorizontalLogo = 'assets/icons/W2D_horizontal_logo.png';
   static const String iconsW2DLogoAspirationalGold = 'assets/icons/W2D_logo_aspirational_gold.png';
   static const String iconsW2DLogoGreen = 'assets/icons/W2D_logo_green.png';

@@ -101,7 +101,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 children: [
                   if (widget.productEntity.salePrice.isNotEmpty) ...[
                     Text(
-                      '\u{62f} ${widget.productEntity.regularPrice}',
+                      '\u{62f}\u{2e}\u{625} ${widget.productEntity.regularPrice}',
                       style: TextStyle(
                         fontSize: 35,
                         fontWeight: FontWeight.w600,
@@ -112,7 +112,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     ),
                     SizedBox(width: 10),
                     Text(
-                      '\u{62f} ${widget.productEntity.salePrice}',
+                      '\u{62f}\u{2e}\u{625} ${widget.productEntity.salePrice}',
                       style: TextStyle(
                         fontSize: 35,
                         fontWeight: FontWeight.w500,
@@ -120,7 +120,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     ),
                   ] else ...[
                     Text(
-                      '\u{62f} ${widget.productEntity.regularPrice}',
+                      '\u{62f}\u{2e}\u{625} ${widget.productEntity.regularPrice}',
                       style: TextStyle(
                         fontSize: 35,
                         fontWeight: FontWeight.w500,
