@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/checkout/payment_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/orders/cubit/orders_cubit.dart';
@@ -105,7 +106,7 @@ final GoRouter router = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         return BlocProvider<CategoryCubit>(
           create: (context) => sl<CategoryCubit>(),
-          child: CategoryListingScreen(categorySlug: state.extra as String),
+          child: CategoryListingScreen(category: state.extra as SubCategoriesEntity),
         );
       },
     ),

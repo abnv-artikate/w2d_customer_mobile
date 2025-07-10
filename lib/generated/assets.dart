@@ -2,20 +2,10 @@
 class Assets {
   Assets._();
 
-  static const String fontsCormorantGaramondBold = 'assets/fonts/CormorantGaramond-Bold.ttf';
-  static const String fontsCormorantGaramondBoldItalic = 'assets/fonts/CormorantGaramond-BoldItalic.ttf';
-  static const String fontsCormorantGaramondItalic = 'assets/fonts/CormorantGaramond-Italic.ttf';
-  static const String fontsCormorantGaramondLight = 'assets/fonts/CormorantGaramond-Light.ttf';
-  static const String fontsCormorantGaramondLightItalic = 'assets/fonts/CormorantGaramond-LightItalic.ttf';
-  static const String fontsCormorantGaramondMedium = 'assets/fonts/CormorantGaramond-Medium.ttf';
-  static const String fontsCormorantGaramondMediumItalic = 'assets/fonts/CormorantGaramond-MediumItalic.ttf';
-  static const String fontsCormorantGaramondRegular = 'assets/fonts/CormorantGaramond-Regular.ttf';
-  static const String fontsCormorantGaramondSemiBold = 'assets/fonts/CormorantGaramond-SemiBold.ttf';
-  static const String fontsCormorantGaramondSemiBoldItalic = 'assets/fonts/CormorantGaramond-SemiBoldItalic.ttf';
-  static const String fontsURWClassicoBold = 'assets/fonts/URWClassico-Bold.ttf';
-  static const String fontsURWClassicoBoldItalic = 'assets/fonts/URWClassico-BoldItalic.ttf';
-  static const String fontsURWClassicoItalic = 'assets/fonts/URWClassico-Italic.ttf';
-  static const String fontsURWClassicoRegular = 'assets/fonts/URWClassico-Regular.ttf';
+  static const String dMSansDMSansBold = 'assets/fonts/DMSans/DMSans-Bold.ttf';
+  static const String dMSansDMSansMedium = 'assets/fonts/DMSans/DMSans-Medium.ttf';
+  static const String dMSansDMSansRegular = 'assets/fonts/DMSans/DMSans-Regular.ttf';
+  static const String dMSansDMSansSemiBold = 'assets/fonts/DMSans/DMSans-SemiBold.ttf';
   static const String iconsBrandMallActive = 'assets/icons/brand_mall_active.png';
   static const String iconsBrandMallInactive = 'assets/icons/brand_mall_inactive.png';
   static const String iconsCart5 = 'assets/icons/cart5.png';
@@ -32,5 +22,6 @@ class Assets {
   static const String imagesHomepageBannersW2D14 = 'assets/images/HomepageBannersW2D14.png';
   static const String imagesHomepageBannersW2D15 = 'assets/images/HomepageBannersW2D15.png';
   static const String imagesHomepageBannersW2D16 = 'assets/images/HomepageBannersW2D16.png';
+  static const String w2dCustomerMobile = '.env';
 
 }

@@ -16,12 +16,8 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider<CommonCubit>(
-          create: (context) => sl<CommonCubit>(),
-        ),
-        BlocProvider<AuthCubit>(
-          create: (context) => sl<AuthCubit>(),
-        ),
+        BlocProvider<CommonCubit>(create: (context) => sl<CommonCubit>()),
+        BlocProvider<AuthCubit>(create: (context) => sl<AuthCubit>()),
       ],
       child: MyApp(),
     ),
@@ -36,7 +32,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: Constants.appName,
-
       routerConfig: router,
       theme: ThemeData(
         scaffoldBackgroundColor: AppColors.white,
@@ -46,6 +41,7 @@ class MyApp extends StatelessWidget {
         ),
         drawerTheme: DrawerThemeData(backgroundColor: AppColors.white),
         bottomAppBarTheme: BottomAppBarTheme(color: AppColors.white),
+        fontFamily: 'DMSans',
         useMaterial3: true,
       ),
       // home: const CategoryListingScreen(),

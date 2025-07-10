@@ -16,64 +16,64 @@ class MySharedPref {
 
   MySharedPref(this._pref);
 
-  void saveAccessToken(String token) {
-    _pref.setString(accessToken, token);
+  void saveAccessToken(String token) async {
+    await _pref.setString(accessToken, token);
   }
 
   String? getAccessToken() {
     return _pref.getString(accessToken);
   }
 
-  void saveRefreshToken(String token) {
-    _pref.setString(refreshToken, token);
+  void saveRefreshToken(String token) async {
+    await _pref.setString(refreshToken, token);
   }
 
   String? getRefreshToken() {
     return _pref.getString(refreshToken);
   }
 
-  void saveUserEmail(String email) {
-    _pref.setString(userEmail, email);
+  void saveUserEmail(String email) async {
+    await _pref.setString(userEmail, email);
   }
 
   String? getUserEmail() {
     return _pref.getString(userEmail);
   }
 
-  void saveCartId(String cartId) {
-    _pref.setString(cartID, cartId);
+  void saveCartId(String cartId) async {
+    await _pref.setString(cartID, cartId);
   }
 
   String? getCartId() {
     return _pref.getString(cartID);
   }
 
-  void saveLatitude(double latitude) {
-    _pref.setDouble(latitudeKey, latitude);
+  void saveLatitude(double latitude) async {
+    await _pref.setDouble(latitudeKey, latitude);
   }
 
   double? getLatitude() {
     return _pref.getDouble(latitudeKey);
   }
 
-  void saveLongitude(double longitude) {
-    _pref.setDouble(longitudeKey, longitude);
+  void saveLongitude(double longitude) async {
+    await _pref.setDouble(longitudeKey, longitude);
   }
 
   double? getLongitude() {
     return _pref.getDouble(longitudeKey);
   }
 
-  void saveDestinationCity(String city) {
-    _pref.setString(destinationCity, city);
+  void saveDestinationCity(String city) async {
+    await _pref.setString(destinationCity, city);
   }
 
   String? getDestinationCity() {
     return _pref.getString(destinationCity);
   }
 
-  void saveDestinationCountry(String country) {
-    _pref.setString(destinationCountry, country);
+  void saveDestinationCountry(String country) async {
+    await _pref.setString(destinationCountry, country);
   }
 
   String? getDestinationCountry() {

@@ -34,13 +34,13 @@ class _ProductScreenState extends State<ProductScreen> {
             widget.showErrorToast(context: context, message: state.message);
           }
         },
-        child: ListView(
-          shrinkWrap: true,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _productDetailANdPrice(),
             SizedBox(height: 10),
             _wishlistAndCartButton(),
-            SizedBox(height: 10),
           ],
         ),
       ),
@@ -75,8 +75,8 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   _productDetailANdPrice() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      shrinkWrap: true,
       children: [
         Image.network(
           widget.productEntity.mainImage,
@@ -84,42 +84,67 @@ class _ProductScreenState extends State<ProductScreen> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.width,
         ),
-        Text(
-          widget.productEntity.name,
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
-        ),
-        Text(
-          widget.productEntity.shortDescription,
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-        ),
-        Row(
-          children: [
-            Text(
-              '\u{20B9}${widget.productEntity.regularPrice}',
-              style: TextStyle(
-                fontSize: 35,
-                fontWeight: FontWeight.w600,
-                decoration: TextDecoration.lineThrough,
-                decorationColor: AppColors.softWhite80,
-                color: AppColors.softWhite80,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.productEntity.name,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
               ),
-            ),
-            SizedBox(width: 10),
-            Text(
-              '\u{20B9}${widget.productEntity.salePrice}',
-              style: TextStyle(fontSize: 35, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-        Container(
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppColors.worldGreen10,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(
-            '${_calculateDiscount()}% off',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+              Text(
+                widget.productEntity.shortDescription,
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+              ),
+              Row(
+                children: [
+                  if (widget.productEntity.salePrice.isNotEmpty) ...[
+                    Text(
+                      '\u{62f} ${widget.productEntity.regularPrice}',
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.lineThrough,
+                        decorationColor: AppColors.softWhite80,
+                        color: AppColors.softWhite80,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      '\u{62f} ${widget.productEntity.salePrice}',
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ] else ...[
+                    Text(
+                      '\u{62f} ${widget.productEntity.regularPrice}',
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              if (widget.productEntity.salePrice.isNotEmpty &&
+                  widget.productEntity.salePrice !=
+                      widget.productEntity.regularPrice) ...[
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.worldGreen10,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    '${_calculateDiscount()}% off',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ],

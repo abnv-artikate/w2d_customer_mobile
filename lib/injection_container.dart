@@ -243,7 +243,9 @@ Future<void> init() async {
   );
 
   /// Clients
-  sl.registerLazySingleton<W2DClient>(() => W2DClient(w2dDio));
+  sl.registerLazySingleton<W2DClient>(
+    () => W2DClient(w2dDio, sl<LocalDatasource>()),
+  );
   sl.registerLazySingleton<ShippingClient>(() => ShippingClient(shippingDio));
   sl.registerLazySingleton<TelrPaymentClient>(
     () => TelrPaymentClient(telrPaymentDio),

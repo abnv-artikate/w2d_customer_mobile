@@ -445,7 +445,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }) {
     context.read<OrdersCubit>().createOrder(
       CreateOrderParams(
-        cartId: widget.checkOutScreenEntity.cartItems[0].cart.toString(),
+        cartId: widget.checkOutScreenEntity.cartItems[0].id.toString(),
         addressId: 13,
         quoteToken:
             widget.checkOutScreenEntity.freightQuoteEntityData!.quoteToken,

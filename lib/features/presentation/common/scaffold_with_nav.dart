@@ -35,7 +35,7 @@ class _ScaffoldWithNavState extends State<ScaffoldWithNav> {
             label: 'Home',
           ),
           CustomNavigationDestination(
-            icon: Icon(LucideIcons.layoutPanelLeft, size: 30),
+            icon: Icon(LucideIcons.layoutList, size: 30),
             label: 'Explore',
           ),
 

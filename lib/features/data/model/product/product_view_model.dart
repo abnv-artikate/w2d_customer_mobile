@@ -6,23 +6,20 @@ class ProductViewModel {
   String? message;
   Data? data;
 
-  ProductViewModel({
-    this.type,
-    this.status,
-    this.message,
-    this.data,
-  });
+  ProductViewModel({this.type, this.status, this.message, this.data});
 
-  factory ProductViewModel.fromRawJson(String str) => ProductViewModel.fromJson(json.decode(str));
+  factory ProductViewModel.fromRawJson(String str) =>
+      ProductViewModel.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory ProductViewModel.fromJson(Map<String, dynamic> json) => ProductViewModel(
-    type: json["type"],
-    status: json["status"],
-    message: json["message"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-  );
+  factory ProductViewModel.fromJson(Map<String, dynamic> json) =>
+      ProductViewModel(
+        type: json["type"],
+        status: json["status"],
+        message: json["message"],
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "type": type,
@@ -158,10 +155,17 @@ class Data {
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     id: json["id"],
     seller: json["seller"] == null ? null : Seller.fromJson(json["seller"]),
-    category: json["category"] == null ? null : Category.fromJson(json["category"]),
+    category:
+        json["category"] == null ? null : Category.fromJson(json["category"]),
     brand: json["brand"] == null ? null : Brand.fromJson(json["brand"]),
-    reviews: json["reviews"] == null ? [] : List<dynamic>.from(json["reviews"]!.map((x) => x)),
-    variations: json["variations"] == null ? [] : List<dynamic>.from(json["variations"]!.map((x) => x)),
+    reviews:
+        json["reviews"] == null
+            ? []
+            : List<dynamic>.from(json["reviews"]!.map((x) => x)),
+    variations:
+        json["variations"] == null
+            ? []
+            : List<dynamic>.from(json["variations"]!.map((x) => x)),
     name: json["name"],
     sku: json["sku"],
     modelNumber: json["model_number"],
@@ -171,7 +175,10 @@ class Data {
     longDescription: json["long_description"],
     keyFeatures: json["key_features"],
     mainImage: json["main_image"],
-    gallery: json["gallery"] == null ? [] : List<String>.from(json["gallery"]!.map((x) => x)),
+    gallery:
+        json["gallery"] == null
+            ? []
+            : List<String>.from(json["gallery"]!.map((x) => x)),
     videoUrl: json["video_url"],
     regularPrice: json["regular_price"],
     localTransitFee: json["local_transit_fee"],
@@ -185,9 +192,17 @@ class Data {
     weightUnit: json["weight_unit"],
     shippingWeight: json["shipping_weight"],
     shippingWeightUnit: json["shipping_weight_unit"],
-    dimensions: json["dimensions"] == null ? null : Dimensions.fromJson(json["dimensions"]),
+    dimensions:
+        json["dimensions"] == null
+            ? null
+            : Dimensions.fromJson(json["dimensions"]),
     packagingDimensions: json["packaging_dimensions"],
-    packagingDetails: json["packaging_details"] == null ? [] : List<Dimensions>.from(json["packaging_details"]!.map((x) => Dimensions.fromJson(x))),
+    packagingDetails:
+        json["packaging_details"] == null
+            ? []
+            : List<Dimensions>.from(
+              json["packaging_details"]!.map((x) => Dimensions.fromJson(x)),
+            ),
     shippingMethods: json["shipping_methods"],
     shippingRegion: json["shipping_region"],
     shippingCountries: json["shipping_countries"],
@@ -201,7 +216,12 @@ class Data {
     visibility: json["visibility"],
     specificCustomerGroups: json["specific_customer_groups"],
     lastUpdatedBy: json["last_updated_by"],
-    technicalSpecifications: json["technical_specifications"] == null ? null : TechnicalSpecifications.fromJson(json["technical_specifications"]),
+    technicalSpecifications:
+        json["technical_specifications"] == null
+            ? null
+            : TechnicalSpecifications.fromJson(
+              json["technical_specifications"],
+            ),
     hasVariant: json["has_variant"],
     woodenBoxPackaging: json["wooden_box_packaging"],
     isPerfume: json["is_perfume"],
@@ -220,8 +240,10 @@ class Data {
     "seller": seller?.toJson(),
     "category": category?.toJson(),
     "brand": brand?.toJson(),
-    "reviews": reviews == null ? [] : List<dynamic>.from(reviews!.map((x) => x)),
-    "variations": variations == null ? [] : List<dynamic>.from(variations!.map((x) => x)),
+    "reviews":
+        reviews == null ? [] : List<dynamic>.from(reviews!.map((x) => x)),
+    "variations":
+        variations == null ? [] : List<dynamic>.from(variations!.map((x) => x)),
     "name": name,
     "sku": sku,
     "model_number": modelNumber,
@@ -231,7 +253,8 @@ class Data {
     "long_description": longDescription,
     "key_features": keyFeatures,
     "main_image": mainImage,
-    "gallery": gallery == null ? [] : List<dynamic>.from(gallery!.map((x) => x)),
+    "gallery":
+        gallery == null ? [] : List<dynamic>.from(gallery!.map((x) => x)),
     "video_url": videoUrl,
     "regular_price": regularPrice,
     "local_transit_fee": localTransitFee,
@@ -247,7 +270,10 @@ class Data {
     "shipping_weight_unit": shippingWeightUnit,
     "dimensions": dimensions?.toJson(),
     "packaging_dimensions": packagingDimensions,
-    "packaging_details": packagingDetails == null ? [] : List<dynamic>.from(packagingDetails!.map((x) => x.toJson())),
+    "packaging_details":
+        packagingDetails == null
+            ? []
+            : List<dynamic>.from(packagingDetails!.map((x) => x.toJson())),
     "shipping_methods": shippingMethods,
     "shipping_region": shippingRegion,
     "shipping_countries": shippingCountries,
@@ -281,11 +307,7 @@ class Brand {
   String? name;
   dynamic description;
 
-  Brand({
-    this.id,
-    this.name,
-    this.description,
-  });
+  Brand({this.id, this.name, this.description});
 
   factory Brand.fromRawJson(String str) => Brand.fromJson(json.decode(str));
 
@@ -319,7 +341,8 @@ class Category {
     this.allowedAttributes,
   });
 
-  factory Category.fromRawJson(String str) => Category.fromJson(json.decode(str));
+  factory Category.fromRawJson(String str) =>
+      Category.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
@@ -327,15 +350,26 @@ class Category {
     id: json["id"],
     name: json["name"],
     parent: json["parent"],
-    subcategories: json["subcategories"] == null ? [] : List<Category>.from(json["subcategories"]!.map((x) => Category.fromJson(x))),
-    allowedAttributes: json["allowed_attributes"] == null ? null : AllowedAttributes.fromJson(json["allowed_attributes"]),
+    subcategories:
+        json["subcategories"] == null
+            ? []
+            : List<Category>.from(
+              json["subcategories"]!.map((x) => Category.fromJson(x)),
+            ),
+    allowedAttributes:
+        json["allowed_attributes"] == null
+            ? null
+            : AllowedAttributes.fromJson(json["allowed_attributes"]),
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "name": name,
     "parent": parent,
-    "subcategories": subcategories == null ? [] : List<dynamic>.from(subcategories!.map((x) => x.toJson())),
+    "subcategories":
+        subcategories == null
+            ? []
+            : List<dynamic>.from(subcategories!.map((x) => x.toJson())),
     "allowed_attributes": allowedAttributes?.toJson(),
   };
 }
@@ -355,24 +389,44 @@ class AllowedAttributes {
     this.heartNotes,
   });
 
-  factory AllowedAttributes.fromRawJson(String str) => AllowedAttributes.fromJson(json.decode(str));
+  factory AllowedAttributes.fromRawJson(String str) =>
+      AllowedAttributes.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory AllowedAttributes.fromJson(Map<String, dynamic> json) => AllowedAttributes(
-    size: json["size"] == null ? [] : List<String>.from(json["size"]!.map((x) => x)),
-    color: json["color"] == null ? [] : List<String>.from(json["color"]!.map((x) => x)),
-    topNotes: json["Top Notes"] == null ? [] : List<String>.from(json["Top Notes"]!.map((x) => x)),
-    baseNotes: json["Base Notes"] == null ? [] : List<String>.from(json["Base Notes"]!.map((x) => x)),
-    heartNotes: json["Heart Notes"] == null ? [] : List<String>.from(json["Heart Notes"]!.map((x) => x)),
-  );
+  factory AllowedAttributes.fromJson(Map<String, dynamic> json) =>
+      AllowedAttributes(
+        size:
+            json["size"] == null
+                ? []
+                : List<String>.from(json["size"]!.map((x) => x)),
+        color:
+            json["color"] == null
+                ? []
+                : List<String>.from(json["color"]!.map((x) => x)),
+        topNotes:
+            json["Top Notes"] == null
+                ? []
+                : List<String>.from(json["Top Notes"]!.map((x) => x)),
+        baseNotes:
+            json["Base Notes"] == null
+                ? []
+                : List<String>.from(json["Base Notes"]!.map((x) => x)),
+        heartNotes:
+            json["Heart Notes"] == null
+                ? []
+                : List<String>.from(json["Heart Notes"]!.map((x) => x)),
+      );
 
   Map<String, dynamic> toJson() => {
     "size": size == null ? [] : List<dynamic>.from(size!.map((x) => x)),
     "color": color == null ? [] : List<dynamic>.from(color!.map((x) => x)),
-    "Top Notes": topNotes == null ? [] : List<dynamic>.from(topNotes!.map((x) => x)),
-    "Base Notes": baseNotes == null ? [] : List<dynamic>.from(baseNotes!.map((x) => x)),
-    "Heart Notes": heartNotes == null ? [] : List<dynamic>.from(heartNotes!.map((x) => x)),
+    "Top Notes":
+        topNotes == null ? [] : List<dynamic>.from(topNotes!.map((x) => x)),
+    "Base Notes":
+        baseNotes == null ? [] : List<dynamic>.from(baseNotes!.map((x) => x)),
+    "Heart Notes":
+        heartNotes == null ? [] : List<dynamic>.from(heartNotes!.map((x) => x)),
   };
 }
 
@@ -382,14 +436,10 @@ class Dimensions {
   Height? length;
   Height? weight;
 
-  Dimensions({
-    this.width,
-    this.height,
-    this.length,
-    this.weight,
-  });
+  Dimensions({this.width, this.height, this.length, this.weight});
 
-  factory Dimensions.fromRawJson(String str) => Dimensions.fromJson(json.decode(str));
+  factory Dimensions.fromRawJson(String str) =>
+      Dimensions.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
@@ -412,68 +462,65 @@ class Height {
   String? unit;
   double? value;
 
-  Height({
-    this.unit,
-    this.value,
-  });
+  Height({this.unit, this.value});
 
   factory Height.fromRawJson(String str) => Height.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory Height.fromJson(Map<String, dynamic> json) => Height(
-    unit: json["unit"],
-    value: double.parse(json["value"]),
-  );
+  factory Height.fromJson(Map<String, dynamic> json) {
+    final val = json["value"];
 
-  Map<String, dynamic> toJson() => {
-    "unit": unit,
-    "value": value,
-  };
+    double parsedValue;
+
+    if (val is num) {
+      // Both int and double are subtypes of num
+      parsedValue = val.toDouble();
+    } else if (val is String) {
+      parsedValue = double.parse(val);
+    } else {
+      parsedValue = double.tryParse(val.toString()) ?? 0.0;
+    }
+
+    return Height(
+      unit: json["unit"],
+      value: parsedValue,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {"unit": unit, "value": value};
 }
 
 class Seller {
   int? id;
   String? businessName;
 
-  Seller({
-    this.id,
-    this.businessName,
-  });
+  Seller({this.id, this.businessName});
 
   factory Seller.fromRawJson(String str) => Seller.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory Seller.fromJson(Map<String, dynamic> json) => Seller(
-    id: json["id"],
-    businessName: json["business_name"],
-  );
+  factory Seller.fromJson(Map<String, dynamic> json) =>
+      Seller(id: json["id"], businessName: json["business_name"]);
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "business_name": businessName,
-  };
+  Map<String, dynamic> toJson() => {"id": id, "business_name": businessName};
 }
 
 class TechnicalSpecifications {
   String? topNotes;
 
-  TechnicalSpecifications({
-    this.topNotes,
-  });
+  TechnicalSpecifications({this.topNotes});
 
-  factory TechnicalSpecifications.fromRawJson(String str) => TechnicalSpecifications.fromJson(json.decode(str));
+  factory TechnicalSpecifications.fromRawJson(String str) =>
+      TechnicalSpecifications.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory TechnicalSpecifications.fromJson(Map<String, dynamic> json) => TechnicalSpecifications(
-    topNotes: json["Top Notes"],
-  );
+  factory TechnicalSpecifications.fromJson(Map<String, dynamic> json) =>
+      TechnicalSpecifications(topNotes: json["Top Notes"]);
 
-  Map<String, dynamic> toJson() => {
-    "Top Notes": topNotes,
-  };
+  Map<String, dynamic> toJson() => {"Top Notes": topNotes};
 }
 
 class EnumValues<T> {

@@ -20,7 +20,6 @@ import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_paymen
 import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_payment_response_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/telr_payment/terl_confirm_payment_request_model.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
-import 'package:xml/xml.dart';
 
 abstract class RemoteDatasource {
   /// Auth Datasource

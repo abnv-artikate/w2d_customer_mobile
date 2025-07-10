@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final CarouselOptions _bestSellerCarouselOption = CarouselOptions(
     disableCenter: true,
     padEnds: false,
-    height: 320,
+    height: 280,
     viewportFraction: 0.5,
     enableInfiniteScroll: false,
   );
@@ -115,15 +115,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   context.push(AppRoutes.searchRoute);
                 },
               ),
-              Expanded(
-                child: BrandMallToggleWidget(
-                  onTap: () {
-                    setState(() {
-                      isBrand = !isBrand;
-                    });
-                  },
-                  isBrand: isBrand,
-                ),
+              BrandMallToggleWidget(
+                onTap: () {
+                  setState(() {
+                    isBrand = !isBrand;
+                  });
+                },
+                isBrand: isBrand,
               ),
             ],
           ),
@@ -169,13 +167,12 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, state) {
         return brandMallCollections.isNotEmpty ||
                 hiddenGemsCollections.isNotEmpty
-            ? ListView.separated(
+            ? ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (BuildContext context, int index) {
                 return Container(
-                  color: AppColors.softWhite71,
-                  padding: EdgeInsets.symmetric(vertical: 25, horizontal: 8),
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -233,6 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           .regularPrice,
                               onViewTap: () {},
                               onCartTap: () {},
+                              isHomePage: true,
                             );
                           },
                         ),
@@ -241,9 +239,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               },
-              separatorBuilder: (BuildContext context, int index) {
-                return SizedBox(height: 10);
-              },
+              // separatorBuilder: (BuildContext context, int index) {
+              //   return SizedBox(height: 2);
+              // },
               itemCount:
                   isBrand
                       ? brandMallCollections.length

@@ -107,8 +107,7 @@ class _ExploreCategoriesScreenState extends State<ExploreCategoriesScreen> {
                                                                     AppRoutes
                                                                         .listingRoute,
                                                                     extra:
-                                                                        categoryList[index]
-                                                                            .handle,
+                                                                        e,
                                                                   )
                                                                   .then((_) {
                                                                     _callCategoriesListingAPi();
