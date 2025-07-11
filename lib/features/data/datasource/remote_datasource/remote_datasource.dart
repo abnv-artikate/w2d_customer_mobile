@@ -73,7 +73,7 @@ abstract class RemoteDatasource {
 
   Future<TelrConfirmPaymentResponseModel> verifyPayment(String transCode);
 
-  Future createOrder(Map<String, dynamic> body);
+  // Future createOrder(Map<String, dynamic> body);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
@@ -298,16 +298,16 @@ class RemoteDatasourceImpl extends RemoteDatasource {
     }
   }
 
-  @override
-  Future createOrder(Map<String, dynamic> body) async {
-    try {
-      final response = w2dClient.createOrder(body);
-
-      return response;
-    } on DioException catch (e) {
-      throw Exception(e.message);
-    } on Exception {
-      rethrow;
-    }
-  }
+  // @override
+  // Future createOrder(Map<String, dynamic> body) async {
+  //   try {
+  //     final response = w2dClient.createOrder(body);
+  //
+  //     return response;
+  //   } on DioException catch (e) {
+  //     throw Exception(e.message);
+  //   } on Exception {
+  //     rethrow;
+  //   }
+  // }
 }

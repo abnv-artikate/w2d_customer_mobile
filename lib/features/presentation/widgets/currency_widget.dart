@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
 class CurrencyWidget extends StatelessWidget {
@@ -8,8 +9,10 @@ class CurrencyWidget extends StatelessWidget {
     required this.price,
     required this.fontSize,
     required this.strikeThrough,
-    this.fontColor,
-    this.strikeThroughColor,
+    this.fontColor = AppColors.deepBlue,
+    this.strikeThroughColor = AppColors.black,
+    this.svgHeight = 10,
+    this.svgWidth = 5,
   });
 
   final String price;
@@ -17,6 +20,8 @@ class CurrencyWidget extends StatelessWidget {
   final bool strikeThrough;
   final Color? fontColor;
   final Color? strikeThroughColor;
+  final double svgHeight;
+  final double svgWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +30,14 @@ class CurrencyWidget extends StatelessWidget {
       children: [
         SvgPicture.asset(
           Assets.iconsUAEDirhamSymbol,
-          height: 10,
-          width: 5,
+          height: svgHeight,
+          width: svgWidth,
           fit: BoxFit.contain,
         ),
+        // Text(
+        //   '&#xea;',
+        //   style: TextStyle(fontFamily: 'AEDFont', fontSize: fontSize),
+        // ),
         SizedBox(width: 4),
         Text(
           price,

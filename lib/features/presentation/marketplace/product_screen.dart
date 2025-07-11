@@ -8,6 +8,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/product/product_vie
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -80,7 +81,7 @@ class _ProductScreenState extends State<ProductScreen> {
       children: [
         Image.network(
           widget.productEntity.mainImage,
-          fit: BoxFit.cover,
+          fit: BoxFit.contain,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.width,
         ),
@@ -100,31 +101,54 @@ class _ProductScreenState extends State<ProductScreen> {
               Row(
                 children: [
                   if (widget.productEntity.salePrice.isNotEmpty) ...[
-                    Text(
-                      '\u{62f}\u{2e}\u{625} ${widget.productEntity.regularPrice}',
-                      style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.w600,
-                        decoration: TextDecoration.lineThrough,
-                        decorationColor: AppColors.softWhite80,
-                        color: AppColors.softWhite80,
-                      ),
+                    // Text(
+                    //   '\u{62f}\u{2e}\u{625} ${widget.productEntity.regularPrice}',
+                    //   style: TextStyle(
+                    //     fontSize: 35,
+                    //     fontWeight: FontWeight.w600,
+                    //     decoration: TextDecoration.lineThrough,
+                    //     decorationColor: AppColors.softWhite80,
+                    //     color: AppColors.softWhite80,
+                    //   ),
+                    // ),
+                    CurrencyWidget(
+                      price: widget.productEntity.salePrice,
+                      fontSize: 35,
+                      strikeThrough: false,
+                      svgHeight: 20,
+                      svgWidth: 10,
                     ),
                     SizedBox(width: 10),
-                    Text(
-                      '\u{62f}\u{2e}\u{625} ${widget.productEntity.salePrice}',
-                      style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    // Text(
+                    //   '\u{62f}\u{2e}\u{625} ${widget.productEntity.salePrice}',
+                    //   style: TextStyle(
+                    //     fontSize: 35,
+                    //     fontWeight: FontWeight.w500,
+                    //   ),
+                    // ),
+                    CurrencyWidget(
+                      price: widget.productEntity.regularPrice,
+                      fontSize: 35,
+                      strikeThrough: true,
+                      fontColor: AppColors.softWhite80,
+                      strikeThroughColor: AppColors.softWhite80,
+                      svgHeight: 20,
+                      svgWidth: 10,
                     ),
                   ] else ...[
-                    Text(
-                      '\u{62f}\u{2e}\u{625} ${widget.productEntity.regularPrice}',
-                      style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    // Text(
+                    //   '\u{62f}\u{2e}\u{625} ${widget.productEntity.regularPrice}',
+                    //   style: TextStyle(
+                    //     fontSize: 35,
+                    //     fontWeight: FontWeight.w500,
+                    //   ),
+                    // ),
+                    CurrencyWidget(
+                      price: widget.productEntity.regularPrice,
+                      fontSize: 35,
+                      strikeThrough: false,
+                      svgHeight: 20,
+                      svgWidth: 10,
                     ),
                   ],
                 ],
@@ -179,6 +203,6 @@ class _ProductScreenState extends State<ProductScreen> {
   int _calculateDiscount() {
     double salePrice = double.parse(widget.productEntity.salePrice);
     double regularPrice = double.parse(widget.productEntity.regularPrice);
-    return ((salePrice / regularPrice) * 100).ceil();
+    return (((regularPrice - salePrice) / regularPrice) * 100).floor();
   }
 }

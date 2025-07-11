@@ -65,28 +65,56 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
               : productCategoryList.isEmpty
               ? Center(child: Text('No items available'))
               : SingleChildScrollView(
-                child: ListView.separated(
-                  physics: NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return ProductItemWidget(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      imgUrl: productCategoryList[index].mainImage,
-                      itemName: productCategoryList[index].productName,
-                      regularPrice: productCategoryList[index].regularPrice,
-                      salePrice: productCategoryList[index].salePrice,
-                      onViewTap: () {
-                        _callProductViewApi(productCategoryList[index].id);
+                child: Column(
+                  children: [
+                    if (widget.category.subcategories.isNotEmpty) ...[
+                      Container(
+                        height: 100,
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          controller: ScrollController(),
+                          itemBuilder: (context, index) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Text(
+                                widget.category.subcategories[index].name,
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return SizedBox(width: 5);
+                          },
+                          itemCount: widget.category.subcategories.length,
+                        ),
+                      ),
+                    ],
+                    ListView.separated(
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return ProductItemWidget(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          imgUrl: productCategoryList[index].mainImage,
+                          itemName: productCategoryList[index].productName,
+                          regularPrice: productCategoryList[index].regularPrice,
+                          salePrice: productCategoryList[index].salePrice,
+                          onViewTap: () {
+                            _callProductViewApi(productCategoryList[index].id);
+                          },
+                          onCartTap: () {},
+                          isHomePage: false,
+                        );
                       },
-                      onCartTap: () {},
-                      isHomePage: false,
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return SizedBox(height: 10);
-                  },
-                  itemCount: productCategoryList.length,
+                      separatorBuilder: (context, index) {
+                        return SizedBox(height: 10);
+                      },
+                      itemCount: productCategoryList.length,
+                    ),
+                  ],
                 ),
               );
         },

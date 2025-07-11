@@ -2,6 +2,7 @@
 class Assets {
   Assets._();
 
+  static const String aEDFontFont = 'assets/fonts/AEDFont/font.ttf';
   static const String dMSansDMSansBold = 'assets/fonts/DMSans/DMSans-Bold.ttf';
   static const String dMSansDMSansMedium = 'assets/fonts/DMSans/DMSans-Medium.ttf';
   static const String dMSansDMSansRegular = 'assets/fonts/DMSans/DMSans-Regular.ttf';

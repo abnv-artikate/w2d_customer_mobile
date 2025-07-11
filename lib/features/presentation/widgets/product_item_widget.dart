@@ -35,6 +35,7 @@ class ProductItemWidget extends StatelessWidget {
     return GestureDetector(
       onTap: isHomePage ? onViewTap : null,
       child: Container(
+        height: isHomePage ? 200 : null,
         padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
         margin: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         decoration: BoxDecoration(
@@ -96,8 +97,20 @@ class ProductItemWidget extends StatelessWidget {
             SizedBox(height: 10),
             Text(
               itemName,
-              style: TextStyle(fontSize: 20, overflow: TextOverflow.ellipsis),
+              overflow: TextOverflow.fade,
+              maxLines: 2,
+              style: TextStyle(fontSize: 20),
             ),
+            if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.worldGreen10,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text('${_calculateDiscount()}% off'),
+              ),
+            ],
             Row(
               children: [
                 if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
@@ -106,7 +119,7 @@ class ProductItemWidget extends StatelessWidget {
                     fontSize: 15,
                     strikeThrough: false,
                   ),
-                  SizedBox(width: 5,),
+                  SizedBox(width: 5),
                   CurrencyWidget(
                     price: regularPrice,
                     fontSize: 15,
@@ -155,5 +168,11 @@ class ProductItemWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  int _calculateDiscount() {
+    double sale = double.parse(salePrice);
+    double regular = double.parse(regularPrice);
+    return (((regular - sale) / regular) * 100).floor();
   }
 }

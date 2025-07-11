@@ -51,54 +51,22 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   fonts:
+    - family: AEDFont
+      fonts:
+        - asset: assets/fonts/AEDFont/font.ttf
+          weight: 400
     - family: DMSans
       fonts:
-      - asset: assets/fonts/DMSans/DMSans-Regular.ttf
-        weight: 400
-      - asset: assets/fonts/DMSans/DMSans-Medium.ttf
-        weight: 500
-      - asset: assets/fonts/DMSans/DMSans-SemiBold.ttf
-        weight: 600
-      - asset: assets/fonts/DMSans/DMSans-Bold.ttf
-        weight: 700
+        - asset: assets/fonts/DMSans/DMSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/DMSans/DMSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/DMSans/DMSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/DMSans/DMSans-Bold.ttf
+          weight: 700
   assets:
     - assets/
     - assets/icons/
     - assets/images/
     - .env
-
-
-
-  #
-  #  // thin 300
-  #  // regular 400
-  #  // medium 500
-  #  // semiBold 600
-  #  // bold 700
-  #  // extraBold 800
-  #  // black 900
-  
-  
-
-  
-  
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  

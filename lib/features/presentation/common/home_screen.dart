@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final CarouselOptions _bestSellerCarouselOption = CarouselOptions(
     disableCenter: true,
     padEnds: false,
-    height: 280,
+    height: 320,
     viewportFraction: 0.5,
     enableInfiniteScroll: false,
   );

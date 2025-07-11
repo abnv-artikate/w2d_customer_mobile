@@ -91,9 +91,9 @@ Future<void> init() async {
       verifyPaymentUseCase: sl<VerifyPaymentUseCase>(),
     ),
   );
-  sl.registerFactory<OrdersCubit>(
-    () => OrdersCubit(createOrderUseCase: sl<CreateOrderUseCase>()),
-  );
+  // sl.registerFactory<OrdersCubit>(
+  //   () => OrdersCubit(createOrderUseCase: sl<CreateOrderUseCase>()),
+  // );
 
   /// UseCases
   sl.registerLazySingleton<SendOtpUseCase>(
@@ -147,9 +147,9 @@ Future<void> init() async {
   sl.registerLazySingleton<VerifyPaymentUseCase>(
     () => VerifyPaymentUseCase(sl<Repository>()),
   );
-  sl.registerLazySingleton<CreateOrderUseCase>(
-    () => CreateOrderUseCase(sl<Repository>()),
-  );
+  // sl.registerLazySingleton<CreateOrderUseCase>(
+  //   () => CreateOrderUseCase(sl<Repository>()),
+  // );
 
   /// Repositories
   sl.registerLazySingleton<Repository>(

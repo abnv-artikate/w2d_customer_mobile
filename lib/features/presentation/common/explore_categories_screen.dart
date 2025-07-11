@@ -55,73 +55,44 @@ class _ExploreCategoriesScreenState extends State<ExploreCategoriesScreen> {
                     )
                     : categoryList.isEmpty
                     ? Center(child: Text('No Categories to show right now'))
-                    : ListView.builder(
+                    : GridView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
                       shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 2,
+                      ),
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: categoryList.length,
                       itemBuilder: (context, index) {
-                        return ExpansionTile(
-                          showTrailingIcon: false,
-                          onExpansionChanged: (val) {
-                            setState(() {
-                              categoryList[index].isExpanded = val;
-                            });
+                        return InkWell(
+                          onTap: () {
+                            context
+                                .push(
+                                  AppRoutes.listingRoute,
+                                  extra: categoryList[index],
+                                )
+                                .then((_) {
+                                  _callCategoriesListingAPi();
+                                });
                           },
-                          title: CategoriesListingWidget(
-                            name: categoryList[index].name,
-                            isExpanded: categoryList[index].isExpanded,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: AppColors.deepBlue),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Center(
+                              child: Text(
+                                categoryList[index].name,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
                           ),
-                          children:
-                              categoryList[index].subcategories.isNotEmpty
-                                  ? categoryList[index].subcategories
-                                      .map(
-                                        (e) => ExpansionTile(
-                                          showTrailingIcon: false,
-                                          leading: SizedBox(width: 15),
-                                          onExpansionChanged: (val) {
-                                            setState(() {
-                                              e.isExpanded = val;
-                                            });
-                                          },
-                                          title: CategoriesListingWidget(
-                                            name: e.name,
-                                            isExpanded: e.isExpanded,
-                                          ),
-                                          children:
-                                              e.subcategories.isNotEmpty
-                                                  ? e.subcategories
-                                                      .map(
-                                                        (e) => ExpansionTile(
-                                                          showTrailingIcon:
-                                                              false,
-                                                          leading: SizedBox(
-                                                            width: 55,
-                                                          ),
-                                                          title: CategoriesListingWidget(
-                                                            name: e.name,
-                                                            isExpanded:
-                                                                e.isExpanded,
-                                                            onTap: () {
-                                                              context
-                                                                  .push(
-                                                                    AppRoutes
-                                                                        .listingRoute,
-                                                                    extra:
-                                                                        e,
-                                                                  )
-                                                                  .then((_) {
-                                                                    _callCategoriesListingAPi();
-                                                                  });
-                                                            },
-                                                          ),
-                                                        ),
-                                                      )
-                                                      .toList()
-                                                  : [],
-                                        ),
-                                      )
-                                      .toList()
-                                  : [],
                         );
                       },
                     );

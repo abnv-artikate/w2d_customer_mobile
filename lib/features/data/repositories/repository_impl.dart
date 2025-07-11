@@ -383,21 +383,21 @@ class RepositoryImpl extends Repository {
     }
   }
 
-  @override
-  Future<Either<Failure, String>> createOrder(CreateOrderParams params) async {
-    try {
-      if (await networkInfo.isConnected) {
-        final result = await remoteDatasource.createOrder(params.toJson());
-
-        print(result.toString());
-
-        return Right("Success");
-
-      } else {
-        return Left(ServerFailure(message: Constants.errorNoInternet));
-      }
-    } on ServerFailure catch (e) {
-      return Left(ServerFailure(message: e.message));
-    }
-  }
+  // @override
+  // Future<Either<Failure, String>> createOrder(CreateOrderParams params) async {
+  //   try {
+  //     if (await networkInfo.isConnected) {
+  //       final result = await remoteDatasource.createOrder(params.toJson());
+  //
+  //       print(result.toString());
+  //
+  //       return Right("Success");
+  //
+  //     } else {
+  //       return Left(ServerFailure(message: Constants.errorNoInternet));
+  //     }
+  //   } on ServerFailure catch (e) {
+  //     return Left(ServerFailure(message: e.message));
+  //   }
+  // }
 }
