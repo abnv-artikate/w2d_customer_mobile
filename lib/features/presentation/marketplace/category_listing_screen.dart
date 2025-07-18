@@ -69,18 +69,38 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                   children: [
                     if (widget.category.subcategories.isNotEmpty) ...[
                       Container(
-                        height: 100,
+                        height: 50,
                         child: ListView.separated(
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
                           controller: ScrollController(),
                           itemBuilder: (context, index) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Text(
-                                widget.category.subcategories[index].name,
+                            return InkWell(
+                              onTap: () {
+                                context
+                                    .push(
+                                      AppRoutes.listingRoute,
+                                      extra:
+                                          widget.category.subcategories[index],
+                                    )
+                                    .then((_) {
+                                      _callCategoryListApi();
+                                    });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 16,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: AppColors.deepBlue),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    widget.category.subcategories[index].name,
+                                  ),
+                                ),
                               ),
                             );
                           },
