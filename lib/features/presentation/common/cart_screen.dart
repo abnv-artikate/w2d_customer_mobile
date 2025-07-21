@@ -200,7 +200,6 @@ class _CartScreenState extends State<CartScreen> {
                                   addInsurance: isTransitInsured,
                                 );
                               }
-                              ;
                             },
                           ),
                         );

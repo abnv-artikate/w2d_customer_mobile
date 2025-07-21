@@ -228,7 +228,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                       : hiddenGemsCollections[index]
                                           .products[idx]
                                           .regularPrice,
-                              onViewTap: () {},
+                              onViewTap: () {
+                                context
+                                    .push(
+                                      AppRoutes.productRoute,
+                                      extra:
+                                          isBrand
+                                              ? brandMallCollections[index]
+                                                  .products[idx]
+                                                  .id
+                                              : hiddenGemsCollections[index]
+                                                  .products[idx]
+                                                  .id,
+                                    )
+                                    .then((_) {
+                                      _callGetCollectionsApi();
+                                    });
+                              },
                               onCartTap: () {},
                               isHomePage: true,
                             );
@@ -249,15 +265,6 @@ class _HomeScreenState extends State<HomeScreen> {
             )
             : SizedBox();
       },
-    );
-  }
-
-  _popularCategories() {
-    return Column(
-      children: [
-        SizedBox(height: 20),
-        Center(child: Text('//TODO: Popular categories here')),
-      ],
     );
   }
 

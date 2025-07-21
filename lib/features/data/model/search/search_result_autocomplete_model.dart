@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 enum SuggestionType { product, searchTerm }
 
 class Product {

@@ -10,7 +10,6 @@ import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/product_item_widget.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 
 class CategoryListingScreen extends StatefulWidget {
@@ -49,13 +48,13 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
             widget.showErrorToast(context: context, message: state.error);
           }
 
-          if (state is ProductViewLoaded) {
-            context
-                .push(AppRoutes.productRoute, extra: state.productEntity)
-                .then((_) => _callCategoryListApi());
-          } else if (state is CategoryError) {
-            widget.showErrorToast(context: context, message: state.error);
-          }
+          // if (state is ProductViewLoaded) {
+          //   context
+          //       .push(AppRoutes.productRoute, extra: state.productEntity)
+          //       .then((_) => _callCategoryListApi());
+          // } else if (state is CategoryError) {
+          //   widget.showErrorToast(context: context, message: state.error);
+          // }
         },
         builder: (context, state) {
           return state is CategoryLoading
@@ -123,7 +122,12 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                           regularPrice: productCategoryList[index].regularPrice,
                           salePrice: productCategoryList[index].salePrice,
                           onViewTap: () {
-                            _callProductViewApi(productCategoryList[index].id);
+                            context
+                                .push(
+                                  AppRoutes.productRoute,
+                                  extra: productCategoryList[index].id,
+                                )
+                                .then((_) => _callCategoryListApi());
                           },
                           onCartTap: () {},
                           isHomePage: false,
@@ -178,9 +182,9 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
     );
   }
 
-  void _callProductViewApi(String productId) {
-    context.read<CategoryCubit>().getProductView(
-      ProductViewParams(productId: productId),
-    );
-  }
+  // void _callProductViewApi(String productId) {
+  //   context.read<CategoryCubit>().getProductView(
+  //     ProductViewParams(productId: productId),
+  //   );
+  // }
 }

@@ -4,7 +4,6 @@ import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 import 'package:w2d_customer_mobile/core/utils/constants.dart';
 import 'package:w2d_customer_mobile/core/utils/endpoint_constants.dart';
-import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_payment_response_model.dart';
 
 part 'telr_payment_client.g.dart';
 

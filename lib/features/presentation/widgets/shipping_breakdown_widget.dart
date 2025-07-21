@@ -61,21 +61,21 @@ class ShippingBreakdownWidget extends StatelessWidget {
             children: [
               Text('Goods Value'),
               Spacer(),
-              Text(_calculateGoodsValue(cartItems!).toStringAsFixed(2)),
+              Text(_calculateGoodsValue(cartItems).toStringAsFixed(2)),
             ],
           ),
           Row(
             children: [
               Text('Platform Fee'),
               Spacer(),
-              Text(_calculatePlatformFees(cartItems!).toStringAsFixed(2)),
+              Text(_calculatePlatformFees(cartItems).toStringAsFixed(2)),
             ],
           ),
           Row(
             children: [
               Text('Local Transit Fee'),
               Spacer(),
-              Text(_calculateLocalTransitFees(cartItems!).toStringAsFixed(2)),
+              Text(_calculateLocalTransitFees(cartItems).toStringAsFixed(2)),
             ],
           ),
           Row(

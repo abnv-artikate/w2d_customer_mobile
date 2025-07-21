@@ -6,7 +6,6 @@ import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/payment
 import 'package:w2d_customer_mobile/features/presentation/checkout/payment_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/orders/cubit/orders_cubit.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
-import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/login_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/checkout/checkout_screen.dart';
@@ -116,7 +115,7 @@ final GoRouter router = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         return BlocProvider<CategoryCubit>(
           create: (context) => sl<CategoryCubit>(),
-          child: ProductScreen(productEntity: state.extra as ProductViewEntity),
+          child: ProductScreen(productId: state.extra as String),
         );
       },
     ),

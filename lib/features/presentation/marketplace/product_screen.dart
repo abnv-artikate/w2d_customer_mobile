@@ -6,15 +6,16 @@ import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 
 class ProductScreen extends StatefulWidget {
-  const ProductScreen({super.key, required this.productEntity});
+  const ProductScreen({super.key, required this.productId});
 
-  final ProductViewEntity productEntity;
+  final String productId;
 
   @override
   State<ProductScreen> createState() => _ProductScreenState();
@@ -22,29 +23,50 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   @override
+  void initState() {
+    _callProductViewApi(widget.productId);
+    super.initState();
+  }
+
+  ProductViewEntity? product;
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 80,
-        leading: _backButton(),
-        actions: [_likeButton()],
-      ),
-      body: BlocListener<CategoryCubit, CategoryState>(
-        listener: (context, state) {
-          if (state is CartSyncLoaded) {
-            widget.showErrorToast(context: context, message: state.message);
-          }
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _productDetailANdPrice(),
-            SizedBox(height: 10),
-            _wishlistAndCartButton(),
-          ],
-        ),
-      ),
+    return BlocConsumer<CategoryCubit, CategoryState>(
+      listener: (context, state) {
+        if (state is CartSyncLoaded) {
+          widget.showErrorToast(context: context, message: state.message);
+        } else if (state is CategoryError) {
+          widget.showErrorToast(context: context, message: state.error);
+        }
+
+        if (state is ProductViewLoaded) {
+          product = state.productEntity;
+        } else if (state is CategoryError) {
+          widget.showErrorToast(context: context, message: state.error);
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            leadingWidth: 80,
+            leading: product != null ? _backButton() : null,
+            actions: [product != null ? _likeButton() : null],
+          ),
+          body:
+              product == null
+                  ? Center(child: Text('Error occurred while loading product'))
+                  : Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _productDetailANdPrice(),
+                      SizedBox(height: 10),
+                      _wishlistAndCartButton(),
+                    ],
+                  ),
+        );
+      },
     );
   }
 
@@ -80,7 +102,7 @@ class _ProductScreenState extends State<ProductScreen> {
       shrinkWrap: true,
       children: [
         Image.network(
-          widget.productEntity.mainImage,
+          product!.mainImage,
           fit: BoxFit.contain,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.width,
@@ -91,43 +113,26 @@ class _ProductScreenState extends State<ProductScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.productEntity.name,
+                product!.name,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
               ),
               Text(
-                widget.productEntity.shortDescription,
+                product!.shortDescription,
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
               ),
               Row(
                 children: [
-                  if (widget.productEntity.salePrice.isNotEmpty) ...[
-                    // Text(
-                    //   '\u{62f}\u{2e}\u{625} ${widget.productEntity.regularPrice}',
-                    //   style: TextStyle(
-                    //     fontSize: 35,
-                    //     fontWeight: FontWeight.w600,
-                    //     decoration: TextDecoration.lineThrough,
-                    //     decorationColor: AppColors.softWhite80,
-                    //     color: AppColors.softWhite80,
-                    //   ),
-                    // ),
+                  if (product!.salePrice.isNotEmpty) ...[
                     CurrencyWidget(
-                      price: widget.productEntity.salePrice,
+                      price: product!.salePrice,
                       fontSize: 35,
                       strikeThrough: false,
                       svgHeight: 20,
                       svgWidth: 10,
                     ),
                     SizedBox(width: 10),
-                    // Text(
-                    //   '\u{62f}\u{2e}\u{625} ${widget.productEntity.salePrice}',
-                    //   style: TextStyle(
-                    //     fontSize: 35,
-                    //     fontWeight: FontWeight.w500,
-                    //   ),
-                    // ),
                     CurrencyWidget(
-                      price: widget.productEntity.regularPrice,
+                      price: product!.regularPrice,
                       fontSize: 35,
                       strikeThrough: true,
                       fontColor: AppColors.softWhite80,
@@ -136,15 +141,8 @@ class _ProductScreenState extends State<ProductScreen> {
                       svgWidth: 10,
                     ),
                   ] else ...[
-                    // Text(
-                    //   '\u{62f}\u{2e}\u{625} ${widget.productEntity.regularPrice}',
-                    //   style: TextStyle(
-                    //     fontSize: 35,
-                    //     fontWeight: FontWeight.w500,
-                    //   ),
-                    // ),
                     CurrencyWidget(
-                      price: widget.productEntity.regularPrice,
+                      price: product!.regularPrice,
                       fontSize: 35,
                       strikeThrough: false,
                       svgHeight: 20,
@@ -153,9 +151,8 @@ class _ProductScreenState extends State<ProductScreen> {
                   ],
                 ],
               ),
-              if (widget.productEntity.salePrice.isNotEmpty &&
-                  widget.productEntity.salePrice !=
-                      widget.productEntity.regularPrice) ...[
+              if (product!.salePrice.isNotEmpty &&
+                  product!.salePrice != product!.regularPrice) ...[
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -192,7 +189,7 @@ class _ProductScreenState extends State<ProductScreen> {
           width: MediaQuery.of(context).size.width * 0.48,
           onTap: () {
             context.read<CategoryCubit>().cartSync(
-              CartSyncParams(productId: widget.productEntity.id, quantity: 1),
+              CartSyncParams(productId: product!.id, quantity: 1),
             );
           },
         ),
@@ -201,8 +198,14 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   int _calculateDiscount() {
-    double salePrice = double.parse(widget.productEntity.salePrice);
-    double regularPrice = double.parse(widget.productEntity.regularPrice);
+    double salePrice = double.parse(product!.salePrice);
+    double regularPrice = double.parse(product!.regularPrice);
     return (((regularPrice - salePrice) / regularPrice) * 100).floor();
+  }
+
+  void _callProductViewApi(String productId) {
+    context.read<CategoryCubit>().getProductView(
+      ProductViewParams(productId: productId),
+    );
   }
 }
