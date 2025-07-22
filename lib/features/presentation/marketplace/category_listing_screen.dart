@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
@@ -48,13 +49,13 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
             widget.showErrorToast(context: context, message: state.error);
           }
 
-          // if (state is ProductViewLoaded) {
-          //   context
-          //       .push(AppRoutes.productRoute, extra: state.productEntity)
-          //       .then((_) => _callCategoryListApi());
-          // } else if (state is CategoryError) {
-          //   widget.showErrorToast(context: context, message: state.error);
-          // }
+          if (state is ProductViewLoaded) {
+            context
+                .push(AppRoutes.productRoute, extra: state.productEntity)
+                .then((_) => _callCategoryListApi());
+          } else if (state is CategoryError) {
+            widget.showErrorToast(context: context, message: state.error);
+          }
         },
         builder: (context, state) {
           return state is CategoryLoading
@@ -122,12 +123,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                           regularPrice: productCategoryList[index].regularPrice,
                           salePrice: productCategoryList[index].salePrice,
                           onViewTap: () {
-                            context
-                                .push(
-                                  AppRoutes.productRoute,
-                                  extra: productCategoryList[index].id,
-                                )
-                                .then((_) => _callCategoryListApi());
+                            _callProductViewApi(productCategoryList[index].id);
                           },
                           onCartTap: () {},
                           isHomePage: false,
@@ -182,9 +178,9 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
     );
   }
 
-  // void _callProductViewApi(String productId) {
-  //   context.read<CategoryCubit>().getProductView(
-  //     ProductViewParams(productId: productId),
-  //   );
-  // }
+  void _callProductViewApi(String productId) {
+    context.read<CategoryCubit>().getProductView(
+      ProductViewParams(productId: productId),
+    );
+  }
 }

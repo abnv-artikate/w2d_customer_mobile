@@ -118,6 +118,7 @@ class ProductItemWidget extends StatelessWidget {
                     price: salePrice,
                     fontSize: 15,
                     strikeThrough: false,
+                    fontColor: AppColors.worldGreen,
                   ),
                   SizedBox(width: 5),
                   CurrencyWidget(

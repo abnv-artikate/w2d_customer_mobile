@@ -13,23 +13,15 @@ import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widge
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 
 class ProductScreen extends StatefulWidget {
-  const ProductScreen({super.key, required this.productId});
+  const ProductScreen({super.key, required this.product});
 
-  final String productId;
+  final ProductViewEntity product;
 
   @override
   State<ProductScreen> createState() => _ProductScreenState();
 }
 
 class _ProductScreenState extends State<ProductScreen> {
-  @override
-  void initState() {
-    _callProductViewApi(widget.productId);
-    super.initState();
-  }
-
-  ProductViewEntity? product;
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CategoryCubit, CategoryState>(
@@ -39,51 +31,23 @@ class _ProductScreenState extends State<ProductScreen> {
         } else if (state is CategoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
-
-        if (state is ProductViewLoaded) {
-          product = state.productEntity;
-        } else if (state is CategoryError) {
-          widget.showErrorToast(context: context, message: state.error);
-        }
       },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            leadingWidth: 80,
-            leading: product != null ? _backButton() : null,
-            actions: [product != null ? _likeButton() : null],
+            actions: [_likeButton()],
           ),
-          body:
-              product == null
-                  ? Center(child: Text('Error occurred while loading product'))
-                  : Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _productDetailANdPrice(),
-                      SizedBox(height: 10),
-                      _wishlistAndCartButton(),
-                    ],
-                  ),
+          body: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _productDetailANdPrice(),
+              SizedBox(height: 10),
+              _wishlistAndCartButton(),
+            ],
+          ),
         );
       },
-    );
-  }
-
-  _backButton() {
-    return GestureDetector(
-      onTap: () {
-        context.pop();
-      },
-      child: Container(
-        margin: EdgeInsets.only(left: 20),
-        // padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100),
-          color: AppColors.white,
-        ),
-        child: Center(child: Icon(LucideIcons.arrowLeft, size: 30)),
-      ),
     );
   }
 
@@ -102,7 +66,7 @@ class _ProductScreenState extends State<ProductScreen> {
       shrinkWrap: true,
       children: [
         Image.network(
-          product!.mainImage,
+          widget.product.mainImage,
           fit: BoxFit.contain,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.width,
@@ -113,18 +77,18 @@ class _ProductScreenState extends State<ProductScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                product!.name,
+                widget.product.name,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
               ),
               Text(
-                product!.shortDescription,
+                widget.product.shortDescription,
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
               ),
               Row(
                 children: [
-                  if (product!.salePrice.isNotEmpty) ...[
+                  if (widget.product.salePrice.isNotEmpty) ...[
                     CurrencyWidget(
-                      price: product!.salePrice,
+                      price: widget.product.salePrice,
                       fontSize: 35,
                       strikeThrough: false,
                       svgHeight: 20,
@@ -132,7 +96,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     ),
                     SizedBox(width: 10),
                     CurrencyWidget(
-                      price: product!.regularPrice,
+                      price: widget.product.regularPrice,
                       fontSize: 35,
                       strikeThrough: true,
                       fontColor: AppColors.softWhite80,
@@ -142,7 +106,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     ),
                   ] else ...[
                     CurrencyWidget(
-                      price: product!.regularPrice,
+                      price: widget.product.regularPrice,
                       fontSize: 35,
                       strikeThrough: false,
                       svgHeight: 20,
@@ -151,8 +115,8 @@ class _ProductScreenState extends State<ProductScreen> {
                   ],
                 ],
               ),
-              if (product!.salePrice.isNotEmpty &&
-                  product!.salePrice != product!.regularPrice) ...[
+              if (widget.product.salePrice.isNotEmpty &&
+                  widget.product.salePrice != widget.product.regularPrice) ...[
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -189,7 +153,7 @@ class _ProductScreenState extends State<ProductScreen> {
           width: MediaQuery.of(context).size.width * 0.48,
           onTap: () {
             context.read<CategoryCubit>().cartSync(
-              CartSyncParams(productId: product!.id, quantity: 1),
+              CartSyncParams(productId: widget.product.id, quantity: 1),
             );
           },
         ),
@@ -198,14 +162,8 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   int _calculateDiscount() {
-    double salePrice = double.parse(product!.salePrice);
-    double regularPrice = double.parse(product!.regularPrice);
+    double salePrice = double.parse(widget.product.salePrice);
+    double regularPrice = double.parse(widget.product.regularPrice);
     return (((regularPrice - salePrice) / regularPrice) * 100).floor();
-  }
-
-  void _callProductViewApi(String productId) {
-    context.read<CategoryCubit>().getProductView(
-      ProductViewParams(productId: productId),
-    );
   }
 }

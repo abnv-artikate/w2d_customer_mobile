@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
+import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
@@ -127,14 +129,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _brandAndHiddenGems(),
-            _bestSellers(),
-            // _popularCategories(),
-          ],
+      body: BlocListener<CategoryCubit, CategoryState>(
+        listener: (context, state) {
+          if (state is ProductViewLoaded) {
+            context.push(AppRoutes.productRoute, extra: state.productEntity);
+          }
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _brandAndHiddenGems(),
+              _bestSellers(),
+              // _popularCategories(),
+            ],
+          ),
         ),
       ),
     );
@@ -229,21 +238,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                           .products[idx]
                                           .regularPrice,
                               onViewTap: () {
-                                context
-                                    .push(
-                                      AppRoutes.productRoute,
-                                      extra:
-                                          isBrand
-                                              ? brandMallCollections[index]
-                                                  .products[idx]
-                                                  .id
-                                              : hiddenGemsCollections[index]
-                                                  .products[idx]
-                                                  .id,
-                                    )
-                                    .then((_) {
-                                      _callGetCollectionsApi();
-                                    });
+                                _callProductViewApi(
+                                  isBrand
+                                      ? brandMallCollections[index]
+                                          .products[idx]
+                                          .id
+                                      : hiddenGemsCollections[index]
+                                          .products[idx]
+                                          .id,
+                                );
                               },
                               onCartTap: () {},
                               isHomePage: true,
@@ -274,5 +277,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _callGetCollectionsApi() async {
     await context.read<CommonCubit>().getCollections();
+  }
+
+  void _callProductViewApi(String productId) {
+    context.read<CategoryCubit>().getProductView(
+      ProductViewParams(productId: productId),
+    );
   }
 }
