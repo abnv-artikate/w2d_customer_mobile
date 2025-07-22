@@ -29,22 +29,34 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
     super.initState();
   }
 
+  List<CategoryProductEntity> brandProductCategoryList = [];
+  List<CategoryProductEntity> hiddenProductCategoryList = [];
+  bool isBrand = false;
+
   @override
   Widget build(BuildContext context) {
-    List<ResultEntity> productCategoryList = [];
-    bool isBrand = false;
     return Scaffold(
       // drawer: Drawer(child: _drawer()),
       appBar: AppBar(
         surfaceTintColor: AppColors.white,
         title: Text(widget.category.name),
         centerTitle: true,
-        actions: [BrandMallToggleWidget(onTap: () {}, isBrand: isBrand)],
+        actions: [
+          BrandMallToggleWidget(
+            onTap: () {
+              setState(() {
+                isBrand = !isBrand;
+              });
+            },
+            isBrand: isBrand,
+          ),
+        ],
       ),
       body: BlocConsumer<CategoryCubit, CategoryState>(
         listener: (context, state) {
           if (state is CategoryLoaded) {
-            productCategoryList = state.productCategoryListing;
+            brandProductCategoryList = state.brandMallProductCategoryListing;
+            hiddenProductCategoryList = state.hiddenGemsProductCategoryListing;
           } else if (state is CategoryError) {
             widget.showErrorToast(context: context, message: state.error);
           }
@@ -62,7 +74,8 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
               ? Center(
                 child: CircularProgressIndicator(color: AppColors.worldGreen),
               )
-              : productCategoryList.isEmpty
+              : brandProductCategoryList.isEmpty &&
+                  hiddenProductCategoryList.isEmpty
               ? Center(child: Text('No items available'))
               : SingleChildScrollView(
                 child: Column(
@@ -118,12 +131,30 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                       itemBuilder: (context, index) {
                         return ProductItemWidget(
                           width: MediaQuery.of(context).size.width * 0.8,
-                          imgUrl: productCategoryList[index].mainImage,
-                          itemName: productCategoryList[index].productName,
-                          regularPrice: productCategoryList[index].regularPrice,
-                          salePrice: productCategoryList[index].salePrice,
+                          imgUrl:
+                              isBrand
+                                  ? brandProductCategoryList[index].mainImage
+                                  : hiddenProductCategoryList[index].mainImage,
+                          itemName:
+                              isBrand
+                                  ? brandProductCategoryList[index].productName
+                                  : hiddenProductCategoryList[index]
+                                      .productName,
+                          regularPrice:
+                              isBrand
+                                  ? brandProductCategoryList[index].regularPrice
+                                  : hiddenProductCategoryList[index]
+                                      .regularPrice,
+                          salePrice:
+                              isBrand
+                                  ? brandProductCategoryList[index].salePrice
+                                  : hiddenProductCategoryList[index].salePrice,
                           onViewTap: () {
-                            _callProductViewApi(productCategoryList[index].id);
+                            _callProductViewApi(
+                              isBrand
+                                  ? brandProductCategoryList[index].id
+                                  : hiddenProductCategoryList[index].id,
+                            );
                           },
                           onCartTap: () {},
                           isHomePage: false,
@@ -132,7 +163,10 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                       separatorBuilder: (context, index) {
                         return SizedBox(height: 10);
                       },
-                      itemCount: productCategoryList.length,
+                      itemCount:
+                          isBrand
+                              ? brandProductCategoryList.length
+                              : hiddenProductCategoryList.length,
                     ),
                   ],
                 ),

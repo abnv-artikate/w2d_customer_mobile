@@ -91,7 +91,7 @@ class ShippingBreakdownWidget extends StatelessWidget {
             children: [
               Text('Dest Duty / Taxes / Other Fees'),
               Spacer(),
-              Text(""),
+              Text('${_calculateDestDutyTaxesOtherFees()}'),
             ],
           ),
           if (calculateInsuranceEntity != null) ...[
@@ -127,7 +127,7 @@ class ShippingBreakdownWidget extends StatelessWidget {
 
     for (CartItemEntity item in cartItems) {
       if (item.isChecked) {
-        totalGoodsValue += double.parse(item.product.salePrice) * item.quantity;
+        totalGoodsValue += item.product.salePrice * item.quantity;
       }
     }
 
@@ -150,7 +150,7 @@ class ShippingBreakdownWidget extends StatelessWidget {
 
     for (CartItemEntity item in cartItems) {
       if (item.isChecked) {
-        totalTransitFee += double.parse(item.product.localTransitFee);
+        totalTransitFee += item.product.localTransitFee;
       }
     }
 

@@ -12,7 +12,7 @@ class GetCurrentLocationUseCase {
       Location location = Location();
 
       bool _serviceEnabled;
-      // PermissionStatus _permissionGranted;
+      PermissionStatus _permissionGranted;
       LocationData _locationData;
 
       _serviceEnabled = await location.serviceEnabled();
@@ -23,13 +23,13 @@ class GetCurrentLocationUseCase {
         }
       }
 
-      // _permissionGranted = await location.hasPermission();
-      // if (_permissionGranted == PermissionStatus.denied) {
-      //   _permissionGranted = await location.requestPermission();
-      //   if (_permissionGranted != PermissionStatus.granted) {
-      //     return Left("Location Service disabled");
-      //   }
-      // }
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          return Left("Location Service disabled");
+        }
+      }
 
       _locationData = await location.getLocation();
 

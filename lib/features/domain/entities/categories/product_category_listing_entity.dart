@@ -4,7 +4,7 @@ class ProductCategoryListingEntity {
   int count;
   String next;
   dynamic previous;
-  List<ResultEntity> results;
+  List<CategoryProductEntity> results;
 
   ProductCategoryListingEntity({
     required this.count,
@@ -14,7 +14,7 @@ class ProductCategoryListingEntity {
   });
 }
 
-class ResultEntity {
+class CategoryProductEntity {
   String id;
   String productName;
   String sku;
@@ -27,7 +27,7 @@ class ResultEntity {
   List<dynamic> reviews;
   SellerEntity seller;
 
-  ResultEntity({
+  CategoryProductEntity({
     required this.id,
     required this.productName,
     required this.sku,

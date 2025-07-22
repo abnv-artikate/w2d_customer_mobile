@@ -77,7 +77,7 @@ class RepositoryConv {
       results:
           model.results
               ?.map(
-                (e) => ResultEntity(
+                (e) => CategoryProductEntity(
                   id: e.id ?? "",
                   productName: e.name ?? "",
                   sku: e.sku ?? "",
@@ -314,142 +314,144 @@ class RepositoryConv {
     );
   }
 
-  static CartEntity convertCartModelToEntity(CartModel model) {
-    return CartEntity(
-      id: model.data?.id ?? -1,
-      customer: model.data?.customer,
-      sessionKey: model.data?.sessionKey ?? "",
-      createdAt: model.data?.createdAt ?? "",
-      items:
-          model.data?.items
-              ?.map(
-                (e) => CartItemEntity(
-                  id: e.id ?? -1,
-                  cart: e.cart ?? -1,
-                  quantity: e.quantity ?? -1,
-                  voucherCode: e.voucherCode,
-                  discountAmount: e.discountAmount ?? "",
-                  addedAt: e.addedAt ?? "",
-                  isChecked: e.isChecked ?? true,
-                  product: CartItemProductEntity(
-                    id: e.product?.id ?? "",
-                    name: e.product?.name ?? "",
-                    sku: e.product?.sku ?? "",
-                    modelNumber: e.product?.modelNumber,
-                    productType: e.product?.productType ?? "",
-                    badge: e.product?.badge ?? "",
-                    shortDescription: e.product?.shortDescription ?? "",
-                    longDescription: e.product?.longDescription ?? "",
-                    keyFeatures: e.product?.keyFeatures ?? "",
-                    mainImage: e.product?.mainImage ?? "",
-                    gallery: e.product?.gallery ?? [],
-                    videoUrl: e.product?.videoUrl ?? "",
-                    regularPrice: e.product?.regularPrice ?? "",
-                    localTransitFee: e.product?.localTransitFee ?? "",
-                    salePrice: e.product?.salePrice ?? "",
-                    currency: e.product?.currency,
-                    availableStock: e.product?.availableStock ?? -1,
-                    lowStockAlert: e.product?.lowStockAlert ?? 1,
-                    purchaseLimit: e.product?.purchaseLimit ?? -1,
-                    commissionPercentage: e.product?.commissionPercentage,
-                    weight: e.product?.weight ?? "",
-                    weightUnit: e.product?.weightUnit ?? "",
-                    shippingWeight: e.product?.shippingWeight,
-                    shippingWeightUnit: e.product?.shippingWeightUnit ?? "",
-                    dimensions: CartItemProductDimensionsEntity(
-                      width: DimensionEntity(
-                        unit: e.product?.dimensions?.width?.unit ?? "",
-                        value: e.product?.dimensions?.width?.value ?? "",
-                      ),
-                      height: DimensionEntity(
-                        unit: e.product?.dimensions?.height?.unit ?? "",
-                        value: e.product?.dimensions?.height?.value ?? "",
-                      ),
-                      length: DimensionEntity(
-                        unit: e.product?.dimensions?.length?.unit ?? "",
-                        value: e.product?.dimensions?.length?.value ?? "",
-                      ),
-                      weight: DimensionEntity(
-                        unit: e.product?.dimensions?.weight?.unit ?? "",
-                        value: e.product?.dimensions?.weight?.value ?? "",
-                      ),
-                    ),
-                    packagingDimensions: CartItemProductDimensionsEntity(
-                      width: DimensionEntity(
-                        unit: e.product?.dimensions?.width?.unit ?? "",
-                        value: e.product?.dimensions?.width?.value ?? "",
-                      ),
-                      height: DimensionEntity(
-                        unit: e.product?.dimensions?.height?.unit ?? "",
-                        value: e.product?.dimensions?.height?.value ?? "",
-                      ),
-                      length: DimensionEntity(
-                        unit: e.product?.dimensions?.length?.unit ?? "",
-                        value: e.product?.dimensions?.length?.value ?? "",
-                      ),
-                      weight: DimensionEntity(
-                        unit: e.product?.dimensions?.weight?.unit ?? "",
-                        value: e.product?.dimensions?.weight?.value ?? "",
-                      ),
-                    ),
-                    packagingDetails:
-                        e.product?.packagingDetails
-                            ?.map(
-                              (e) => CartItemProductDimensionsEntity(
-                                width: DimensionEntity(
-                                  unit: e.width?.unit ?? "",
-                                  value: e.width?.value ?? "",
-                                ),
-                                height: DimensionEntity(
-                                  unit: e.height?.unit ?? "",
-                                  value: e.height?.value ?? "",
-                                ),
-                                length: DimensionEntity(
-                                  unit: e.length?.unit ?? "",
-                                  value: e.length?.value ?? "",
-                                ),
-                                weight: DimensionEntity(
-                                  unit: e.weight?.unit ?? "",
-                                  value: e.weight?.value ?? "",
-                                ),
-                              ),
-                            )
-                            .toList() ??
-                        [],
-                    shippingMethods: e.product?.shippingMethods ?? "",
-                    shippingRegion: e.product?.shippingRegion ?? "",
-                    shippingCountries: e.product?.shippingCountries ?? [],
-                    handlingTime: e.product?.handlingTime ?? "",
-                    returnsPolicy: e.product?.returnsPolicy,
-                    tags: e.product?.tags,
-                    seoTitle: e.product?.seoTitle,
-                    metaDescription: e.product?.metaDescription,
-                    status: e.product?.status ?? "",
-                    publishDate: e.product?.publishDate,
-                    visibility: e.product?.visibility ?? "",
-                    specificCustomerGroups: e.product?.specificCustomerGroups,
-                    lastUpdatedBy: e.product?.lastUpdatedBy,
-                    technicalSpecifications: e.product?.technicalSpecifications,
-                    hasVariant: e.product?.hasVariant ?? false,
-                    woodenBoxPackaging: e.product?.woodenBoxPackaging ?? false,
-                    isPerfume: e.product?.isPerfume ?? false,
-                    containsBattery: e.product?.containsBattery ?? false,
-                    isCosmetics: e.product?.isCosmetics ?? false,
-                    containsMagnet: e.product?.containsMagnet ?? false,
-                    countryOfOrigin: e.product?.countryOfOrigin ?? "",
-                    hsCode: e.product?.hsCode,
-                    isActive: e.product?.isActive ?? false,
-                    createdAt: e.product?.createdAt ?? "",
-                    lastUpdatedAt: e.product?.lastUpdatedAt ?? "",
-                    seller: e.product?.seller ?? -1,
-                    brand: e.product?.brand ?? -1,
-                  ),
-                ),
-              )
-              .toList() ??
-          [],
-    );
-  }
+  // static CartEntity convertCartModelToEntity(CartModel model) {
+  //   return CartEntity(
+  //     id: model.data?.id ?? -1,
+  //     customer: model.data?.customer,
+  //     sessionKey: model.data?.sessionKey ?? "",
+  //     createdAt: model.data?.createdAt ?? "",
+  //     items:
+  //         model.data?.items
+  //             ?.map(
+  //               (e) => CartItemEntity(
+  //                 id: e.id ?? -1,
+  //                 cart: e.cart ?? -1,
+  //                 quantity: e.quantity ?? -1,
+  //                 voucherCode: e.voucherCode,
+  //                 discountAmount: e.discountAmount ?? "",
+  //                 addedAt: e.addedAt ?? "",
+  //                 isChecked: e.isChecked ?? true,
+  //                 product: CartItemProductEntity(
+  //                   id: e.product?.id ?? "",
+  //                   name: e.product?.name ?? "",
+  //                   sku: e.product?.sku ?? "",
+  //                   modelNumber: e.product?.modelNumber,
+  //                   productType: e.product?.productType ?? "",
+  //                   badge: e.product?.badge ?? "",
+  //                   shortDescription: e.product?.shortDescription ?? "",
+  //                   longDescription: e.product?.longDescription ?? "",
+  //                   keyFeatures: e.product?.keyFeatures ?? "",
+  //                   mainImage: e.product?.mainImage ?? "",
+  //                   gallery: e.product?.gallery ?? [],
+  //                   videoUrl: e.product?.videoUrl ?? "",
+  //                   regularPrice: e.product?.regularPrice ?? "",
+  //                   localTransitFee: e.product?.localTransitFee ?? "",
+  //                   salePrice: e.product?.salePrice ?? "",
+  //                   currency: e.product?.currency,
+  //                   availableStock: e.product?.availableStock ?? -1,
+  //                   lowStockAlert: e.product?.lowStockAlert ?? 1,
+  //                   purchaseLimit: e.product?.purchaseLimit ?? -1,
+  //                   commissionPercentage: e.product?.commissionPercentage,
+  //                   weight: e.product?.weight ?? "",
+  //                   weightUnit: e.product?.weightUnit ?? "",
+  //                   shippingWeight: e.product?.shippingWeight,
+  //                   shippingWeightUnit: e.product?.shippingWeightUnit ?? "",
+  //                   dimensions: CartItemProductDimensionsEntity(
+  //                     width: DimensionEntity(
+  //                       unit: e.product?.dimensions?.width?.unit ?? "",
+  //                       value: e.product?.dimensions?.width?.value ?? "",
+  //                     ),
+  //                     height: DimensionEntity(
+  //                       unit: e.product?.dimensions?.height?.unit ?? "",
+  //                       value: e.product?.dimensions?.height?.value ?? "",
+  //                     ),
+  //                     length: DimensionEntity(
+  //                       unit: e.product?.dimensions?.length?.unit ?? "",
+  //                       value: e.product?.dimensions?.length?.value ?? "",
+  //                     ),
+  //                     weight: DimensionEntity(
+  //                       unit: e.product?.dimensions?.weight?.unit ?? "",
+  //                       value: e.product?.dimensions?.weight?.value ?? "",
+  //                     ),
+  //                   ),
+  //                   packagingDimensions: CartItemProductDimensionsEntity(
+  //                     width: DimensionEntity(
+  //                       unit: e.product?.dimensions?.width?.unit ?? "",
+  //                       value: e.product?.dimensions?.width?.value ?? "",
+  //                     ),
+  //                     height: DimensionEntity(
+  //                       unit: e.product?.dimensions?.height?.unit ?? "",
+  //                       value: e.product?.dimensions?.height?.value ?? "",
+  //                     ),
+  //                     length: DimensionEntity(
+  //                       unit: e.product?.dimensions?.length?.unit ?? "",
+  //                       value: e.product?.dimensions?.length?.value ?? "",
+  //                     ),
+  //                     weight: DimensionEntity(
+  //                       unit: e.product?.dimensions?.weight?.unit ?? "",
+  //                       value: e.product?.dimensions?.weight?.value ?? "",
+  //                     ),
+  //                   ),
+  //                   packagingDetails:
+  //                       e.product?.packagingDetails
+  //                           ?.map(
+  //                             (e) => CartItemProductDimensionsEntity(
+  //                               width: Measurement(
+  //                                 unit: e.width?.unit ?? "",
+  //                                 value: e.width?.value,
+  //                               ),
+  //                               height: Measurement(
+  //                                 unit: e.height?.unit ?? "",
+  //                                 value: e.height?.value,
+  //                               ),
+  //                               length: Measurement(
+  //                                 unit: e.length?.unit ?? "",
+  //                                 value: e.length?.value,
+  //                               ),
+  //                               weight: Measurement(
+  //                                 unit: e.weight?.unit ?? "",
+  //                                 value: e.weight?.value,
+  //                               ),
+  //                             ),
+  //                           )
+  //                           .toList() ??
+  //                       [],
+  //                   shippingMethods: e.product?.shippingMethods ?? "",
+  //                   shippingRegion: e.product?.shippingRegion ?? "",
+  //                   shippingCountries: e.product?.shippingCountries ?? [],
+  //                   handlingTime: e.product?.handlingTime ?? "",
+  //                   returnsPolicy: e.product?.returnsPolicy,
+  //                   tags: e.product?.tags,
+  //                   seoTitle: e.product?.seoTitle,
+  //                   metaDescription: e.product?.metaDescription,
+  //                   status: e.product?.status ?? "",
+  //                   publishDate: e.product?.publishDate,
+  //                   visibility: e.product?.visibility ?? "",
+  //                   specificCustomerGroups: e.product?.specificCustomerGroups,
+  //                   lastUpdatedBy: e.product?.lastUpdatedBy,
+  //                   technicalSpecifications: e.product?.technicalSpecifications,
+  //                   attributes: ProductAttributes(
+  //                     hasVariant: e.product?.hasVariant ?? false,
+  //                     woodenBoxPackaging: e.product?.woodenBoxPackaging ?? false,
+  //                     isPerfume: e.product?.isPerfume ?? false,
+  //                     containsBattery: e.product?.containsBattery ?? false,
+  //                     isCosmetics: e.product?.isCosmetics ?? false,
+  //                     containsMagnet: e.product?.containsMagnet ?? false,
+  //                   ),
+  //                   countryOfOrigin: e.product?.countryOfOrigin ?? "",
+  //                   hsCode: e.product?.hsCode,
+  //                   isActive: e.product?.isActive ?? false,
+  //                   createdAt: e.product?.createdAt ?? "",
+  //                   lastUpdatedAt: e.product?.lastUpdatedAt ?? "",
+  //                   seller: e.product?.seller ?? -1,
+  //                   brand: e.product?.brand ?? -1,
+  //                 ),
+  //               ),
+  //             )
+  //             .toList() ??
+  //         [],
+  //   );
+  // }
 
   static UpdatedCartEntity convertUpdateCartModelToEntity(
     UpdatedCartModel model,

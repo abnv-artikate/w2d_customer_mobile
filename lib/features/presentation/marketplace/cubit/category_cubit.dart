@@ -26,10 +26,24 @@ class CategoryCubit extends Cubit<CategoryState> {
 
   getProductCategoryList(ProductCategoryParams params) async {
     emit(CategoryLoading());
+    List<CategoryProductEntity> hidden = [];
+    List<CategoryProductEntity> brand = [];
     final result = await productCategoryUseCase.call(params);
 
     result.fold((l) => _emitFailure(l), (data) {
-      emit(CategoryLoaded(productCategoryListing: data.results));
+      for (CategoryProductEntity item in data.results) {
+        if (item.seller.isHiddenGem) {
+          hidden.add(item);
+        } else {
+          brand.add(item);
+        }
+      }
+      emit(
+        CategoryLoaded(
+          brandMallProductCategoryListing: brand,
+          hiddenGemsProductCategoryListing: hidden,
+        ),
+      );
     });
   }
 

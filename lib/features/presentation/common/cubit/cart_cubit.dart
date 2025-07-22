@@ -39,7 +39,7 @@ class CartCubit extends Cubit<CartState> {
     final result = await getCartItemUseCase.call(NoParams());
 
     result.fold((l) => _emitFailure(l), (data) {
-      emit(CartItemLoaded(cartItems: data.items));
+      emit(CartItemLoaded(cartItems: data!.items));
     });
   }
 

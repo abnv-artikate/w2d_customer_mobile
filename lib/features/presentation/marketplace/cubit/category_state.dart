@@ -7,9 +7,13 @@ final class CategoryInitial extends CategoryState {}
 final class CategoryLoading extends CategoryState {}
 
 final class CategoryLoaded extends CategoryState {
-  final List<ResultEntity> productCategoryListing;
+  final List<CategoryProductEntity> brandMallProductCategoryListing;
+  final List<CategoryProductEntity> hiddenGemsProductCategoryListing;
 
-  CategoryLoaded({required this.productCategoryListing});
+  CategoryLoaded({
+    required this.brandMallProductCategoryListing,
+    required this.hiddenGemsProductCategoryListing,
+  });
 }
 
 final class ProductViewLoading extends CategoryState {}

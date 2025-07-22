@@ -53,7 +53,7 @@ abstract class Repository {
   Future<Either<Failure, String>> cartSync({required CartSyncParams params});
 
   /// Cart Repositories
-  Future<Either<Failure, CartEntity>> getCart();
+  Future<Either<Failure, CartEntity?>> getCart();
 
   Future<Either<Failure, UpdatedCartEntity>> updateCart({
     required UpdateCartParams params,

@@ -3,7 +3,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 class LocationWidget extends StatelessWidget {
   final VoidCallback onTap;
-  final String address;
+  final String? address;
 
   const LocationWidget({super.key, required this.onTap, required this.address});
 
@@ -19,7 +19,7 @@ class LocationWidget extends StatelessWidget {
             Icon(LucideIcons.mapPin),
             SizedBox(width: 5),
             Text(
-              address,
+              address ?? "Tap to set Location",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
           ],

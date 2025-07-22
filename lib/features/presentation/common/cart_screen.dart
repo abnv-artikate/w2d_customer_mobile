@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/place_type.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
@@ -42,11 +45,19 @@ class _CartScreenState extends State<CartScreen> {
 
   List<CartItemEntity> cartItems = [];
 
+  final TextEditingController _addCtrl = TextEditingController();
+
   @override
   void initState() {
     _callLocationApi();
     _callGetCartItemApi();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _addCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -67,16 +78,19 @@ class _CartScreenState extends State<CartScreen> {
                 address = "${state.location.city}, ${state.location.country}";
                 _callGetFreightQuoteApi(
                   cartItems: cartItems,
-                  address: location!,
+                  location: location!,
                 );
               } else if (state is GetLocationError) {
                 widget.showErrorToast(context: context, message: state.error);
               }
             },
             builder: (context, state) {
-              return address != null
-                  ? LocationWidget(onTap: () {}, address: address!)
-                  : SizedBox();
+              return LocationWidget(
+                onTap: () {
+                  _setLocationWidget();
+                },
+                address: address,
+              );
             },
           ),
         ],
@@ -86,9 +100,11 @@ class _CartScreenState extends State<CartScreen> {
           if (state is CartItemLoaded) {
             cartItems = state.cartItems;
             if (location != null) {
-              _callGetFreightQuoteApi(cartItems: cartItems, address: location!);
+              _callGetFreightQuoteApi(
+                cartItems: cartItems,
+                location: location!,
+              );
             }
-            //TODO: add manual location  input here.
           } else if (state is UpdateCartLoaded) {
             _callGetCartItemApi();
           } else if (state is CartError) {
@@ -164,105 +180,120 @@ class _CartScreenState extends State<CartScreen> {
                       builder: (context, state) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: ShippingBreakdownWidget(
-                            cartItems: cartItems,
-                            location: location,
-                            freightQuoteEntityData: freightQuoteEntityData,
-                            calculateInsuranceEntity: calculateInsuranceEntity,
-                            selectedShippingIndex: selectedShippingIndex,
-                            isTransitInsured: isTransitInsured,
-                            onShippingMethodDropdownTap: () {
-                              if (location != null) {
-                                if (freightQuoteEntityData != null) {
-                                  _shippingMethodBottomSheet();
-                                } else {
-                                  _callGetFreightQuoteApi(
-                                    cartItems: cartItems,
-                                    address: location!,
+                          child: Column(
+                            children: [
+                              ShippingBreakdownWidget(
+                                cartItems: cartItems,
+                                location: location,
+                                freightQuoteEntityData: freightQuoteEntityData,
+                                calculateInsuranceEntity:
+                                    calculateInsuranceEntity,
+                                selectedShippingIndex: selectedShippingIndex,
+                                isTransitInsured: isTransitInsured,
+                                onShippingMethodDropdownTap: () {
+                                  if (location != null) {
+                                    if (freightQuoteEntityData != null) {
+                                      _shippingMethodBottomSheet();
+                                    } else {
+                                      _callGetFreightQuoteApi(
+                                        cartItems: cartItems,
+                                        location: location!,
+                                      );
+                                    }
+                                  } else {
+                                    widget.showErrorToast(
+                                      context: context,
+                                      message: "Fetching Location Data",
+                                    );
+                                    _callLocationApi();
+                                  }
+                                },
+                                onTransitInsuranceTap: (bool? value) {
+                                  setState(() {
+                                    isTransitInsured = value!;
+                                  });
+                                  _callConfirmInsuranceApi(
+                                    quoteToken:
+                                        freightQuoteEntityData!.quoteToken,
+                                    addInsurance: isTransitInsured,
                                   );
-                                }
-                              } else {
-                                widget.showErrorToast(
-                                  context: context,
-                                  message: "Fetching Location Data",
-                                );
-                                _callLocationApi();
-                              }
-                            },
-                            onTransitInsuranceTap: (bool? value) {
-                              setState(() {
-                                isTransitInsured = value!;
-                              });
-                              if (isTransitInsured) {
-                                _callConfirmInsuranceApi(
-                                  quoteToken:
-                                      freightQuoteEntityData!.quoteToken,
-                                  addInsurance: isTransitInsured,
-                                );
-                              }
-                            },
+                                },
+                              ),
+
+                              CustomFilledButtonWidget(
+                                title:
+                                    state is GetFreightQuoteLoading ||
+                                            state
+                                                is CalculateInsuranceLoading ||
+                                            state
+                                                is SelectFreightQuoteLoading ||
+                                            state is ConfirmInsuranceLoading
+                                        ? 'Loading...'
+                                        : 'Proceed To Buy',
+                                color: AppColors.worldGreen,
+                                height: 50,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                horizontalMargin: 20,
+                                borderRadius: 4,
+                                onTap: () {
+                                  if (selectedShippingIndex == null) {
+                                    if (freightQuoteEntityData != null &&
+                                        location != null) {
+                                      _shippingMethodBottomSheet();
+                                    } else if (location != null) {
+                                      _callGetFreightQuoteApi(
+                                        cartItems: cartItems,
+                                        location: location!,
+                                      );
+                                    } else {
+                                      _callLocationApi();
+                                    }
+                                  } else {
+                                    if (_callCheckUserLoginApi()) {
+                                      context
+                                          .push(
+                                            AppRoutes.checkoutRoute,
+                                            extra: CheckOutScreenEntity(
+                                              cartItems: cartItems,
+                                              freightQuoteEntityData:
+                                                  freightQuoteEntityData,
+                                              calculateInsuranceEntity:
+                                                  calculateInsuranceEntity,
+                                              isTransitInsured:
+                                                  isTransitInsured,
+                                              localTransitFee:
+                                                  _calculateLocalTransitFees(
+                                                    cartItems,
+                                                  ),
+                                            ),
+                                          )
+                                          .then((_) {
+                                            _callLocationApi();
+                                            _callGetCartItemApi();
+                                          });
+                                    } else {
+                                      // context.push(AppRoutes.loginRoute, extra: true);
+                                      // context.push(
+                                      //   AppRoutes.checkoutRoute,
+                                      //   extra: CheckOutScreenEntity(
+                                      //     cartItems: cartItems,
+                                      //     freightQuoteEntityData: freightQuoteEntityData,
+                                      //     calculateInsuranceEntity:
+                                      //         calculateInsuranceEntity,
+                                      //     isTransitInsured: isTransitInsured,
+                                      //   ),
+                                      // );
+                                      widget.showErrorToast(
+                                        context: context,
+                                        message: "you are not logged in !!!",
+                                      );
+                                    }
+                                  }
+                                },
+                              ),
+                            ],
                           ),
                         );
-                      },
-                    ),
-
-                    CustomFilledButtonWidget(
-                      title: 'Proceed To Buy',
-                      color: AppColors.worldGreen,
-                      height: 50,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      horizontalMargin: 20,
-                      borderRadius: 4,
-                      onTap: () {
-                        if (selectedShippingIndex == null) {
-                          if (freightQuoteEntityData != null &&
-                              location != null) {
-                            _shippingMethodBottomSheet();
-                          } else if (location != null) {
-                            _callGetFreightQuoteApi(
-                              cartItems: cartItems,
-                              address: location!,
-                            );
-                          } else {
-                            _callLocationApi();
-                          }
-                        } else {
-                          if (_callCheckUserLoginApi()) {
-                            context
-                                .push(
-                                  AppRoutes.checkoutRoute,
-                                  extra: CheckOutScreenEntity(
-                                    cartItems: cartItems,
-                                    freightQuoteEntityData:
-                                        freightQuoteEntityData,
-                                    calculateInsuranceEntity:
-                                        calculateInsuranceEntity,
-                                    isTransitInsured: isTransitInsured,
-                                    localTransitFee: _calculateLocalTransitFees(cartItems),
-                                  ),
-                                )
-                                .then((_) {
-                                  _callLocationApi();
-                                  _callGetCartItemApi();
-                                });
-                          } else {
-                            // context.push(AppRoutes.loginRoute, extra: true);
-                            // context.push(
-                            //   AppRoutes.checkoutRoute,
-                            //   extra: CheckOutScreenEntity(
-                            //     cartItems: cartItems,
-                            //     freightQuoteEntityData: freightQuoteEntityData,
-                            //     calculateInsuranceEntity:
-                            //         calculateInsuranceEntity,
-                            //     isTransitInsured: isTransitInsured,
-                            //   ),
-                            // );
-                            widget.showErrorToast(
-                              context: context,
-                              message: "you are not logged in !!!",
-                            );
-                          }
-                        }
                       },
                     ),
                   ],
@@ -483,6 +514,91 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
+  void _setLocationWidget() async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Set Location'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GooglePlaceAutoCompleteTextField(
+                textEditingController: _addCtrl,
+                googleAPIKey: "AIzaSyCBixn2iS2Fm7jDolWu4S5dBqA1avQ7T_g",
+                boxDecoration: BoxDecoration(),
+                inputDecoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: AppColors.softWhite71,
+                      width: 2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: AppColors.worldGreen,
+                      width: 2,
+                    ),
+                  ),
+                  hintText: 'Complete Address',
+                  hintStyle: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.softWhite80,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 22,
+                    vertical: 16,
+                  ),
+                ),
+                debounceTime: 800,
+                isLatLngRequired: true,
+                getPlaceDetailWithLatLng: (Prediction prediction) async {
+                  // double lat = double.parse(prediction.lat!);
+                  // double lng = double.parse(prediction.lng!);
+                  address = prediction.terms?.first.value ?? "";
+                  // final List<Placemark> placemarks = await placemarkFromCoordinates(
+                  //   lat,
+                  //   lng,
+                  // );
+                  // countryCode = placemarks[0].isoCountryCode!;
+                },
+                itemClick: (Prediction prediction) {
+                  _addCtrl.text = prediction.description!;
+                  _addCtrl.selection = TextSelection.fromPosition(
+                    TextPosition(offset: prediction.description!.length),
+                  );
+                  setState(() {
+                    address = prediction.terms?.first.value ?? "";
+                  });
+                  context.pop();
+                },
+                itemBuilder: (context, index, Prediction prediction) {
+                  return Container(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        Icon(Icons.location_on),
+                        SizedBox(width: 7),
+                        Expanded(child: Text(prediction.description ?? "")),
+                      ],
+                    ),
+                  );
+                },
+                seperatedBuilder: Divider(),
+                isCrossBtnShown: true,
+                containerHorizontalPadding: 0,
+                placeType: PlaceType.geocode,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _callLocationApi() async {
     await context.read<CommonCubit>().getCurrentLocation();
   }
@@ -509,68 +625,22 @@ class _CartScreenState extends State<CartScreen> {
 
   void _callGetFreightQuoteApi({
     required List<CartItemEntity> cartItems,
-    required LocationEntity address,
+    required LocationEntity location,
   }) {
-    List<Items?> items =
-        cartItems.map((e) {
-          if (e.isChecked) {
-            return Items(
-              itemsGoods:
-                  "${double.parse(e.product.regularPrice) * e.quantity}",
-              itemDescription: e.product.productType,
-              noOfPkgs: e.product.packagingDetails.length,
-              attribute:
-                  e.product.isCosmetics
-                      ? "cosmetics"
-                      : e.product.isPerfume
-                      ? "perfumes"
-                      : e.product.containsBattery
-                      ? "battery"
-                      : e.product.containsMagnet
-                      ? "magnet"
-                      : "",
-              hsCode: e.product.hsCode,
-              dimensions:
-                  e.product.woodenBoxPackaging
-                      ? e.product.packagingDetails.map((e) {
-                        if (double.parse(e.weight.value) != 0.0 &&
-                            double.parse(e.width.value) != 0.0 &&
-                            double.parse(e.height.value) != 0.0 &&
-                            double.parse(e.length.value) != 0.0) {
-                          return Dimensions(
-                            kiloGrams: double.parse(e.weight.value),
-                            length: double.parse(e.length.value),
-                            width: double.parse(e.width.value),
-                            height: double.parse(e.height.value),
-                            addWoodenPacking: true,
-                          );
-                        }
-                      }).toList()
-                      : e.product.packagingDetails.map((e) {
-                        if (double.parse(e.weight.value) != 0.0 &&
-                            double.parse(e.width.value) != 0.0 &&
-                            double.parse(e.height.value) != 0.0 &&
-                            double.parse(e.length.value) != 0.0) {
-                          return Dimensions(
-                            kiloGrams: double.parse(e.weight.value),
-                            length: double.parse(e.length.value),
-                            width: double.parse(e.width.value),
-                            height: double.parse(e.height.value),
-                            addWoodenPacking: false,
-                          );
-                        }
-                      }).toList(),
-            );
-          }
-        }).toList();
-    if (items.isNotEmpty && items.nonNulls.toList().isNotEmpty) {
+    final items =
+        cartItems
+            .map((item) => item.toFreightItem())
+            .whereType<Items>() // Automatically filters out null values
+            .toList();
+
+    if (items.isNotEmpty) {
       context.read<ShippingCubit>().getFreightQuote(
         GetFreightQuoteParams(
-          destinationCountry: address.country,
-          destinationCountryShortName: address.isoCountryCode,
-          destinationCity: address.city,
-          destinationLatitude: address.latitude,
-          destinationLongitude: address.longitude,
+          destinationCountry: location.country,
+          destinationCountryShortName: location.isoCountryCode,
+          destinationCity: location.city,
+          destinationLatitude: location.latitude,
+          destinationLongitude: location.longitude,
           items: items,
         ),
       );
@@ -632,7 +702,7 @@ class _CartScreenState extends State<CartScreen> {
 
     for (CartItemEntity item in cartItems) {
       if (item.isChecked) {
-        totalTransitFee += double.parse(item.product.localTransitFee);
+        totalTransitFee += item.product.localTransitFee;
       }
     }
 

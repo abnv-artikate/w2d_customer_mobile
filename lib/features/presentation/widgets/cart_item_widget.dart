@@ -73,7 +73,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                         ),
                       ),
                       Text(
-                        widget.cartItem.product.salePrice,
+                        widget.cartItem.product.salePrice.toStringAsFixed(2),
                         style: TextStyle(fontSize: 18),
                       ),
                       _incrementWidget(

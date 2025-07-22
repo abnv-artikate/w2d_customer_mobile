@@ -91,22 +91,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          BlocConsumer<CommonCubit, CommonState>(
-            listener: (context, state) {
-              if (state is GetLocationLoading) {
-                address = "Loading location";
-              } else if (state is GetLocationLoaded) {
-                address = "${state.location.city}, ${state.location.country}";
-              } else if (state is GetLocationError) {
-                widget.showErrorToast(context: context, message: state.error);
-              }
-            },
-            builder: (context, state) {
-              return address != null
-                  ? LocationWidget(onTap: () {}, address: address!)
-                  : SizedBox();
-            },
-          ),
+          // BlocConsumer<CommonCubit, CommonState>(
+          //   listener: (context, state) {
+          //     if (state is GetLocationLoading) {
+          //       address = "Loading location";
+          //     } else if (state is GetLocationLoaded) {
+          //       address = "${state.location.city}, ${state.location.country}";
+          //     } else if (state is GetLocationError) {
+          //       widget.showErrorToast(context: context, message: state.error);
+          //     }
+          //   },
+          //   builder: (context, state) {
+          //     return
+          LocationWidget(onTap: () {}, address: address),
+          //   },
+          // ),
         ],
         bottom: PreferredSize(
           preferredSize: Size.zero,

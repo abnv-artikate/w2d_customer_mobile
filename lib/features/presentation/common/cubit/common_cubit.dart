@@ -100,7 +100,7 @@ class CommonCubit extends Cubit<CommonState> {
     return localDatasource.getUserEmail() != null;
   }
 
-  logout(){
+  void logout(){
     localDatasource.logout();
   }
 

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/rendering.dart';
 import 'package:uuid/v4.dart';
 import 'package:w2d_customer_mobile/core/error/exceptions.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
@@ -204,7 +205,7 @@ class RepositoryImpl extends Repository {
   }
 
   @override
-  Future<Either<Failure, CartEntity>> getCart() async {
+  Future<Either<Failure, CartEntity?>> getCart() async {
     try {
       String cartId = "";
       if (localDatasource.getCartId() != null) {
@@ -216,7 +217,9 @@ class RepositoryImpl extends Repository {
       if (await networkInfo.isConnected) {
         final result = await remoteDatasource.getCart({"cart_id": cartId});
 
-        return Right(RepositoryConv.convertCartModelToEntity(result));
+        return result.hasData
+            ? Right(result.toEntity())
+            : Left(ServerFailure(message: "No Data Present in Cart"));
       } else {
         return Left(ServerFailure(message: Constants.errorNoInternet));
       }
@@ -368,13 +371,14 @@ class RepositoryImpl extends Repository {
   }
 
   @override
-  Future<Either<Failure, ConfirmPaymentResponseEntity>> verifyPayment(String transCode) async {
+  Future<Either<Failure, ConfirmPaymentResponseEntity>> verifyPayment(
+    String transCode,
+  ) async {
     try {
       if (await networkInfo.isConnected) {
         final result = await remoteDatasource.verifyPayment(transCode);
 
         return Right(ConfirmPaymentResponseEntity.fromModel(result));
-
       } else {
         return Left(ServerFailure(message: Constants.errorNoInternet));
       }

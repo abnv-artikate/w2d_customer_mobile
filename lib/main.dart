@@ -35,6 +35,11 @@ class MyApp extends StatelessWidget {
       routerConfig: router,
       theme: ThemeData(
         scaffoldBackgroundColor: AppColors.white,
+        primaryColor: AppColors.white,
+        dialogTheme: DialogTheme(
+          backgroundColor: AppColors.white,
+          surfaceTintColor: AppColors.white,
+        ),
         appBarTheme: AppBarTheme(
           color: AppColors.white,
           surfaceTintColor: AppColors.white,
