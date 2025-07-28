@@ -3,19 +3,19 @@ import 'package:w2d_customer_mobile/core/error/failure.dart';
 import 'package:w2d_customer_mobile/core/usecase/usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
 
-class CreateOrderUseCase extends UseCase<String, CreateOrderParams> {
+class OrderPendingUseCase extends UseCase<String, OrderPendingParams> {
   final Repository _repository;
 
-  CreateOrderUseCase(this._repository);
+  OrderPendingUseCase(this._repository);
 
   @override
-  Future<Either<Failure, String>> call(CreateOrderParams params) {
-    // return _repository.createOrder(params);
-    throw UnimplementedError("Check if cart id error is fixed.");
+  Future<Either<Failure, String>> call(OrderPendingParams params) {
+    return _repository.orderPending(params);
+    // throw UnimplementedError("Check if cart id error is fixed.");
   }
 }
 
-class CreateOrderParams {
+class OrderPendingParams {
   final String cartId;
   final int addressId;
   final String quoteToken;
@@ -36,7 +36,7 @@ class CreateOrderParams {
   final String file;
   final String orderRef;
 
-  CreateOrderParams({
+  OrderPendingParams({
     required this.cartId,
     required this.addressId,
     required this.quoteToken,

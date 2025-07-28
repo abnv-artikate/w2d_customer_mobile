@@ -7,15 +7,22 @@ import 'package:google_places_flutter/model/place_type.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/address/customer_address_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/orders/create_order_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/location/get_manual_location_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_success_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/pending_order_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
+import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/address_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/payment_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/orders/cubit/orders_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_text_field.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_breakdown_widget.dart';
@@ -31,13 +38,13 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  bool addNewAdd = true;
+  bool addNewAdd = false;
   bool? isTransitInsured;
   String countryCode = "";
-  String orderRef = "";
 
   @override
   initState() {
+    _callGetSavedAddressApi();
     super.initState();
   }
 
@@ -57,6 +64,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final FocusNode _streetNode = FocusNode();
   final FocusNode _completeAddNode = FocusNode();
   final FocusNode _pinNode = FocusNode();
+
+  List<CustomerAddressesEntity> addressList = [];
 
   @override
   void dispose() {
@@ -87,24 +96,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           BlocListener<PaymentCubit, PaymentState>(
             listener: (context, state) {
               if (state is InitiatePaymentLoaded) {
-                orderRef = state.response.transactionCode;
-                context
-                    .push(
-                      AppRoutes.paymentRoute,
-                      extra: state.response.startUrl,
-                    )
-                    .then((_) {
-                      _callConfirmPaymentApi(state.response.transactionCode);
-                    });
+                _callPendingOrderApi(response: state.response);
               } else if (state is InitiatePaymentError) {
                 widget.showErrorToast(context: context, message: state.error);
               }
 
               if (state is VerifyPaymentLoaded) {
                 if (state.response.status == 'A') {
-                  _callCreateOrderApi(
-                    tranRef: state.response.tranRef,
-                    orderRef: orderRef,
+                  _callOrderSuccessApi(
+                    OrderSuccessParams(
+                      paymentReference: state.paymentRef,
+                      gatewayTxnId: state.response.tranRef,
+                      cartId: widget.checkOutScreenEntity.cartSessionKey,
+                    ),
                   );
                 } else {
                   widget.showErrorToast(
@@ -119,13 +123,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
           BlocListener<OrdersCubit, OrdersState>(
             listener: (context, state) {
-              if (state is CreateOrderLoaded) {
-                context.pop();
-              } else if (state is CreateOrderError) {
+              if (state is OrderPendingLoaded) {
+                context
+                    .push(AppRoutes.paymentRoute, extra: state.startUrl)
+                    .then((_) {
+                      _callConfirmPaymentApi(state.transactionCode);
+                    });
+                widget.showErrorToast(
+                  context: context,
+                  message: "Order Pending Created",
+                );
+              } else if (state is OrderPendingError) {
                 widget.showErrorToast(
                   context: context,
                   message: "Error while creating order",
                 );
+              }
+
+              if (state is OrderSuccessLoaded) {
+                context.pop();
+              } else if (state is OrderSuccessError) {
+                widget.showErrorToast(context: context, message: state.error);
               }
             },
           ),
@@ -137,24 +155,37 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Text(
-                //   "Saved Addresses",
-                //   style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
-                // ),
-                // _savedAddress(),
-                // _customerDetails(),
-                // if (!addNewAdd) ...[
-                //   BlankButtonWidget(
-                //     title: "Add Address",
-                //     width: (MediaQuery.of(context).size.width),
-                //     height: 50,
-                //     onTap: () {
-                //       setState(() {
-                //         addNewAdd = true;
-                //       });
-                //     },
-                //   ),
-                // ],
+                BlocConsumer<AddressCubit, AddressState>(
+                  listener: (context, state) {
+                    if (state is GetSavedAddressLoaded) {
+                      addressList = state.list;
+                    } else if (state is GetSavedAddressError) {
+                      widget.showErrorToast(
+                        context: context,
+                        message: state.error,
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    return _savedAddress();
+                  },
+                ),
+                if (!addNewAdd) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: BlankButtonWidget(
+                      title: "Add Address",
+                      width: (MediaQuery.of(context).size.width * 0.5),
+                      height: 50,
+                      borderRadius: 4,
+                      onTap: () {
+                        setState(() {
+                          addNewAdd = true;
+                        });
+                      },
+                    ),
+                  ),
+                ],
                 ShippingBreakdownWidget(
                   cartItems: widget.checkOutScreenEntity.cartItems,
                   location: null,
@@ -183,6 +214,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   },
                 ),
                 if (addNewAdd) ...[_addNewAddress()],
+                SizedBox(height: 5),
+                CustomFilledButtonWidget(
+                  title: "Proceed",
+                  color: AppColors.worldGreen,
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  onTap: () {
+                    _callInitiatePaymentApi(
+                      PaymentRequestEntity(
+                        cartId: widget.checkOutScreenEntity.cartSessionKey,
+                        amount: '1000',
+                        currency: 'AED',
+                        firstName: _firstNameCtrl.text,
+                        lastName: _lastNameCtrl.text,
+                        street: _streetCtrl.text,
+                        city: _cityCtrl.text,
+                        region: _cityCtrl.text,
+                        country: countryCode,
+                        zip: _pinCtrl.text,
+                        email: _emailCtrl.text,
+                        phone: _primaryPhoneCtrl.text,
+                      ),
+                    );
+                    // _clearTextFields();
+                  },
+                ),
               ],
             ),
           ),
@@ -228,6 +285,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             onTapOutside: (_) {
               _primaryPhoneNode.unfocus();
             },
+            maxLength: 10,
           ),
           SizedBox(height: 5),
           CustomTextField(
@@ -283,8 +341,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 lat,
                 lng,
               );
+
               countryCode = placemarks[0].isoCountryCode!;
             },
+
             itemClick: (Prediction prediction) {
               _completeAddCtrl.text = prediction.description!;
               _completeAddCtrl.selection = TextSelection.fromPosition(
@@ -317,96 +377,45 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               _pinNode.unfocus();
             },
           ),
-          SizedBox(height: 5),
-          CustomFilledButtonWidget(
-            title: "Proceed",
-            color: AppColors.worldGreen,
-            height: 50,
-            width: MediaQuery.of(context).size.width,
-            onTap: () {
-              _callInitiatePaymentApi(
-                PaymentRequestEntity(
-                  cartId:
-                      widget.checkOutScreenEntity.cartItems[0].cart.toString(),
-                  amount: '1000',
-                  currency: 'AED',
-                  firstName: _firstNameCtrl.text,
-                  lastName: _lastNameCtrl.text,
-                  street: _streetCtrl.text,
-                  city: _cityCtrl.text,
-                  region: _cityCtrl.text,
-                  country: countryCode,
-                  zip: _pinCtrl.text,
-                  email: _emailCtrl.text,
-                  phone: _primaryPhoneCtrl.text,
-                ),
-              );
-              // _clearTextFields();
-            },
-          ),
         ],
       ),
     );
   }
 
-  // _customerDetails() {
-  //   return Container(
-  //     padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-  //     decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(
-  //           "Customer Details",
-  //           style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
-  //         ),
-  //         CustomTextField(
-  //           ctrl: _firstNameCtrl,
-  //           hintText: 'First Name',
-  //           focusNode: _firstNameNode,
-  //           onTapOutside: (_) {
-  //             _firstNameNode.unfocus();
-  //           },
-  //         ),
-  //         SizedBox(height: 5),
-  //         CustomTextField(
-  //           ctrl: _lastNameCtrl,
-  //           hintText: 'Last Name',
-  //           focusNode: _lastNameNode,
-  //           onTapOutside: (_) {
-  //             _lastNameNode.unfocus();
-  //           },
-  //         ),
-  //         SizedBox(height: 5),
-  //         CustomTextField(
-  //           ctrl: _primaryPhoneCtrl,
-  //           hintText: 'Primary Phone Number',
-  //           focusNode: _primaryPhoneNode,
-  //           onTapOutside: (_) {
-  //             _primaryPhoneNode.unfocus();
-  //           },
-  //         ),
-  //         SizedBox(height: 5),
-  //         CustomTextField(
-  //           ctrl: _emailCtrl,
-  //           hintText: 'Email ID',
-  //           focusNode: _emailNode,
-  //           onTapOutside: (_) {
-  //             _secondaryPhoneNode.unfocus();
-  //           },
-  //         ),
-  //         SizedBox(height: 5),
-  //         CustomFilledButtonWidget(
-  //           title: 'Save for Future',
-  //           color: AppColors.worldGreen,
-  //           height: 50,
-  //           width: (MediaQuery.of(context).size.width),
-  //           onTap: () {},
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  _savedAddress() {
+    return ListView.separated(
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () {
+            _callSelectAddressApi(addressList[index].id);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: AppColors.deepBlue),
+            ),
+            child: Column(
+              children: [
+                Text(addressList[index].id.toString()),
+                Text(addressList[index].fullName),
+                Text(addressList[index].primaryPhoneNumber),
+                Text(addressList[index].addressType),
+                Text(addressList[index].addressLine1),
+                Text(addressList[index].city),
+                Text(addressList[index].country),
+                Text(addressList[index].isDefault.toString()),
+              ],
+            ),
+          ),
+        );
+      },
+      separatorBuilder: (context, index) {
+        return SizedBox(height: 5);
+      },
+      itemCount: addressList.length,
+    );
+  }
 
   void _callConfirmInsuranceApi({
     required String quoteToken,
@@ -439,14 +448,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     _pinCtrl.clear();
   }
 
-  void _callCreateOrderApi({
-    required String tranRef,
-    required String orderRef,
+  void _callPendingOrderApi({
+    // required String tranRef,
+    // required String orderRef,
+    required PaymentResponseEntity response,
   }) {
-    context.read<OrdersCubit>().createOrder(
-      CreateOrderParams(
-        cartId: widget.checkOutScreenEntity.cartItems[0].id.toString(),
-        addressId: 13,
+    context.read<OrdersCubit>().pendingOrder(
+      params: OrderPendingParams(
+        cartId: widget.checkOutScreenEntity.cartSessionKey,
+        addressId: 87,
         quoteToken:
             widget.checkOutScreenEntity.freightQuoteEntityData!.quoteToken,
         transitInsurance:
@@ -483,9 +493,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 .netTotal ??
             0,
         file: "",
-        orderRef: orderRef,
+        orderRef: response.transactionCode,
       ),
+      startUrl: response.startUrl,
+      transactionCode: response.transactionCode,
     );
+  }
+
+  void _callGetSavedAddressApi() {
+    context.read<AddressCubit>().getSavedAddress();
+  }
+
+  void _callSelectAddressApi(int addressID) {
+    context.read<AddressCubit>().selectAddress(addressID);
+  }
+
+  void _callManualLocationApi(GetManualLocationParams params) async {
+    await context.read<CartCubit>().getManualLocation(params);
+  }
+
+  void _callOrderSuccessApi(OrderSuccessParams params) async {
+    await context.read<OrdersCubit>().orderSuccess(params);
   }
 }
 
@@ -495,6 +523,7 @@ class CheckOutScreenEntity {
   CalculateInsuranceEntity? calculateInsuranceEntity;
   double localTransitFee;
   final bool isTransitInsured;
+  final String cartSessionKey;
 
   CheckOutScreenEntity({
     required this.cartItems,
@@ -502,5 +531,6 @@ class CheckOutScreenEntity {
     this.calculateInsuranceEntity,
     required this.localTransitFee,
     required this.isTransitInsured,
+    required this.cartSessionKey,
   });
 }

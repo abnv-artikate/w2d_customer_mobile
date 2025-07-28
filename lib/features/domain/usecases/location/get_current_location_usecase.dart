@@ -16,12 +16,12 @@ class GetCurrentLocationUseCase {
       LocationData _locationData;
 
       _serviceEnabled = await location.serviceEnabled();
+      // if (!_serviceEnabled) {
+      //   _serviceEnabled = await location.requestService();
       if (!_serviceEnabled) {
-        _serviceEnabled = await location.requestService();
-        if (!_serviceEnabled) {
-          return Left("Location Service disabled");
-        }
+        return Left("Location Service disabled");
       }
+      // }
 
       _permissionGranted = await location.hasPermission();
       if (_permissionGranted == PermissionStatus.denied) {
@@ -45,8 +45,8 @@ class GetCurrentLocationUseCase {
           city: place.locality ?? place.subAdministrativeArea ?? "",
           country: place.country ?? "",
           isoCountryCode: place.isoCountryCode ?? "",
-          latitude: _locationData.latitude.toString(),
-          longitude: _locationData.longitude.toString(),
+          latitude: _locationData.latitude?.toDouble() ?? 0.0,
+          longitude: _locationData.longitude?.toDouble() ?? 0.0,
         ),
       );
     } on Exception catch (e) {

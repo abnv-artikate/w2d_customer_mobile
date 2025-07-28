@@ -39,6 +39,12 @@ class EndPoints {
   static const String createPayment = 'mobile.xml';
   static const String confirmPayment = 'mobile_complete.xml';
 
+  /// Address Endpoits
+  static const String customerAddress = '/customer/address/';
+  static const String customerAddresses = '/customer/addresses/';
+
   /// Order Endpoints
   static const String createOrder = '/order/create/';
+  static const String orderPending = '/order/pending/';
+  static const String orderSuccess = '/order/success/';
 }

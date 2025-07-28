@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:w2d_customer_mobile/features/data/client/client.dart';
 import 'package:w2d_customer_mobile/features/data/client/shipping_client.dart';
 import 'package:w2d_customer_mobile/features/data/client/telr_payment_client.dart';
+import 'package:w2d_customer_mobile/features/data/model/address/get_customer_addresses_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.dart';
@@ -73,7 +74,15 @@ abstract class RemoteDatasource {
 
   Future<TelrConfirmPaymentResponseModel> verifyPayment(String transCode);
 
-  // Future createOrder(Map<String, dynamic> body);
+  ///
+  Future saveCustomerAddress(Map<String, dynamic> body);
+
+  Future<CustomerAddressesModel> getCustomerAddresses();
+
+  /// Order Datasource
+  Future orderPending(Map<String, dynamic> body);
+
+  Future orderSuccess(Map<String, dynamic> body);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
@@ -298,16 +307,47 @@ class RemoteDatasourceImpl extends RemoteDatasource {
     }
   }
 
-  // @override
-  // Future createOrder(Map<String, dynamic> body) async {
-  //   try {
-  //     final response = w2dClient.createOrder(body);
-  //
-  //     return response;
-  //   } on DioException catch (e) {
-  //     throw Exception(e.message);
-  //   } on Exception {
-  //     rethrow;
-  //   }
-  // }
+  @override
+  Future<CustomerAddressesModel> getCustomerAddresses() async {
+    try {
+      return await w2dClient.getCustomerAddresses();
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future saveCustomerAddress(Map<String, dynamic> body) async {
+    try {
+      return await w2dClient.saveCustomerAddress(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future orderPending(Map<String, dynamic> body) async {
+    try {
+      return await w2dClient.orderPending(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future orderSuccess(Map<String, dynamic> body) async {
+    try {
+      return await w2dClient.orderSuccess(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
 }

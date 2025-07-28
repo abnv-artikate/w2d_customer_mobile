@@ -9,6 +9,7 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final TapRegionCallback onTapOutside;
   final TextInputType textInputType;
+  final int? maxLength;
 
   const CustomTextField({
     super.key,
@@ -19,6 +20,7 @@ class CustomTextField extends StatefulWidget {
     this.textInputType = TextInputType.text,
     required this.hintText,
     required this.onTapOutside,
+    this.maxLength,
   });
 
   @override
@@ -51,6 +53,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       ),
       // cursorColor: AppColors.deepBlue,
       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+      maxLength: widget.maxLength,
       onTapOutside: widget.onTapOutside,
     );
   }

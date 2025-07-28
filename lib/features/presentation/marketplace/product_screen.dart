@@ -35,7 +35,7 @@ class _ProductScreenState extends State<ProductScreen> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            actions: [_likeButton()],
+            actions: [_cartButton()],
           ),
           body: Column(
             mainAxisSize: MainAxisSize.max,
@@ -51,7 +51,7 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  _likeButton() {
+  _cartButton() {
     return Container(
       margin: EdgeInsets.only(right: 20),
       child: IconButton(

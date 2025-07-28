@@ -471,26 +471,162 @@ enum ShippingMethod {
 // Extensions for freight quote integration
 extension CartItemEntityFreightExtensions on CartItemEntity {
   Items? toFreightItem() {
-    if (!isChecked || !isValidForShipping) return null;
-
     try {
-      final dimensions = product.packagingDetails
-          .where((detail) => detail.isValid)
-          .map((detail) => detail.toDimension(product.attributes.woodenBoxPackaging))
-          .toList();
+      // Check if item is valid for shipping
+      if (!isChecked) {
+        print('CartItem ${id}: Item not checked');
+        return null;
+      }
 
-      if (dimensions.isEmpty) return null;
+      // if (!isValidForShipping) {
+      //   print('CartItem ${id}: Item not valid for shipping');
+      //   return null;
+      // }
 
-      return Items(
-        itemsGoods: (product.effectivePrice * quantity).toString(),
-        itemDescription: product.productType.name,
-        noOfPkgs: dimensions.length,
-        attribute: product.shippingAttribute,
-        hsCode: product.hsCode ?? "",
-        dimensions: dimensions,
-      );
+      // Validate product existence
+      if (product == null) {
+        print('CartItem ${id}: Product is null');
+        return null;
+      }
+
+      // Calculate total goods value
+      double totalGoodsValue;
+      try {
+        totalGoodsValue = product.effectivePrice * quantity;
+        if (totalGoodsValue <= 0) {
+          print('CartItem ${id}: Invalid goods value: $totalGoodsValue');
+          return null;
+        }
+      } catch (e) {
+        print('CartItem ${id}: Error calculating goods value: $e');
+        return null;
+      }
+
+      // Get product type safely
+      String productTypeString;
+      try {
+        productTypeString = product.productType?.name ?? 'other';
+      } catch (e) {
+        print('CartItem ${id}: Error getting product type: $e');
+        productTypeString = 'other';
+      }
+
+      // Get shipping attribute safely
+      String shippingAttribute;
+      try {
+        shippingAttribute = product.shippingAttribute ?? '';
+      } catch (e) {
+        print('CartItem ${id}: Error getting shipping attribute: $e');
+        shippingAttribute = '';
+      }
+
+      // Get HS code safely
+      String hsCode;
+      try {
+        hsCode = product.hsCode ?? variant?.hsCode ?? '';
+      } catch (e) {
+        print('CartItem ${id}: Error getting HS code: $e');
+        hsCode = '';
+      }
+
+      // Get packaging details safely
+      List<CartItemProductDimensionsEntity> packagingDetailsList;
+      try {
+        packagingDetailsList = variant?.packagingDetails ?? product.packagingDetails ?? [];
+
+        if (packagingDetailsList.isEmpty) {
+          print('CartItem ${id}: No packaging details available');
+          return null;
+        }
+      } catch (e) {
+        print('CartItem ${id}: Error getting packaging details: $e');
+        return null;
+      }
+
+      // Filter valid packaging details
+      List<CartItemProductDimensionsEntity> validPackagingDetails;
+      try {
+        validPackagingDetails = packagingDetailsList.where((detail) {
+          try {
+            return detail.isValid;
+          } catch (e) {
+            print('CartItem ${id}: Error checking packaging detail validity: $e');
+            return false;
+          }
+        }).toList();
+
+        if (validPackagingDetails.isEmpty) {
+          print('CartItem ${id}: No valid packaging details found');
+          return null;
+        }
+      } catch (e) {
+        print('CartItem ${id}: Error filtering packaging details: $e');
+        return null;
+      }
+
+      // Get wooden box packaging flag safely
+      bool woodenBoxPackaging;
+      try {
+        woodenBoxPackaging = variant?.attributes?.woodenBoxPackaging ??
+            product.attributes?.woodenBoxPackaging ??
+            false;
+      } catch (e) {
+        print('CartItem ${id}: Error getting wooden box packaging flag: $e');
+        woodenBoxPackaging = false;
+      }
+
+      // Create dimensions for each quantity
+      List<Dimensions> allDimensions = [];
+      try {
+        for (int i = 0; i < quantity; i++) {
+          for (var detail in validPackagingDetails) {
+            try {
+              Dimensions dimension = detail.toDimension(woodenBoxPackaging);
+
+              // Validate dimension values
+              if (dimension.kiloGrams <= 0 ||
+                  dimension.length <= 0 ||
+                  dimension.width <= 0 ||
+                  dimension.height <= 0) {
+                print('CartItem ${id}: Invalid dimension values for detail at quantity $i');
+                continue;
+              }
+
+              allDimensions.add(dimension);
+            } catch (e) {
+              print('CartItem ${id}: Error creating dimension for detail at quantity $i: $e');
+              continue;
+            }
+          }
+        }
+
+        if (allDimensions.isEmpty) {
+          print('CartItem ${id}: No valid dimensions created');
+          return null;
+        }
+      } catch (e) {
+        print('CartItem ${id}: Error creating dimensions list: $e');
+        return null;
+      }
+
+      // Create and return Items object
+      try {
+        return Items(
+          itemsGoods: totalGoodsValue.toString(),
+          itemDescription: productTypeString,
+          noOfPkgs: allDimensions.length,
+          attribute: shippingAttribute,
+          hsCode: hsCode,
+          dimensions: allDimensions,
+        );
+      } catch (e) {
+        print('CartItem ${id}: Error creating Items object: $e');
+        return null;
+      }
+
     } catch (e) {
-      // Log error appropriately
+      print('CartItem ${id}: Unexpected error in toFreightItem(): $e');
+      print('CartItem ${id}: Stack trace: ${StackTrace.current}');
       return null;
     }
   }

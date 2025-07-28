@@ -21,9 +21,9 @@ class GetFreightQuoteUseCase
 class GetFreightQuoteParams {
   final String destinationCountry;
   final String destinationCountryShortName;
-  final String? destinationCity;
-  final String? destinationLatitude;
-  final String? destinationLongitude;
+  final String destinationCity;
+  final String destinationLatitude;
+  final String destinationLongitude;
   final List<Items?> items;
 
   GetFreightQuoteParams({

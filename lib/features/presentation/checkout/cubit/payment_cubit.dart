@@ -39,7 +39,7 @@ class PaymentCubit extends Cubit<PaymentState> {
         emit(VerifyPaymentError(error: l.message));
       },
       (r) {
-        emit(VerifyPaymentLoaded(response: r));
+        emit(VerifyPaymentLoaded(response: r, paymentRef: transCode));
       },
     );
   }

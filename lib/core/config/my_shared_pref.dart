@@ -84,5 +84,6 @@ class MySharedPref {
     _pref.remove(accessToken);
     _pref.remove(refreshToken);
     _pref.remove(userEmail);
+    _pref.remove(cartID);
   }
 }

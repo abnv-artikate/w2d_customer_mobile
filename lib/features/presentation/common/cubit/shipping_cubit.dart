@@ -24,7 +24,7 @@ class ShippingCubit extends Cubit<ShippingState> {
   final CalculateInsuranceUseCase calculateInsuranceUseCase;
   final ConfirmInsuranceUseCase confirmInsuranceUseCase;
 
-  getFreightQuote(GetFreightQuoteParams params) async {
+  getFreightQuote({required GetFreightQuoteParams params, required }) async {
     emit(GetFreightQuoteLoading());
     final result = await getFreightQuoteUseCase.call(params);
 

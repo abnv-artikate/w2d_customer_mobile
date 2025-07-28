@@ -14,6 +14,8 @@ import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/lo
 import 'package:w2d_customer_mobile/features/data/datasource/remote_datasource/remote_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/repositories/repository_impl.dart';
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/address/create_address_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/address/get_address_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
@@ -23,7 +25,9 @@ import 'package:w2d_customer_mobile/features/domain/usecases/categories/categori
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/get_collections_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/orders/create_order_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/location/get_manual_location_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_success_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/pending_order_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/initiate_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/verify_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
@@ -33,6 +37,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_in
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/address_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
@@ -54,7 +59,6 @@ Future<void> init() async {
   sl.registerFactory<CommonCubit>(
     () => CommonCubit(
       categoriesHierarchyUseCase: sl<CategoriesHierarchyUseCase>(),
-      getCurrentLocationUseCase: sl<GetCurrentLocationUseCase>(),
       getCollectionsUseCase: sl<GetCollectionsUseCase>(),
       searchProductAutoCompleteUseCase: sl<SearchProductAutoCompleteUseCase>(),
       localDatasource: sl<LocalDatasource>(),
@@ -75,6 +79,7 @@ Future<void> init() async {
       getCartItemUseCase: sl<GetCartUseCase>(),
       updateCartUseCase: sl<UpdateCartUseCase>(),
       getCurrentLocationUseCase: sl<GetCurrentLocationUseCase>(),
+      getManualLocationUseCase: sl<GetManualLocationUseCase>(),
     ),
   );
   sl.registerFactory<ShippingCubit>(
@@ -91,9 +96,18 @@ Future<void> init() async {
       verifyPaymentUseCase: sl<VerifyPaymentUseCase>(),
     ),
   );
-  // sl.registerFactory<OrdersCubit>(
-  //   () => OrdersCubit(createOrderUseCase: sl<CreateOrderUseCase>()),
-  // );
+  sl.registerFactory<AddressCubit>(
+    () => AddressCubit(
+      createAddressUseCase: sl<CreateAddressUseCase>(),
+      getAddressUseCase: sl<GetAddressUseCase>(),
+    ),
+  );
+  sl.registerFactory<OrdersCubit>(
+    () => OrdersCubit(
+      orderPendingUseCase: sl<OrderPendingUseCase>(),
+      orderSuccessUseCase: sl<OrderSuccessUseCase>(),
+    ),
+  );
 
   /// UseCases
   sl.registerLazySingleton<SendOtpUseCase>(
@@ -138,6 +152,9 @@ Future<void> init() async {
   sl.registerLazySingleton<GetCurrentLocationUseCase>(
     () => GetCurrentLocationUseCase(),
   );
+  sl.registerLazySingleton<GetManualLocationUseCase>(
+    () => GetManualLocationUseCase(),
+  );
   sl.registerFactory<SearchProductAutoCompleteUseCase>(
     () => SearchProductAutoCompleteUseCase(sl<Repository>()),
   );
@@ -147,9 +164,18 @@ Future<void> init() async {
   sl.registerLazySingleton<VerifyPaymentUseCase>(
     () => VerifyPaymentUseCase(sl<Repository>()),
   );
-  // sl.registerLazySingleton<CreateOrderUseCase>(
-  //   () => CreateOrderUseCase(sl<Repository>()),
-  // );
+  sl.registerLazySingleton<OrderPendingUseCase>(
+    () => OrderPendingUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<OrderSuccessUseCase>(
+    () => OrderSuccessUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<CreateAddressUseCase>(
+    () => CreateAddressUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<GetAddressUseCase>(
+    () => GetAddressUseCase(sl<Repository>()),
+  );
 
   /// Repositories
   sl.registerLazySingleton<Repository>(

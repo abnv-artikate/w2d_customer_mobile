@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/rendering.dart';
 import 'package:uuid/v4.dart';
 import 'package:w2d_customer_mobile/core/error/exceptions.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
@@ -8,6 +7,7 @@ import 'package:w2d_customer_mobile/core/utils/constants.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/remote_datasource/remote_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/repositories/repository_conv.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/address/customer_address_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/updated_cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
@@ -24,12 +24,14 @@ import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/paymen
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/address/create_address_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/orders/create_order_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_success_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/pending_order_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
@@ -387,21 +389,76 @@ class RepositoryImpl extends Repository {
     }
   }
 
-  // @override
-  // Future<Either<Failure, String>> createOrder(CreateOrderParams params) async {
-  //   try {
-  //     if (await networkInfo.isConnected) {
-  //       final result = await remoteDatasource.createOrder(params.toJson());
-  //
-  //       print(result.toString());
-  //
-  //       return Right("Success");
-  //
-  //     } else {
-  //       return Left(ServerFailure(message: Constants.errorNoInternet));
-  //     }
-  //   } on ServerFailure catch (e) {
-  //     return Left(ServerFailure(message: e.message));
-  //   }
-  // }
+  @override
+  Future<Either<Failure, String>> orderPending(
+    OrderPendingParams params,
+  ) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.orderPending(params.toJson());
+
+        print(result.toString());
+
+        return Right("Success");
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> createAddress(
+    CreateAddressParams params,
+  ) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.saveCustomerAddress(
+          params.toJson(),
+        );
+
+        print(result.toString());
+
+        return Right("Success");
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<CustomerAddressesEntity>>>
+  getCustomerAddresses() async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.getCustomerAddresses();
+
+        return Right(result.data?.map((e) => e.toEntity()).toList() ?? []);
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> orderSuccess(
+    OrderSuccessParams params,
+  ) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.orderSuccess(params.toJson());
+
+        return Right("result is here do something.");
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
 }

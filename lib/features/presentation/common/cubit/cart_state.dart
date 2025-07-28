@@ -15,9 +15,9 @@ final class CartSyncLoaded extends CartState {
 final class CartItemLoading extends CartState {}
 
 final class CartItemLoaded extends CartState {
-  final List<CartItemEntity> cartItems;
+  final CartEntity? cart;
 
-  CartItemLoaded({required this.cartItems});
+  CartItemLoaded({required this.cart});
 }
 
 final class UpdateCartLoading extends CartState {}
@@ -32,4 +32,24 @@ final class CartError extends CartState {
   final String error;
 
   CartError(this.error);
+}
+
+final class GetLocationLoading extends CartState {}
+
+final class GetLocationLoaded extends CartState {
+  final LocationEntity location;
+
+  GetLocationLoaded({required this.location});
+}
+
+final class GetManualLocationLoaded extends CartState {
+  final LocationEntity location;
+
+  GetManualLocationLoaded({required this.location});
+}
+
+final class GetLocationError extends CartState {
+  final String error;
+
+  GetLocationError({required this.error});
 }

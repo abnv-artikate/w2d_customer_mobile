@@ -22,8 +22,9 @@ final class VerifyPaymentLoading extends PaymentState {}
 
 final class VerifyPaymentLoaded extends PaymentState {
   final ConfirmPaymentResponseEntity response;
+  final String paymentRef;
 
-  VerifyPaymentLoaded({required this.response});
+  VerifyPaymentLoaded({required this.response, required this.paymentRef});
 }
 
 final class VerifyPaymentError extends PaymentState {

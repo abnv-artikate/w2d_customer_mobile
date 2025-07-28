@@ -5,6 +5,7 @@ import 'package:retrofit/retrofit.dart';
 import 'package:w2d_customer_mobile/core/utils/constants.dart';
 import 'package:w2d_customer_mobile/core/utils/endpoint_constants.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
+import 'package:w2d_customer_mobile/features/data/model/address/get_customer_addresses_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.dart';
@@ -25,10 +26,7 @@ abstract class W2DClient {
   factory W2DClient(final Dio dio, final LocalDatasource localDatasource) {
     dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (
-          RequestOptions options,
-          RequestInterceptorHandler handler,
-        ) {
+        onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
           final token = localDatasource.getAccessToken();
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
@@ -57,12 +55,14 @@ abstract class W2DClient {
                   final responseData = refreshResponse.data;
 
                   // Try different possible key names for access token
-                  final newAccessToken = responseData['access_token'] ??
+                  final newAccessToken =
+                      responseData['access_token'] ??
                       responseData['access'] ??
                       responseData['accessToken'];
 
                   // Try different possible key names for refresh token
-                  final newRefreshToken = responseData['refresh_token'] ??
+                  final newRefreshToken =
+                      responseData['refresh_token'] ??
                       responseData['refresh'] ??
                       responseData['refreshToken'];
 
@@ -77,8 +77,10 @@ abstract class W2DClient {
                     final opts = e.requestOptions;
                     opts.headers['Authorization'] = 'Bearer $newAccessToken';
 
-                    log('Token refreshed successfully, retrying original request',
-                        name: 'W2DClient');
+                    log(
+                      'Token refreshed successfully, retrying original request',
+                      name: 'W2DClient',
+                    );
 
                     final cloneResponse = await dio.fetch(opts);
                     return handler.resolve(cloneResponse);
@@ -88,8 +90,10 @@ abstract class W2DClient {
                     return handler.next(e);
                   }
                 } else {
-                  log('Token refresh failed with status: ${refreshResponse.statusCode}',
-                      name: 'W2DClient');
+                  log(
+                    'Token refresh failed with status: ${refreshResponse.statusCode}',
+                    name: 'W2DClient',
+                  );
                   await localDatasource.logout();
                   return handler.next(e);
                 }
@@ -166,6 +170,18 @@ abstract class W2DClient {
     @Queries() Map<String, dynamic> queries,
   );
 
-  @POST(EndPoints.createOrder)
-  Future createOrder(@Body() Map<String, dynamic> body);
+  ///
+  @POST(EndPoints.customerAddress)
+  Future saveCustomerAddress(@Body() Map<String, dynamic> body);
+
+  @GET(EndPoints.customerAddresses)
+  Future<CustomerAddressesModel> getCustomerAddresses();
+
+
+  /// Order Client
+  @POST(EndPoints.orderPending)
+  Future orderPending(@Body() Map<String, dynamic> body);
+
+  @POST(EndPoints.orderSuccess)
+  Future orderSuccess(@Body() Map<String, dynamic> body);
 }

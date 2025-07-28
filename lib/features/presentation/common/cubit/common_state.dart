@@ -42,19 +42,7 @@ final class CommonCategoriesLoaded extends CommonState {
   CommonCategoriesLoaded({required this.categoriesList});
 }
 
-final class GetLocationLoading extends CommonState {}
 
-final class GetLocationLoaded extends CommonState {
-  final LocationEntity location;
-
-  GetLocationLoaded({required this.location});
-}
-
-final class GetLocationError extends CommonState {
-  final String error;
-
-  GetLocationError({required this.error});
-}
 
 final class CommonError extends CommonState {
   final String error;

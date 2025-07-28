@@ -11,6 +11,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dar
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/location/get_manual_location_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
@@ -42,10 +43,12 @@ class _CartScreenState extends State<CartScreen> {
   FreightQuoteEntityData? freightQuoteEntityData;
   CalculateInsuranceEntity? calculateInsuranceEntity;
   bool isTransitInsured = false;
+  String cartSessionKey = "";
 
   List<CartItemEntity> cartItems = [];
 
   final TextEditingController _addCtrl = TextEditingController();
+  final FocusNode _addNode = FocusNode();
 
   @override
   void initState() {
@@ -57,6 +60,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void dispose() {
     _addCtrl.dispose();
+    _addNode.dispose();
     super.dispose();
   }
 
@@ -69,7 +73,7 @@ class _CartScreenState extends State<CartScreen> {
           style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
         ),
         actions: [
-          BlocConsumer<CommonCubit, CommonState>(
+          BlocConsumer<CartCubit, CartState>(
             listener: (context, state) {
               if (state is GetLocationLoading) {
                 address = "Loading Location";
@@ -80,6 +84,14 @@ class _CartScreenState extends State<CartScreen> {
                   cartItems: cartItems,
                   location: location!,
                 );
+              } else if (state is GetManualLocationLoaded) {
+                location = state.location;
+                address = "${state.location.city}, ${state.location.country}";
+                _callGetFreightQuoteApi(
+                  cartItems: cartItems,
+                  location: location!,
+                );
+                context.pop();
               } else if (state is GetLocationError) {
                 widget.showErrorToast(context: context, message: state.error);
               }
@@ -98,7 +110,8 @@ class _CartScreenState extends State<CartScreen> {
       body: BlocConsumer<CartCubit, CartState>(
         listener: (context, state) {
           if (state is CartItemLoaded) {
-            cartItems = state.cartItems;
+            cartItems = state.cart?.items ?? [];
+            cartSessionKey = state.cart?.sessionKey ?? "";
             if (location != null) {
               _callGetFreightQuoteApi(
                 cartItems: cartItems,
@@ -219,7 +232,6 @@ class _CartScreenState extends State<CartScreen> {
                                   );
                                 },
                               ),
-
                               CustomFilledButtonWidget(
                                 title:
                                     state is GetFreightQuoteLoading ||
@@ -246,7 +258,7 @@ class _CartScreenState extends State<CartScreen> {
                                         location: location!,
                                       );
                                     } else {
-                                      _callLocationApi();
+                                      _setLocationWidget();
                                     }
                                   } else {
                                     if (_callCheckUserLoginApi()) {
@@ -265,6 +277,7 @@ class _CartScreenState extends State<CartScreen> {
                                                   _calculateLocalTransitFees(
                                                     cartItems,
                                                   ),
+                                              cartSessionKey: cartSessionKey,
                                             ),
                                           )
                                           .then((_) {
@@ -524,6 +537,7 @@ class _CartScreenState extends State<CartScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               GooglePlaceAutoCompleteTextField(
+                focusNode: _addNode,
                 textEditingController: _addCtrl,
                 googleAPIKey: "AIzaSyCBixn2iS2Fm7jDolWu4S5dBqA1avQ7T_g",
                 boxDecoration: BoxDecoration(),
@@ -558,22 +572,29 @@ class _CartScreenState extends State<CartScreen> {
                 getPlaceDetailWithLatLng: (Prediction prediction) async {
                   // double lat = double.parse(prediction.lat!);
                   // double lng = double.parse(prediction.lng!);
-                  address = prediction.terms?.first.value ?? "";
+                  // address = prediction.terms?.first.value ?? "";
                   // final List<Placemark> placemarks = await placemarkFromCoordinates(
                   //   lat,
                   //   lng,
                   // );
                   // countryCode = placemarks[0].isoCountryCode!;
+                  _callManualLocationApi(
+                    GetManualLocationParams(
+                      latitude: double.tryParse(prediction.lat ?? "") ?? 0.0,
+                      longitude: double.tryParse(prediction.lng ?? "") ?? 0.0,
+                    ),
+                  );
                 },
                 itemClick: (Prediction prediction) {
                   _addCtrl.text = prediction.description!;
                   _addCtrl.selection = TextSelection.fromPosition(
                     TextPosition(offset: prediction.description!.length),
                   );
-                  setState(() {
-                    address = prediction.terms?.first.value ?? "";
-                  });
-                  context.pop();
+                  // setState(() {
+                  //   address = prediction.terms?.first.value ?? "";
+                  // });
+
+                  // context.pop();
                 },
                 itemBuilder: (context, index, Prediction prediction) {
                   return Container(
@@ -600,7 +621,11 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void _callLocationApi() async {
-    await context.read<CommonCubit>().getCurrentLocation();
+    await context.read<CartCubit>().getCurrentLocation();
+  }
+
+  void _callManualLocationApi(GetManualLocationParams params) async {
+    await context.read<CartCubit>().getManualLocation(params);
   }
 
   void _callGetCartItemApi() {
@@ -627,20 +652,16 @@ class _CartScreenState extends State<CartScreen> {
     required List<CartItemEntity> cartItems,
     required LocationEntity location,
   }) {
-    final items =
-        cartItems
-            .map((item) => item.toFreightItem())
-            .whereType<Items>() // Automatically filters out null values
-            .toList();
+    final items = cartItems.map((item) => item.toFreightItem()).toList();
 
     if (items.isNotEmpty) {
       context.read<ShippingCubit>().getFreightQuote(
-        GetFreightQuoteParams(
+        params: GetFreightQuoteParams(
           destinationCountry: location.country,
           destinationCountryShortName: location.isoCountryCode,
           destinationCity: location.city,
-          destinationLatitude: location.latitude,
-          destinationLongitude: location.longitude,
+          destinationLatitude: location.latitude.toString(),
+          destinationLongitude: location.longitude.toString(),
           items: items,
         ),
       );

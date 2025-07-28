@@ -19,13 +19,11 @@ class CommonCubit extends Cubit<CommonState> {
   CommonCubit({
     required this.localDatasource,
     required this.categoriesHierarchyUseCase,
-    required this.getCurrentLocationUseCase,
     required this.getCollectionsUseCase,
     required this.searchProductAutoCompleteUseCase,
   }) : super(CommonInitial());
 
   final CategoriesHierarchyUseCase categoriesHierarchyUseCase;
-  final GetCurrentLocationUseCase getCurrentLocationUseCase;
   final GetCollectionsUseCase getCollectionsUseCase;
   final SearchProductAutoCompleteUseCase searchProductAutoCompleteUseCase;
   final LocalDatasource localDatasource;
@@ -60,10 +58,10 @@ class CommonCubit extends Cubit<CommonState> {
     final result = await getCollectionsUseCase.call(NoParams());
 
     result.fold(
-      (l) {
+          (l) {
         emit(CollectionsError(error: l.message));
       },
-      (res) {
+          (res) {
         for (CollectionsResultDataEntity item in res.results.data) {
           if (item.name.startsWith("Brand Mall")) {
             brandMallCollections.add(item);
@@ -78,20 +76,6 @@ class CommonCubit extends Cubit<CommonState> {
             hiddenGemsCollections: hiddenGemsCollections,
           ),
         );
-      },
-    );
-  }
-
-  getCurrentLocation() async {
-    emit(GetLocationLoading());
-    final result = await getCurrentLocationUseCase.call();
-
-    result.fold(
-      (err) {
-        emit(GetLocationError(error: err));
-      },
-      (data) {
-        emit(GetLocationLoaded(location: data));
       },
     );
   }

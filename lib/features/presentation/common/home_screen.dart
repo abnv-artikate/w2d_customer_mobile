@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
+import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
@@ -69,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    _callLocationApi();
+    // _callLocationApi();
     _callGetCollectionsApi();
     super.initState();
   }
@@ -91,21 +92,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          // BlocConsumer<CommonCubit, CommonState>(
-          //   listener: (context, state) {
-          //     if (state is GetLocationLoading) {
-          //       address = "Loading location";
-          //     } else if (state is GetLocationLoaded) {
-          //       address = "${state.location.city}, ${state.location.country}";
-          //     } else if (state is GetLocationError) {
-          //       widget.showErrorToast(context: context, message: state.error);
-          //     }
-          //   },
-          //   builder: (context, state) {
-          //     return
-          LocationWidget(onTap: () {}, address: address),
-          //   },
-          // ),
+          BrandMallToggleWidget(
+            onTap: () {
+              setState(() {
+                isBrand = !isBrand;
+              });
+            },
+            isBrand: isBrand,
+          ),
         ],
         bottom: PreferredSize(
           preferredSize: Size.zero,
@@ -115,14 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () {
                   context.push(AppRoutes.searchRoute);
                 },
-              ),
-              BrandMallToggleWidget(
-                onTap: () {
-                  setState(() {
-                    isBrand = !isBrand;
-                  });
-                },
-                isBrand: isBrand,
               ),
             ],
           ),
@@ -247,6 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           .id,
                                 );
                               },
+                              onWishlistTap: () {},
                               onCartTap: () {},
                               isHomePage: true,
                             );
@@ -268,10 +255,6 @@ class _HomeScreenState extends State<HomeScreen> {
             : SizedBox();
       },
     );
-  }
-
-  void _callLocationApi() async {
-    await context.read<CommonCubit>().getCurrentLocation();
   }
 
   void _callGetCollectionsApi() async {

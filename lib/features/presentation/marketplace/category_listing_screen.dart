@@ -83,6 +83,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                     if (widget.category.subcategories.isNotEmpty) ...[
                       Container(
                         height: 50,
+                        margin: EdgeInsets.symmetric(vertical: 10),
                         child: ListView.separated(
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
@@ -157,6 +158,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                             );
                           },
                           onCartTap: () {},
+                          onWishlistTap: () {},
                           isHomePage: false,
                         );
                       },

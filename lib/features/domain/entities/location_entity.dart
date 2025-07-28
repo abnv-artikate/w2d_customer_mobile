@@ -2,8 +2,8 @@ class LocationEntity {
   final String city;
   final String country;
   final String isoCountryCode;
-  final String latitude;
-  final String longitude;
+  final double latitude;
+  final double longitude;
 
   LocationEntity({
     required this.city,

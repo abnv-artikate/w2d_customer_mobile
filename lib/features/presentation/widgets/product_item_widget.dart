@@ -15,6 +15,7 @@ class ProductItemWidget extends StatelessWidget {
     required this.regularPrice,
     required this.salePrice,
     required this.onViewTap,
+    required this.onWishlistTap,
     required this.onCartTap,
     required this.isHomePage,
   });
@@ -27,13 +28,14 @@ class ProductItemWidget extends StatelessWidget {
   final String regularPrice;
   final String salePrice;
   final VoidCallback onViewTap;
+  final VoidCallback onWishlistTap;
   final VoidCallback onCartTap;
   final bool isHomePage;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: isHomePage ? onViewTap : null,
+      onTap: onViewTap,
       child: Container(
         height: isHomePage ? 200 : null,
         padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
@@ -143,12 +145,12 @@ class ProductItemWidget extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   BlankButtonWidget(
-                    title: 'View',
+                    title: 'Add to Wishlist',
                     fontSize: 14,
                     borderRadius: 4,
                     height: 30,
                     width: width * 0.45,
-                    onTap: onViewTap,
+                    onTap: onWishlistTap,
                   ),
                   SizedBox(width: 5),
                   Expanded(

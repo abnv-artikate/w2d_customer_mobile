@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/address/customer_address_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/updated_cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
@@ -15,12 +16,14 @@ import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/confir
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/address/create_address_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/orders/create_order_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_success_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/pending_order_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/initiate_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/verify_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
@@ -97,5 +100,13 @@ abstract class Repository {
     String transCode,
   );
 
-  // Future<Either<Failure, String>> createOrder(CreateOrderParams params);
+  /// Address Repository
+  Future<Either<Failure, String>> createAddress(CreateAddressParams params);
+
+  Future<Either<Failure, List<CustomerAddressesEntity>>> getCustomerAddresses();
+
+  /// Order Repository
+  Future<Either<Failure, String>> orderPending(OrderPendingParams params);
+
+  Future<Either<Failure, String>> orderSuccess(OrderSuccessParams params);
 }
