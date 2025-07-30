@@ -13,15 +13,16 @@ import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/address/create_address_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_manual_location_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_success_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/pending_order_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
-import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/address_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/payment_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/orders/cubit/orders_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/shipping/shipping_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_text_field.dart';
@@ -38,16 +39,6 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  bool addNewAdd = false;
-  bool? isTransitInsured;
-  String countryCode = "";
-
-  @override
-  initState() {
-    _callGetSavedAddressApi();
-    super.initState();
-  }
-
   final TextEditingController _firstNameCtrl = TextEditingController();
   final TextEditingController _lastNameCtrl = TextEditingController();
   final TextEditingController _primaryPhoneCtrl = TextEditingController();
@@ -65,7 +56,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final FocusNode _completeAddNode = FocusNode();
   final FocusNode _pinNode = FocusNode();
 
+  bool? isTransitInsured;
+  String countryCode = "";
+
+  // int? selectedAdd;
+  CustomerAddressesEntity? selectedAdd;
+
   List<CustomerAddressesEntity> addressList = [];
+
+  @override
+  initState() {
+    _callGetSavedAddressApi();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -159,6 +162,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   listener: (context, state) {
                     if (state is GetSavedAddressLoaded) {
                       addressList = state.list;
+                      selectedAdd = state.defaultAdd;
                     } else if (state is GetSavedAddressError) {
                       widget.showErrorToast(
                         context: context,
@@ -170,22 +174,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     return _savedAddress();
                   },
                 ),
-                if (!addNewAdd) ...[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: BlankButtonWidget(
-                      title: "Add Address",
-                      width: (MediaQuery.of(context).size.width * 0.5),
-                      height: 50,
-                      borderRadius: 4,
-                      onTap: () {
-                        setState(() {
-                          addNewAdd = true;
-                        });
-                      },
-                    ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: BlankButtonWidget(
+                    title: "Add Address",
+                    width: (MediaQuery.of(context).size.width * 0.5),
+                    height: 50,
+                    borderRadius: 4,
+                    onTap: () {
+                      _addNewAddress();
+                    },
                   ),
-                ],
+                ),
                 ShippingBreakdownWidget(
                   cartItems: widget.checkOutScreenEntity.cartItems,
                   location: null,
@@ -213,7 +213,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     }
                   },
                 ),
-                if (addNewAdd) ...[_addNewAddress()],
                 SizedBox(height: 5),
                 CustomFilledButtonWidget(
                   title: "Proceed",
@@ -226,15 +225,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         cartId: widget.checkOutScreenEntity.cartSessionKey,
                         amount: '1000',
                         currency: 'AED',
-                        firstName: _firstNameCtrl.text,
-                        lastName: _lastNameCtrl.text,
-                        street: _streetCtrl.text,
-                        city: _cityCtrl.text,
-                        region: _cityCtrl.text,
-                        country: countryCode,
-                        zip: _pinCtrl.text,
-                        email: _emailCtrl.text,
-                        phone: _primaryPhoneCtrl.text,
+                        firstName: selectedAdd?.fullName ?? "",
+                        lastName: "",
+                        street: selectedAdd?.addressLine1 ?? "",
+                        city: selectedAdd?.city ?? "",
+                        region: "",
+                        country: selectedAdd?.country ?? "",
+                        zip: "",
+                        email: "",
+                        phone: selectedAdd?.primaryPhoneNumber ?? "",
                       ),
                     );
                     // _clearTextFields();
@@ -249,171 +248,248 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   _addNewAddress() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Receiver Details",
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
-          ),
-          CustomTextField(
-            ctrl: _firstNameCtrl,
-            hintText: 'First Name',
-            focusNode: _firstNameNode,
-            onTapOutside: (_) {
-              _firstNameNode.unfocus();
-            },
-          ),
-          SizedBox(height: 5),
-          CustomTextField(
-            ctrl: _lastNameCtrl,
-            hintText: 'Last Name',
-            focusNode: _lastNameNode,
-            onTapOutside: (_) {
-              _lastNameNode.unfocus();
-            },
-          ),
-          SizedBox(height: 5),
-          CustomTextField(
-            ctrl: _primaryPhoneCtrl,
-            hintText: 'Primary Phone Number',
-            textInputType: TextInputType.number,
-            focusNode: _primaryPhoneNode,
-            onTapOutside: (_) {
-              _primaryPhoneNode.unfocus();
-            },
-            maxLength: 10,
-          ),
-          SizedBox(height: 5),
-          CustomTextField(
-            ctrl: _emailCtrl,
-            hintText: 'Email Address',
-            focusNode: _emailNode,
-            onTapOutside: (_) {
-              _emailNode.unfocus();
-            },
-          ),
-          SizedBox(height: 5),
-          CustomTextField(
-            ctrl: _streetCtrl,
-            hintText: 'Street',
-            focusNode: _streetNode,
-            onTapOutside: (_) {
-              _streetNode.unfocus();
-            },
-          ),
-          SizedBox(height: 5),
-          GooglePlaceAutoCompleteTextField(
-            textEditingController: _completeAddCtrl,
-            focusNode: _completeAddNode,
-            googleAPIKey: "AIzaSyCBixn2iS2Fm7jDolWu4S5dBqA1avQ7T_g",
-            boxDecoration: BoxDecoration(),
-            inputDecoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: AppColors.softWhite71, width: 2),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: AppColors.worldGreen, width: 2),
-              ),
-              hintText: 'Complete Address',
-              hintStyle: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w400,
-                color: AppColors.softWhite80,
-              ),
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 22,
-                vertical: 16,
-              ),
-            ),
-            debounceTime: 800,
-            isLatLngRequired: true,
-            getPlaceDetailWithLatLng: (Prediction prediction) async {
-              double lat = double.parse(prediction.lat!);
-              double lng = double.parse(prediction.lng!);
-              _cityCtrl.text = prediction.terms?.first.value ?? "";
-              final List<Placemark> placemarks = await placemarkFromCoordinates(
-                lat,
-                lng,
-              );
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.white,
+      enableDrag: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      scrollControlDisabledMaxHeightRatio: 1,
+      builder: (BuildContext context) {
+        return BlocConsumer<AddressCubit, AddressState>(
+          listener: (context, state) {
+            if (state is CreateAddressLoaded) {
+              _callGetSavedAddressApi();
+              context.pop();
+            } else if (state is CreateAddressError) {
+              widget.showErrorToast(context: context, message: state.error);
+            }
+          },
+          builder: (context, state) {
+            return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModalState) {
+                return Container(
+                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Receiver Details",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 22,
+                        ),
+                      ),
+                      CustomTextField(
+                        ctrl: _firstNameCtrl,
+                        hintText: 'First Name',
+                        focusNode: _firstNameNode,
+                        onTapOutside: (_) {
+                          _firstNameNode.unfocus();
+                        },
+                      ),
+                      SizedBox(height: 5),
+                      CustomTextField(
+                        ctrl: _lastNameCtrl,
+                        hintText: 'Last Name',
+                        focusNode: _lastNameNode,
+                        onTapOutside: (_) {
+                          _lastNameNode.unfocus();
+                        },
+                      ),
+                      SizedBox(height: 5),
+                      CustomTextField(
+                        ctrl: _primaryPhoneCtrl,
+                        hintText: 'Primary Phone Number',
+                        textInputType: TextInputType.number,
+                        focusNode: _primaryPhoneNode,
+                        onTapOutside: (_) {
+                          _primaryPhoneNode.unfocus();
+                        },
+                        maxLength: 10,
+                      ),
+                      SizedBox(height: 5),
+                      CustomTextField(
+                        ctrl: _emailCtrl,
+                        hintText: 'Email Address',
+                        focusNode: _emailNode,
+                        onTapOutside: (_) {
+                          _emailNode.unfocus();
+                        },
+                      ),
+                      SizedBox(height: 5),
+                      CustomTextField(
+                        ctrl: _streetCtrl,
+                        hintText: 'Street',
+                        focusNode: _streetNode,
+                        onTapOutside: (_) {
+                          _streetNode.unfocus();
+                        },
+                      ),
+                      SizedBox(height: 5),
+                      GooglePlaceAutoCompleteTextField(
+                        textEditingController: _completeAddCtrl,
+                        focusNode: _completeAddNode,
+                        googleAPIKey: "AIzaSyCBixn2iS2Fm7jDolWu4S5dBqA1avQ7T_g",
+                        boxDecoration: BoxDecoration(),
+                        inputDecoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: AppColors.softWhite71,
+                              width: 2,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: AppColors.worldGreen,
+                              width: 2,
+                            ),
+                          ),
+                          hintText: 'Complete Address',
+                          hintStyle: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.softWhite80,
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 22,
+                            vertical: 16,
+                          ),
+                        ),
+                        debounceTime: 800,
+                        isLatLngRequired: true,
+                        getPlaceDetailWithLatLng: (
+                          Prediction prediction,
+                        ) async {
+                          double lat = double.parse(prediction.lat!);
+                          double lng = double.parse(prediction.lng!);
+                          _cityCtrl.text = prediction.terms?.first.value ?? "";
+                          final List<Placemark> placemarks =
+                              await placemarkFromCoordinates(lat, lng);
 
-              countryCode = placemarks[0].isoCountryCode!;
-            },
+                          countryCode = placemarks[0].isoCountryCode!;
+                        },
 
-            itemClick: (Prediction prediction) {
-              _completeAddCtrl.text = prediction.description!;
-              _completeAddCtrl.selection = TextSelection.fromPosition(
-                TextPosition(offset: prediction.description!.length),
-              );
-            },
-            itemBuilder: (context, index, Prediction prediction) {
-              return Container(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  children: [
-                    Icon(Icons.location_on),
-                    SizedBox(width: 7),
-                    Expanded(child: Text(prediction.description ?? "")),
-                  ],
-                ),
-              );
-            },
-            seperatedBuilder: Divider(),
-            isCrossBtnShown: true,
-            containerHorizontalPadding: 0,
-            placeType: PlaceType.geocode,
-          ),
-          SizedBox(height: 5),
-          CustomTextField(
-            ctrl: _pinCtrl,
-            hintText: 'Pin',
-            focusNode: _pinNode,
-            onTapOutside: (_) {
-              _pinNode.unfocus();
-            },
-          ),
-        ],
-      ),
+                        itemClick: (Prediction prediction) {
+                          _completeAddCtrl.text = prediction.description!;
+                          _completeAddCtrl
+                              .selection = TextSelection.fromPosition(
+                            TextPosition(
+                              offset: prediction.description!.length,
+                            ),
+                          );
+                        },
+                        itemBuilder: (context, index, Prediction prediction) {
+                          return Container(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Icon(Icons.location_on),
+                                SizedBox(width: 7),
+                                Expanded(
+                                  child: Text(prediction.description ?? ""),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        seperatedBuilder: Divider(),
+                        isCrossBtnShown: true,
+                        containerHorizontalPadding: 0,
+                        placeType: PlaceType.geocode,
+                      ),
+                      SizedBox(height: 5),
+                      CustomTextField(
+                        ctrl: _pinCtrl,
+                        hintText: 'Pin',
+                        focusNode: _pinNode,
+                        onTapOutside: (_) {
+                          _pinNode.unfocus();
+                        },
+                      ),
+                      SizedBox(height: 5),
+                      CustomFilledButtonWidget(
+                        title: "Save Address",
+                        color: AppColors.worldGreen,
+                        height: 50,
+                        width: MediaQuery.of(context).size.width,
+                        onTap: () {
+                          _callSaveAddressApi(
+                            CreateAddressParams(
+                              fullName:
+                                  _firstNameCtrl.text + _lastNameCtrl.text,
+                              primaryPhone: _primaryPhoneCtrl.text,
+                              secondaryPhone: "",
+                              addLine1: _streetCtrl.text,
+                              addLine2: "",
+                              city: _cityCtrl.text,
+                              latitude: "",
+                              longitude: "",
+                              country: countryCode,
+                              isDefault: false,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
     );
   }
 
   _savedAddress() {
-    return ListView.separated(
+    return ListView.builder(
       shrinkWrap: true,
+      itemCount: addressList.length,
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            _callSelectAddressApi(addressList[index].id);
+            setState(() {
+              selectedAdd = addressList[index];
+            });
           },
           child: Container(
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            margin: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: AppColors.deepBlue),
+              // border: Border.all(color: AppColors.deepBlue),
+              boxShadow: [
+                BoxShadow(
+                  color:
+                      selectedAdd?.id == addressList[index].id
+                          ? AppColors.worldGreen
+                          : AppColors.deepBlue,
+                  blurRadius: 2,
+                  blurStyle: BlurStyle.outer,
+                ),
+              ],
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(addressList[index].id.toString()),
-                Text(addressList[index].fullName),
-                Text(addressList[index].primaryPhoneNumber),
-                Text(addressList[index].addressType),
-                Text(addressList[index].addressLine1),
-                Text(addressList[index].city),
-                Text(addressList[index].country),
-                Text(addressList[index].isDefault.toString()),
+                // Text('Address Id: ${addressList[index].id.toString()}'),
+                Text('Full Name: ${addressList[index].fullName}'),
+                Text('Phone No: ${addressList[index].primaryPhoneNumber}'),
+                Text('Address Type: ${addressList[index].addressType}'),
+                Text(
+                  'Address : ${addressList[index].addressLine1}, ${addressList[index].city}, ${addressList[index].country}',
+                ),
               ],
             ),
           ),
         );
       },
-      separatorBuilder: (context, index) {
-        return SizedBox(height: 5);
-      },
-      itemCount: addressList.length,
     );
   }
 
@@ -448,11 +524,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     _pinCtrl.clear();
   }
 
-  void _callPendingOrderApi({
-    // required String tranRef,
-    // required String orderRef,
-    required PaymentResponseEntity response,
-  }) {
+  void _callPendingOrderApi({required PaymentResponseEntity response}) {
     context.read<OrdersCubit>().pendingOrder(
       params: OrderPendingParams(
         cartId: widget.checkOutScreenEntity.cartSessionKey,
@@ -508,12 +580,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     context.read<AddressCubit>().selectAddress(addressID);
   }
 
-  void _callManualLocationApi(GetManualLocationParams params) async {
-    await context.read<CartCubit>().getManualLocation(params);
+  void _callOrderSuccessApi(OrderSuccessParams params) {
+    context.read<OrdersCubit>().orderSuccess(params);
   }
 
-  void _callOrderSuccessApi(OrderSuccessParams params) async {
-    await context.read<OrdersCubit>().orderSuccess(params);
+  void _callSaveAddressApi(CreateAddressParams params) {
+    context.read<AddressCubit>().saveAddress(params);
   }
 }
 

@@ -26,8 +26,12 @@ import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_
 import 'package:w2d_customer_mobile/features/domain/usecases/get_collections_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_manual_location_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/cancel_order_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/get_orders_by_id_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/get_orders_list_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_success_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/pending_order_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/update_order_by_id_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/initiate_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/verify_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
@@ -36,14 +40,14 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
-import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/address_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/payment_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/orders/cubit/orders_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/shipping/shipping_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -106,6 +110,8 @@ Future<void> init() async {
     () => OrdersCubit(
       orderPendingUseCase: sl<OrderPendingUseCase>(),
       orderSuccessUseCase: sl<OrderSuccessUseCase>(),
+      getOrdersByIdUseCase: sl<GetOrdersByIdUseCase>(),
+      getOrdersListUseCase: sl<GetOrdersListUseCase>(),
     ),
   );
 
@@ -175,6 +181,18 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<GetAddressUseCase>(
     () => GetAddressUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<GetOrdersListUseCase>(
+    () => GetOrdersListUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<GetOrdersByIdUseCase>(
+    () => GetOrdersByIdUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<UpdateOrderByIdUseCase>(
+    () => UpdateOrderByIdUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<CancelOrderUseCase>(
+    () => CancelOrderUseCase(sl<Repository>()),
   );
 
   /// Repositories

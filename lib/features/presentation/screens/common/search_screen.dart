@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/search/search_result_autocomplete_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 

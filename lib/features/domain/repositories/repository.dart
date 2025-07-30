@@ -22,8 +22,10 @@ import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_use
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/get_orders_list_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_success_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/pending_order_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/update_order_by_id_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/initiate_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/verify_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
@@ -109,4 +111,13 @@ abstract class Repository {
   Future<Either<Failure, String>> orderPending(OrderPendingParams params);
 
   Future<Either<Failure, String>> orderSuccess(OrderSuccessParams params);
+
+  /// Orders Repository
+  Future<Either<Failure, String>> cancelOrder(String params);
+
+  Future<Either<Failure, String>> updateOrder(UpdateOrderParams params);
+
+  Future<Either<Failure, String>> getOrderByID(String params);
+
+  Future<Either<Failure, String>> getOrdersList(GetOrdersListParams params);
 }

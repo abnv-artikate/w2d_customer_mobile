@@ -83,6 +83,15 @@ abstract class RemoteDatasource {
   Future orderPending(Map<String, dynamic> body);
 
   Future orderSuccess(Map<String, dynamic> body);
+
+  /// Orders Datasource
+  Future getOrderByID(String id);
+
+  Future getOrdersList(Map<String, dynamic> json);
+
+  Future updateOrder({required String id, required Map<String, dynamic> body});
+
+  Future cancelOrder(String id);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
@@ -344,6 +353,53 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   Future orderSuccess(Map<String, dynamic> body) async {
     try {
       return await w2dClient.orderSuccess(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future cancelOrder(String id) async {
+    try {
+      return await w2dClient.deleteOrderByID(id);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future getOrderByID(String id) async {
+    try {
+      return await w2dClient.getOrdersByID(id);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future getOrdersList(Map<String, dynamic> body) async {
+    try {
+      return await w2dClient.getOrders(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future updateOrder({
+    required String id,
+    required Map<String, dynamic> body,
+  }) async {
+    try {
+      return await w2dClient.updateOrderByID(id: id, body: body);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

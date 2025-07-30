@@ -3,26 +3,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
-import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/address_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/payment_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/checkout/payment_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/orders/cubit/orders_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/auth/login_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/checkout/checkout_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/checkout/payment_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/common/cart_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/common/explore_categories_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/common/home_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/common/scaffold_with_nav.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/common/search_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/common/user_profile_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/category_listing_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/product_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/orders/order_screen.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
-import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/auth/login_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/checkout/checkout_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cart_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/explore_categories_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/scaffold_with_nav.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/search_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/user_profile_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/marketplace/category_listing_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/home_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/marketplace/cubit/category_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/marketplace/product_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/shipping/shipping_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/injection_container.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -30,7 +31,7 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: AppRoutes.initial,
+  initialLocation: AppRoutes.orderRoute,
   routes: <RouteBase>[
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
@@ -165,6 +166,16 @@ final GoRouter router = GoRouter(
             BlocProvider<PaymentCubit>(create: (context) => sl<PaymentCubit>()),
           ],
           child: PaymentScreen(url: state.extra as String),
+        );
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.orderRoute,
+      builder: (BuildContext context, GoRouterState state) {
+        return BlocProvider<OrdersCubit>(
+          create: (context) => sl<OrdersCubit>(),
+          child: OrderScreen(),
         );
       },
     ),

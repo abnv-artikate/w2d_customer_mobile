@@ -177,11 +177,26 @@ abstract class W2DClient {
   @GET(EndPoints.customerAddresses)
   Future<CustomerAddressesModel> getCustomerAddresses();
 
-
   /// Order Client
   @POST(EndPoints.orderPending)
   Future orderPending(@Body() Map<String, dynamic> body);
 
   @POST(EndPoints.orderSuccess)
   Future orderSuccess(@Body() Map<String, dynamic> body);
+
+  /// Orders Client
+  @GET(EndPoints.orders)
+  Future getOrders(@Queries() Map<String, dynamic> body);
+
+  @GET('${EndPoints.orders}/{id}/')
+  Future getOrdersByID(@Path() String id);
+
+  @PUT('${EndPoints.orders}/{id}/')
+  Future updateOrderByID({
+    @Path() required String id,
+    @Body() required Map<String, dynamic> body,
+  });
+
+  @DELETE('${EndPoints.orders}/{id}/')
+  Future deleteOrderByID(@Path() String id);
 }

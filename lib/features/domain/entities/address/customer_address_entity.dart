@@ -16,7 +16,6 @@ class CustomerAddressesEntity {
   final bool isDefault;
   final String createdAt;
   final String updatedAt;
-  final bool isSelected;
 
   CustomerAddressesEntity({
     required this.id,
@@ -36,6 +35,5 @@ class CustomerAddressesEntity {
     required this.isDefault,
     required this.createdAt,
     required this.updatedAt,
-    this.isSelected = false,
   });
 }

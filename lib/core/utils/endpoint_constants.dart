@@ -47,4 +47,7 @@ class EndPoints {
   static const String createOrder = '/order/create/';
   static const String orderPending = '/order/pending/';
   static const String orderSuccess = '/order/success/';
+
+  /// Orders Endpoints
+  static const String orders = '/orders/';
 }

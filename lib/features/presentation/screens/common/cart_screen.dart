@@ -16,11 +16,10 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
-import 'package:w2d_customer_mobile/features/presentation/checkout/checkout_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/checkout/cubit/payment_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/cart_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/shipping_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/shipping/shipping_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/checkout/checkout_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/cart_item_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
@@ -119,6 +118,7 @@ class _CartScreenState extends State<CartScreen> {
               );
             }
           } else if (state is UpdateCartLoaded) {
+            selectedShippingIndex = null;
             _callGetCartItemApi();
           } else if (state is CartError) {
             widget.showErrorToast(context: context, message: state.error);
@@ -177,6 +177,7 @@ class _CartScreenState extends State<CartScreen> {
                         if (state is GetFreightQuoteLoaded) {
                           freightQuoteEntityData =
                               state.freightQuoteEntity.data;
+                          selectedShippingIndex = null;
                         } else if (state is SelectFreightQuoteLoaded) {
                           _callCalculateInsuranceApi(
                             freightQuoteEntityData!.quoteToken,
@@ -556,7 +557,7 @@ class _CartScreenState extends State<CartScreen> {
                       width: 2,
                     ),
                   ),
-                  hintText: 'Complete Address',
+                  hintText: 'City name where it needs to be delivered',
                   hintStyle: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w400,

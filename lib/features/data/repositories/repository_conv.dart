@@ -619,7 +619,7 @@ class RepositoryConv {
     );
   }
 
-  static PaymentResponseEntity convertTelrPaymentReponseToEntity(
+  static PaymentResponseEntity convertTelrPaymentResponseToEntity(
     TelrPaymentResponseModel model,
   ) {
     return PaymentResponseEntity(

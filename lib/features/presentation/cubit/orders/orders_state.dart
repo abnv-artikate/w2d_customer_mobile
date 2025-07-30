@@ -28,3 +28,23 @@ final class OrderSuccessError extends OrdersState {
 
   OrderSuccessError({required this.error});
 }
+
+final class GetOrdersLoading extends OrdersState {}
+
+final class GetOrdersLoaded extends OrdersState {}
+
+final class GetOrdersError extends OrdersState {
+  final String error;
+
+  GetOrdersError({required this.error});
+}
+
+final class GetOrdersByIdLoading extends OrdersState {}
+
+final class GetOrdersByIdLoaded extends OrdersState {}
+
+final class GetOrdersByIdError extends OrdersState {
+  final String error;
+
+  GetOrdersByIdError({required this.error});
+}

@@ -30,8 +30,10 @@ import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_use
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/get_orders_list_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_success_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/pending_order_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/orders/update_order_by_id_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
@@ -363,7 +365,7 @@ class RepositoryImpl extends Repository {
       if (await networkInfo.isConnected) {
         final result = await remoteDatasource.initiatePayment(request);
 
-        return Right(RepositoryConv.convertTelrPaymentReponseToEntity(result));
+        return Right(RepositoryConv.convertTelrPaymentResponseToEntity(result));
       } else {
         return Left(ServerFailure(message: Constants.errorNoInternet));
       }
@@ -452,6 +454,71 @@ class RepositoryImpl extends Repository {
     try {
       if (await networkInfo.isConnected) {
         final result = await remoteDatasource.orderSuccess(params.toJson());
+
+        return Right("result is here do something.");
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> cancelOrder(String params) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.cancelOrder(params);
+
+        return Right("result is here do something.");
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> getOrderByID(String params) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.getOrderByID(params);
+
+        return Right("result is here do something.");
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> getOrdersList(
+    GetOrdersListParams params,
+  ) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.getOrdersList(params.toJson());
+
+        return Right("result is here do something.");
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> updateOrder(UpdateOrderParams params) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.updateOrder(
+          id: params.id,
+          body: params.toJson(),
+        );
 
         return Right("result is here do something.");
       } else {

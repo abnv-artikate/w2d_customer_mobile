@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/routes/routes.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
-import 'package:w2d_customer_mobile/features/presentation/auth/cubit/auth_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/common/cubit/common_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
 import 'package:w2d_customer_mobile/injection_container.dart' as di;
 import 'package:w2d_customer_mobile/injection_container.dart';
 import 'core/utils/constants.dart';

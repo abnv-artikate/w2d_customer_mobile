@@ -18,8 +18,9 @@ final class GetSavedAddressLoading extends AddressState {}
 
 final class GetSavedAddressLoaded extends AddressState {
   final List<CustomerAddressesEntity> list;
+  final CustomerAddressesEntity? defaultAdd;
 
-  GetSavedAddressLoaded({required this.list});
+  GetSavedAddressLoaded({this.defaultAdd, required this.list});
 }
 
 final class GetSavedAddressError extends AddressState {

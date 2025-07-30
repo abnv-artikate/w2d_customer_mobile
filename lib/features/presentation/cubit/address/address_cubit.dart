@@ -40,6 +40,11 @@ class AddressCubit extends Cubit<AddressState> {
         emit(GetSavedAddressError(error: l.message));
       },
       (data) {
+        for (CustomerAddressesEntity add in data) {
+          if (add.isDefault == true) {
+            emit(GetSavedAddressLoaded(defaultAdd: add, list: data));
+          }
+        }
         emit(GetSavedAddressLoaded(list: data));
       },
     );
