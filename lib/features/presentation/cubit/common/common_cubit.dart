@@ -6,11 +6,9 @@ import 'package:w2d_customer_mobile/core/usecase/usecase.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
-import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/search/search_result_autocomplete_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/categories_hierarchy_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/get_collections_usecase.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/search/search_autocomplete_usecase.dart';
 
 part 'common_state.dart';

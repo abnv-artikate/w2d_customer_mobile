@@ -14,13 +14,11 @@ import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_qu
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/address/create_address_usecase.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/location/get_manual_location_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_success_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/pending_order_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/shipping/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
@@ -574,10 +572,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   void _callGetSavedAddressApi() {
     context.read<AddressCubit>().getSavedAddress();
-  }
-
-  void _callSelectAddressApi(int addressID) {
-    context.read<AddressCubit>().selectAddress(addressID);
   }
 
   void _callOrderSuccessApi(OrderSuccessParams params) {

@@ -2,9 +2,7 @@ import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
@@ -12,7 +10,6 @@ import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/product_item_widget.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/location_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/search_widget.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
