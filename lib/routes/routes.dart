@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
@@ -31,7 +32,7 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: AppRoutes.orderRoute,
+  initialLocation: AppRoutes.initial,
   routes: <RouteBase>[
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
@@ -72,6 +73,9 @@ final GoRouter router = GoRouter(
                 BlocProvider<CartCubit>(create: (context) => sl<CartCubit>()),
                 BlocProvider<ShippingCubit>(
                   create: (context) => sl<ShippingCubit>(),
+                ),
+                BlocProvider<CartShippingCubit>(
+                  create: (context) => sl<CartShippingCubit>(),
                 ),
               ],
               child: CartScreen(),
@@ -147,6 +151,9 @@ final GoRouter router = GoRouter(
             BlocProvider<OrdersCubit>(create: (context) => sl<OrdersCubit>()),
             BlocProvider<AddressCubit>(create: (context) => sl<AddressCubit>()),
             BlocProvider<CartCubit>(create: (context) => sl<CartCubit>()),
+            BlocProvider<CartShippingCubit>(
+              create: (context) => sl<CartShippingCubit>(),
+            ),
           ],
           child: CheckoutScreen(
             checkOutScreenEntity: state.extra as CheckOutScreenEntity,

@@ -343,7 +343,7 @@ class RepositoryImpl extends Repository {
       if (await networkInfo.isConnected) {
         final result = await remoteDatasource.selectFreightService({
           "quote_token": params.quoteToken,
-          "selected_courier_type": params.selectedCourierType,
+          "selected_courier_type": _getCourierType(params.serviceIndex),
         });
 
         return Right(
@@ -354,6 +354,25 @@ class RepositoryImpl extends Repository {
       }
     } on ServerFailure catch (e) {
       return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  String _getCourierType(int? shippingIndex) {
+    switch (shippingIndex) {
+      case 0:
+        return "DOORCOURIER";
+      case 1:
+        return "DOORAIR";
+      case 2:
+        return "PORTAIR";
+      case 3:
+        return "DOORSEA";
+      case 4:
+        return "PORTSEA";
+      case 5:
+        return "DOORLAND";
+      default:
+        return "";
     }
   }
 

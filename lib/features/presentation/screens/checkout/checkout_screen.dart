@@ -477,7 +477,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Text('Address Id: ${addressList[index].id.toString()}'),
-                Text('Full Name: ${addressList[index].fullName}'),
+                Text('Name: ${addressList[index].fullName}'),
                 Text('Phone No: ${addressList[index].primaryPhoneNumber}'),
                 Text('Address Type: ${addressList[index].addressType}'),
                 Text(

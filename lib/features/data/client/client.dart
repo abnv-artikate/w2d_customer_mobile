@@ -40,9 +40,9 @@ abstract class W2DClient {
 
             if (refreshToken != null && refreshToken.isNotEmpty) {
               try {
-                log('Attempting to refresh token', name: 'W2DClient');
+                log('Attempting to refresh token', name: 'w2dClient');
 
-                // Create a new Dio instance to avoid interceptor conflicts
+                // Create a new Dio inst ance to avoid interceptor conflicts
                 final refreshDio = Dio();
 
                 final refreshResponse = await refreshDio.post(
@@ -85,7 +85,7 @@ abstract class W2DClient {
                     final cloneResponse = await dio.fetch(opts);
                     return handler.resolve(cloneResponse);
                   } else {
-                    log('Invalid refresh response format', name: 'W2DClient');
+                    log('Invalid refresh response format', name: 'w2dClient');
                     await localDatasource.logout();
                     return handler.next(e);
                   }
@@ -98,14 +98,14 @@ abstract class W2DClient {
                   return handler.next(e);
                 }
               } catch (refreshError) {
-                log('Token refresh error: $refreshError', name: 'W2DClient');
+                log('Token refresh error: $refreshError', name: 'w2dClient');
 
                 // If refresh fails, logout and continue with original error
                 await localDatasource.logout();
                 return handler.next(e);
               }
             } else {
-              log('No refresh token available', name: 'W2DClient');
+              log('No refresh token available', name: 'w2dClient');
               await localDatasource.logout();
               return handler.next(e);
             }
@@ -114,7 +114,7 @@ abstract class W2DClient {
           // Log other errors for debugging
           log(
             "Request failed: ${e.requestOptions.baseUrl}${e.requestOptions.path}",
-            name: "W2DClient Error ${e.response?.statusCode}",
+            name: "w2dClient Error ${e.response?.statusCode}",
           );
           return handler.next(e);
         },

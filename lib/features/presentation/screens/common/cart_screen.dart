@@ -8,23 +8,20 @@ import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
-import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
-import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_manual_location_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/shipping/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/checkout/checkout_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/cart_item_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/fees_breakdown_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/location_widget.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_breakdown_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_method_list_item_widget.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 
@@ -36,24 +33,21 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  String? address;
-  LocationEntity? location;
-  int? selectedShippingIndex;
-  FreightQuoteEntityData? freightQuoteEntityData;
-  CalculateInsuranceEntity? calculateInsuranceEntity;
-  bool isTransitInsured = false;
-  String cartSessionKey = "";
-
-  List<CartItemEntity> cartItems = [];
-
   final TextEditingController _addCtrl = TextEditingController();
   final FocusNode _addNode = FocusNode();
 
   @override
   void initState() {
-    _callLocationApi();
-    _callGetCartItemApi();
     super.initState();
+    _initData();
+  }
+
+  void _initData() {
+    final cubit = context.read<CartShippingCubit>();
+    // Load cart items first
+    cubit.getCartItems();
+    // Get current location
+    cubit.getCurrentLocation();
   }
 
   @override
@@ -72,254 +66,353 @@ class _CartScreenState extends State<CartScreen> {
           style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
         ),
         actions: [
-          BlocConsumer<CartCubit, CartState>(
-            listener: (context, state) {
-              if (state is GetLocationLoading) {
-                address = "Loading Location";
-              } else if (state is GetLocationLoaded) {
-                location = state.location;
-                address = "${state.location.city}, ${state.location.country}";
-                _callGetFreightQuoteApi(
-                  cartItems: cartItems,
-                  location: location!,
-                );
-              } else if (state is GetManualLocationLoaded) {
-                location = state.location;
-                address = "${state.location.city}, ${state.location.country}";
-                _callGetFreightQuoteApi(
-                  cartItems: cartItems,
-                  location: location!,
-                );
-                context.pop();
-              } else if (state is GetLocationError) {
-                widget.showErrorToast(context: context, message: state.error);
-              }
-            },
+          BlocBuilder<CartShippingCubit, CartShippingState>(
             builder: (context, state) {
               return LocationWidget(
-                onTap: () {
-                  _setLocationWidget();
-                },
-                address: address,
+                onTap: () => _setLocationWidget(),
+                address:
+                    state.hasLocationData
+                        ? '${state.location?.city}, ${state.location?.country}'
+                        : state.isLocationLoading
+                        ? "Loading Location"
+                        : "Set Location",
               );
             },
           ),
         ],
       ),
-      body: BlocConsumer<CartCubit, CartState>(
+      body: BlocListener<CartShippingCubit, CartShippingState>(
         listener: (context, state) {
-          if (state is CartItemLoaded) {
-            cartItems = state.cart?.items ?? [];
-            cartSessionKey = state.cart?.sessionKey ?? "";
-            if (location != null) {
-              _callGetFreightQuoteApi(
-                cartItems: cartItems,
-                location: location!,
-              );
-            }
-          } else if (state is UpdateCartLoaded) {
-            selectedShippingIndex = null;
-            _callGetCartItemApi();
-          } else if (state is CartError) {
-            widget.showErrorToast(context: context, message: state.error);
+          // Handle success messages
+          if (state.hasSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.successMessage ?? "Success Message"),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+
+          // Handle error messages
+          if (state.hasError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage ?? "Error Message"),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+
+          // Handle location loaded - automatically get freight quote
+          if (state.hasLocationData &&
+              state.hasCartData &&
+              !state.hasFreightQuoteData) {
+            _callGetFreightQuoteApi(
+              cartItems: state.cart!.items,
+              location: state.location!,
+            );
+          }
+
+          // Handle freight quote loaded - automatically calculate insurance
+          if (state.hasFreightQuoteData &&
+              state.freightQuote?.quoteToken != null &&
+              !state.hasInsuranceData &&
+              state.selectedShippingIndex != null) {
+            _callCalculateInsuranceApi(state.freightQuote!.quoteToken);
           }
         },
-        builder: (context, state) {
-          return state is CartItemLoading
-              ? Center(
-                child: CircularProgressIndicator(color: AppColors.worldGreen),
-              )
-              : cartItems.isEmpty
-              ? Center(child: Text('No Items in Cart'))
-              : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return CartItemWidget(
-                          cartItem: cartItems[index],
-                          onCheckBoxTap: () {
-                            _callUpdateCartApi(
-                              cartId: cartItems[index].cart,
-                              productId: cartItems[index].product.id,
-                              quantity: cartItems[index].quantity,
-                              checked: !cartItems[index].isChecked,
-                            );
-                          },
-                          onIncrementTap: () {
-                            _callUpdateCartApi(
-                              cartId: cartItems[index].cart,
-                              productId: cartItems[index].product.id,
-                              quantity: cartItems[index].quantity + 1,
-                              checked: cartItems[index].isChecked,
-                            );
-                          },
-                          onDecrementTap: () {
-                            _callUpdateCartApi(
-                              cartId: cartItems[index].cart,
-                              productId: cartItems[index].product.id,
-                              quantity: cartItems[index].quantity - 1,
-                              checked: cartItems[index].isChecked,
-                            );
-                          },
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return SizedBox(height: 10);
-                      },
-                      itemCount: cartItems.length,
+        child: BlocBuilder<CartShippingCubit, CartShippingState>(
+          builder: (context, state) {
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildCartItemsSection(state),
+                        SizedBox(height: 10),
+                        _buildShippingBreakdownSection(state),
+                      ],
                     ),
-
-                    BlocConsumer<ShippingCubit, ShippingState>(
-                      listener: (context, state) {
-                        if (state is GetFreightQuoteLoaded) {
-                          freightQuoteEntityData =
-                              state.freightQuoteEntity.data;
-                          selectedShippingIndex = null;
-                        } else if (state is SelectFreightQuoteLoaded) {
-                          _callCalculateInsuranceApi(
-                            freightQuoteEntityData!.quoteToken,
-                          );
-                        } else if (state is CalculateInsuranceLoaded) {
-                          calculateInsuranceEntity = state.insuranceEntity;
-                        } else if (state is ShippingError) {
-                          widget.showErrorToast(
-                            context: context,
-                            message: state.error,
-                          );
-                        }
-                      },
-                      builder: (context, state) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Column(
-                            children: [
-                              ShippingBreakdownWidget(
-                                cartItems: cartItems,
-                                location: location,
-                                freightQuoteEntityData: freightQuoteEntityData,
-                                calculateInsuranceEntity:
-                                    calculateInsuranceEntity,
-                                selectedShippingIndex: selectedShippingIndex,
-                                isTransitInsured: isTransitInsured,
-                                onShippingMethodDropdownTap: () {
-                                  if (location != null) {
-                                    if (freightQuoteEntityData != null) {
-                                      _shippingMethodBottomSheet();
-                                    } else {
-                                      _callGetFreightQuoteApi(
-                                        cartItems: cartItems,
-                                        location: location!,
-                                      );
-                                    }
-                                  } else {
-                                    widget.showErrorToast(
-                                      context: context,
-                                      message: "Fetching Location Data",
-                                    );
-                                    _callLocationApi();
-                                  }
-                                },
-                                onTransitInsuranceTap: (bool? value) {
-                                  setState(() {
-                                    isTransitInsured = value!;
-                                  });
-                                  _callConfirmInsuranceApi(
-                                    quoteToken:
-                                        freightQuoteEntityData!.quoteToken,
-                                    addInsurance: isTransitInsured,
-                                  );
-                                },
-                              ),
-                              CustomFilledButtonWidget(
-                                title:
-                                    state is GetFreightQuoteLoading ||
-                                            state
-                                                is CalculateInsuranceLoading ||
-                                            state
-                                                is SelectFreightQuoteLoading ||
-                                            state is ConfirmInsuranceLoading
-                                        ? 'Loading...'
-                                        : 'Proceed To Buy',
-                                color: AppColors.worldGreen,
-                                height: 50,
-                                width: MediaQuery.of(context).size.width * 0.9,
-                                horizontalMargin: 20,
-                                borderRadius: 4,
-                                onTap: () {
-                                  if (selectedShippingIndex == null) {
-                                    if (freightQuoteEntityData != null &&
-                                        location != null) {
-                                      _shippingMethodBottomSheet();
-                                    } else if (location != null) {
-                                      _callGetFreightQuoteApi(
-                                        cartItems: cartItems,
-                                        location: location!,
-                                      );
-                                    } else {
-                                      _setLocationWidget();
-                                    }
-                                  } else {
-                                    if (_callCheckUserLoginApi()) {
-                                      context
-                                          .push(
-                                            AppRoutes.checkoutRoute,
-                                            extra: CheckOutScreenEntity(
-                                              cartItems: cartItems,
-                                              freightQuoteEntityData:
-                                                  freightQuoteEntityData,
-                                              calculateInsuranceEntity:
-                                                  calculateInsuranceEntity,
-                                              isTransitInsured:
-                                                  isTransitInsured,
-                                              localTransitFee:
-                                                  _calculateLocalTransitFees(
-                                                    cartItems,
-                                                  ),
-                                              cartSessionKey: cartSessionKey,
-                                            ),
-                                          )
-                                          .then((_) {
-                                            _callLocationApi();
-                                            _callGetCartItemApi();
-                                          });
-                                    } else {
-                                      // context.push(AppRoutes.loginRoute, extra: true);
-                                      // context.push(
-                                      //   AppRoutes.checkoutRoute,
-                                      //   extra: CheckOutScreenEntity(
-                                      //     cartItems: cartItems,
-                                      //     freightQuoteEntityData: freightQuoteEntityData,
-                                      //     calculateInsuranceEntity:
-                                      //         calculateInsuranceEntity,
-                                      //     isTransitInsured: isTransitInsured,
-                                      //   ),
-                                      // );
-                                      widget.showErrorToast(
-                                        context: context,
-                                        message: "you are not logged in !!!",
-                                      );
-                                    }
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                  ),
                 ),
-              );
+                _buildBottomSection(state),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCartItemsSection(CartShippingState state) {
+    if (state.isCartLoading) {
+      return Container(
+        height: 200,
+        child: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.worldGreen),
+          ),
+        ),
+      );
+    }
+
+    if (!state.hasCartData || state.cart!.items.isEmpty) {
+      return Container(
+        height: 200,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.shopping_cart_outlined, size: 64, color: Colors.grey),
+              SizedBox(height: 16),
+              Text(
+                'Your cart is empty',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // final cartItems = state.cart!.items;
+    // final checkedItemsCount = cartItems.where((item) => item.isChecked).length;
+
+    return Column(
+      children: [
+        // Cart items list
+        ListView.separated(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          itemBuilder: (context, index) {
+            final cartItem = state.cart!.items[index];
+            return CartItemWidget(
+              cartItem: cartItem,
+              onCheckBoxTap:
+                  () => _updateCartItem(
+                    cartItem: cartItem,
+                    checked: !cartItem.isChecked,
+                  ),
+              onIncrementTap:
+                  () => _updateCartItem(
+                    cartItem: cartItem,
+                    quantity: cartItem.quantity + 1,
+                  ),
+              onDecrementTap:
+                  () => _updateCartItem(
+                    cartItem: cartItem,
+                    quantity: cartItem.quantity - 1,
+                  ),
+            );
+          },
+          separatorBuilder: (context, index) => SizedBox(height: 10),
+          itemCount: state.cart!.items.length,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildShippingBreakdownSection(CartShippingState state) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: FeesBreakdownWidget(
+        onShippingMethodDropdownTap: () => _handleShippingMethodDropdown(state),
+      ),
+    );
+  }
+
+  Widget _buildBottomSection(CartShippingState state) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.softWhite80,
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: Offset(0, -2),
+          ),
+        ],
+      ),
+      child: CustomFilledButtonWidget(
+        title: _getButtonTitle(state),
+        color: AppColors.worldGreen,
+        height: 50,
+        width: MediaQuery.of(context).size.width * 0.9,
+        horizontalMargin: 0,
+        borderRadius: 4,
+        onTap: () {
+          state.isAnyLoading ? null : _handleProceedToBuy(state);
         },
       ),
     );
   }
 
-  _shippingMethodBottomSheet() {
-    return showModalBottomSheet(
+  String _getButtonTitle(CartShippingState state) {
+    if (state.isAnyLoading) {
+      return 'Loading...';
+    }
+
+    if (!state.hasCartData || state.cart!.items.isEmpty) {
+      return 'Add Items to Cart';
+    }
+
+    final checkedItems =
+        state.cart!.items.where((item) => item.isChecked).toList();
+    if (checkedItems.isEmpty) {
+      return 'Select Items to Continue';
+    }
+
+    if (!state.hasLocationData) {
+      return 'Set Delivery Location';
+    }
+
+    if (!state.hasFreightQuoteData) {
+      return 'Get Shipping Quote';
+    }
+
+    if (state.selectedShippingIndex == null) {
+      return 'Select Shipping Method';
+    }
+
+    return 'Proceed To Buy';
+  }
+
+  void _updateCartItem({
+    required CartItemEntity cartItem,
+    int? quantity,
+    bool? checked,
+  }) {
+    context.read<CartShippingCubit>().updateCart(
+      UpdateCartParams(
+        cartId: cartItem.cart,
+        productId: cartItem.product.id,
+        quantity: quantity ?? cartItem.quantity,
+        checked: checked ?? cartItem.isChecked,
+      ),
+    );
+  }
+
+  void _handleShippingMethodDropdown(CartShippingState state) {
+    // if (!state.hasLocationData) {
+    //   widget.showErrorToast(
+    //     context: context,
+    //     message: "Please set delivery location first",
+    //   );
+    //   _setLocationWidget();
+    //   return;
+    // }
+
+    // if (!state.hasCartData || state.cart!.items.isEmpty) {
+    //   widget.showErrorToast(
+    //     context: context,
+    //     message: "Please add items to cart first",
+    //   );
+    //   return;
+    // }
+
+    final checkedItems =
+        state.cart!.items.where((item) => item.isChecked).toList();
+    if (checkedItems.isEmpty) {
+      widget.showErrorToast(
+        context: context,
+        message: "Please select items from cart",
+      );
+      return;
+    }
+
+    // if (!state.hasFreightQuoteData) {
+    //   widget.showErrorToast(
+    //     context: context,
+    //     message: "Getting shipping quotes...",
+    //   );
+    //   _callGetFreightQuoteApi(
+    //     cartItems: state.cart!.items,
+    //     location: state.location!,
+    //   );
+    //   return;
+    // }
+
+    _shippingMethodBottomSheet(state);
+  }
+
+  void _handleProceedToBuy(CartShippingState state) {
+    if (!state.hasCartData || state.cart!.items.isEmpty) {
+      widget.showErrorToast(
+        context: context,
+        message: "Please add items to cart",
+      );
+      return;
+    }
+
+    final checkedItems =
+        state.cart!.items.where((item) => item.isChecked).toList();
+    if (checkedItems.isEmpty) {
+      widget.showErrorToast(
+        context: context,
+        message: "Please select items from cart",
+      );
+      return;
+    }
+
+    if (!state.hasLocationData) {
+      _setLocationWidget();
+      return;
+    }
+
+    // if (!state.hasFreightQuoteData) {
+    //   _callGetFreightQuoteApi(
+    //     cartItems: state.cart!.items,
+    //     location: state.location!,
+    //   );
+    //   return;
+    // }
+
+    if (state.selectedShippingIndex == null) {
+      _shippingMethodBottomSheet(state);
+      return;
+    }
+
+    if (!_callCheckUserLoginApi()) {
+      widget.showErrorToast(
+        context: context,
+        message: "You are not logged in!",
+      );
+      return;
+    }
+
+    // Navigate to checkout
+    _navigateToCheckout(state);
+  }
+
+  void _navigateToCheckout(CartShippingState state) {
+    context
+        .push(
+          AppRoutes.checkoutRoute,
+          extra: CheckOutScreenEntity(
+            cartItems: state.cart!.items,
+            freightQuoteEntityData: state.freightQuote,
+            calculateInsuranceEntity: state.insuranceData,
+            isTransitInsured: state.isTransitInsured,
+            localTransitFee: state.feeBreakdown?.localTransitFees ?? 0.0,
+            cartSessionKey: state.cart?.sessionKey ?? "",
+          ),
+        )
+        .then((_) {
+          // Refresh data when returning from checkout
+          _initData();
+        });
+  }
+
+  void _shippingMethodBottomSheet(CartShippingState state) {
+    final freightQuoteEntityData = state.freightQuote;
+    if (freightQuoteEntityData == null) return;
+    int? localSelectedIndex = state.selectedShippingIndex;
+
+    showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.white,
       enableDrag: true,
@@ -337,165 +430,184 @@ class _CartScreenState extends State<CartScreen> {
                     'Select Shipping Method',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
                   ),
-                  freightQuoteEntityData?.quoteCourier == null ||
+                  SizedBox(height: 20),
+
+                  // Courier (Air) - Index 0
+                  if (_isShippingOptionAvailable(
+                    freightQuoteEntityData.quoteCourier.doorDelivery,
+                  ))
+                    ShippingMethodListItemWidget(
+                      label: "Sea Freight",
+                      serviceType: "Upto Port",
+                      shippingFee:
                           freightQuoteEntityData
-                                  ?.quoteCourier
-                                  .doorDelivery
-                                  .totalAmount ==
-                              -1
-                      ? SizedBox()
-                      : ShippingMethodListItemWidget(
-                        label: "Courier (Air)",
-                        serviceType: "Upto Door",
-                        shippingFee:
-                            "${freightQuoteEntityData?.quoteCourier.doorDelivery.totalAmount}",
-                        transitEta:
-                            "${freightQuoteEntityData?.quoteCourier.doorDelivery.doorDeliveryTt}",
-                        isSelected: selectedShippingIndex == 0,
-                        onTap: () {
-                          setModalState(() {
-                            if (selectedShippingIndex == 0) {
-                              selectedShippingIndex = null;
-                            } else {
-                              selectedShippingIndex = 0;
-                            }
-                          });
-                        },
-                      ),
-                  freightQuoteEntityData?.quoteAir == null ||
+                              .quoteSea
+                              .portDelivery
+                              .totalAmount
+                              .toString(),
+                      transitEta:
                           freightQuoteEntityData
-                                  ?.quoteAir
-                                  .doorDelivery
-                                  .totalAmount ==
-                              -1
-                      ? SizedBox()
-                      : ShippingMethodListItemWidget(
-                        label: "Air Freight",
-                        serviceType: "Upto Door",
-                        shippingFee:
-                            "${freightQuoteEntityData?.quoteAir.doorDelivery.totalAmount}",
-                        transitEta:
-                            "${freightQuoteEntityData?.quoteAir.doorDelivery.doorDeliveryTt}",
-                        isSelected: selectedShippingIndex == 1,
-                        onTap: () {
-                          setModalState(() {
-                            if (selectedShippingIndex == 1) {
-                              selectedShippingIndex = null;
-                            } else {
-                              selectedShippingIndex = 1;
-                            }
-                          });
-                        },
-                      ),
-                  freightQuoteEntityData?.quoteAir == null ||
+                              .quoteSea
+                              .portDelivery
+                              .portDeliveryTt
+                              .toString(),
+                      isSelected: localSelectedIndex == 0,
+                      onTap: () {
+                        setModalState(() {
+                          localSelectedIndex =
+                              localSelectedIndex == 0 ? null : 0;
+                        });
+                      },
+                    ),
+
+                  // Air Freight (Door) - Index 1
+                  if (_isShippingOptionAvailable(
+                    freightQuoteEntityData.quoteAir.doorDelivery,
+                  ))
+                    ShippingMethodListItemWidget(
+                      label: "Sea Freight",
+                      serviceType: "Upto Port",
+                      shippingFee:
                           freightQuoteEntityData
-                                  ?.quoteAir
-                                  .portDelivery
-                                  .totalAmount ==
-                              -1
-                      ? SizedBox()
-                      : ShippingMethodListItemWidget(
-                        label: "Air Freight",
-                        serviceType: "Upto Port",
-                        shippingFee:
-                            "${freightQuoteEntityData?.quoteAir.portDelivery.totalAmount}",
-                        transitEta:
-                            "${freightQuoteEntityData?.quoteAir.portDelivery.portDeliveryTt}",
-                        isSelected: selectedShippingIndex == 2,
-                        onTap: () {
-                          setModalState(() {
-                            if (selectedShippingIndex == 2) {
-                              selectedShippingIndex = null;
-                            } else {
-                              selectedShippingIndex = 2;
-                            }
-                          });
-                        },
-                      ),
-                  freightQuoteEntityData?.quoteSea == null ||
+                              .quoteSea
+                              .portDelivery
+                              .totalAmount
+                              .toString(),
+                      transitEta:
                           freightQuoteEntityData
-                                  ?.quoteSea
-                                  .doorDelivery
-                                  .totalAmount ==
-                              -1
-                      ? SizedBox()
-                      : ShippingMethodListItemWidget(
-                        label: "Sea Freight",
-                        serviceType: "Upto Door",
-                        shippingFee:
-                            "${freightQuoteEntityData?.quoteSea.doorDelivery.totalAmount}",
-                        transitEta:
-                            "${freightQuoteEntityData?.quoteSea.doorDelivery.doorDeliveryTt}",
-                        isSelected: selectedShippingIndex == 3,
-                        onTap: () {
-                          setModalState(() {
-                            if (selectedShippingIndex == 3) {
-                              selectedShippingIndex = null;
-                            } else {
-                              selectedShippingIndex = 3;
-                            }
-                          });
-                        },
-                      ),
-                  freightQuoteEntityData?.quoteSea == null ||
+                              .quoteSea
+                              .portDelivery
+                              .portDeliveryTt
+                              .toString(),
+                      isSelected: localSelectedIndex == 1,
+                      onTap: () {
+                        setModalState(() {
+                          localSelectedIndex =
+                              localSelectedIndex == 1 ? null : 1;
+                        });
+                      },
+                    ),
+
+                  // Air Freight (Port) - Index 2
+                  if (_isShippingOptionAvailable(
+                    freightQuoteEntityData.quoteAir.portDelivery,
+                  ))
+                    ShippingMethodListItemWidget(
+                      label: "Sea Freight",
+                      serviceType: "Upto Port",
+                      shippingFee:
                           freightQuoteEntityData
-                                  ?.quoteSea
-                                  .portDelivery
-                                  .totalAmount ==
-                              -1
-                      ? SizedBox()
-                      : ShippingMethodListItemWidget(
-                        label: "Sea Freight",
-                        serviceType: "Upto Port",
-                        shippingFee:
-                            "${freightQuoteEntityData?.quoteSea.portDelivery.totalAmount}",
-                        transitEta:
-                            "${freightQuoteEntityData?.quoteSea.portDelivery.portDeliveryTt}",
-                        isSelected: selectedShippingIndex == 4,
-                        onTap: () {
-                          setModalState(() {
-                            if (selectedShippingIndex == 4) {
-                              selectedShippingIndex = null;
-                            } else {
-                              selectedShippingIndex = 4;
-                            }
-                          });
-                        },
-                      ),
-                  freightQuoteEntityData?.quoteLand == null ||
+                              .quoteSea
+                              .portDelivery
+                              .totalAmount
+                              .toString(),
+                      transitEta:
                           freightQuoteEntityData
-                                  ?.quoteLand
-                                  .doorDelivery
-                                  .totalAmount ==
-                              -1
-                      ? SizedBox()
-                      : ShippingMethodListItemWidget(
-                        label: "Land Freight",
-                        serviceType: "Upto Door",
-                        shippingFee:
-                            "${freightQuoteEntityData?.quoteLand.doorDelivery.totalAmount}",
-                        transitEta:
-                            "${freightQuoteEntityData?.quoteLand.doorDelivery.doorDeliveryTt}",
-                        isSelected: selectedShippingIndex == 5,
-                        onTap: () {
-                          setModalState(() {
-                            if (selectedShippingIndex == 5) {
-                              selectedShippingIndex = null;
-                            } else {
-                              selectedShippingIndex = 5;
-                            }
-                          });
-                        },
-                      ),
+                              .quoteSea
+                              .portDelivery
+                              .portDeliveryTt
+                              .toString(),
+                      isSelected: localSelectedIndex == 2,
+                      onTap: () {
+                        setModalState(() {
+                          localSelectedIndex =
+                              localSelectedIndex == 2 ? null : 2;
+                        });
+                      },
+                    ),
+
+                  // Sea Freight (Door) - Index 3
+                  if (_isShippingOptionAvailable(
+                    freightQuoteEntityData.quoteSea.doorDelivery,
+                  ))
+                    ShippingMethodListItemWidget(
+                      label: "Sea Freight",
+                      serviceType: "Upto Port",
+                      shippingFee:
+                          freightQuoteEntityData
+                              .quoteSea
+                              .portDelivery
+                              .totalAmount
+                              .toString(),
+                      transitEta:
+                          freightQuoteEntityData
+                              .quoteSea
+                              .portDelivery
+                              .portDeliveryTt
+                              .toString(),
+                      isSelected: localSelectedIndex == 3,
+                      onTap: () {
+                        setModalState(() {
+                          localSelectedIndex =
+                              localSelectedIndex == 3 ? null : 3;
+                        });
+                      },
+                    ),
+                  // Sea Freight (Port) - Index 4
+                  if (_isShippingOptionAvailable(
+                    freightQuoteEntityData.quoteSea.portDelivery,
+                  ))
+                    ShippingMethodListItemWidget(
+                      label: "Sea Freight",
+                      serviceType: "Upto Port",
+                      shippingFee:
+                          freightQuoteEntityData
+                              .quoteSea
+                              .portDelivery
+                              .totalAmount
+                              .toString(),
+                      transitEta:
+                          freightQuoteEntityData
+                              .quoteSea
+                              .portDelivery
+                              .portDeliveryTt
+                              .toString(),
+                      isSelected: localSelectedIndex == 4,
+                      onTap: () {
+                        setModalState(() {
+                          localSelectedIndex =
+                              localSelectedIndex == 4 ? null : 4;
+                        });
+                      },
+                    ),
+
+                  // Land Freight (Door) - Index 5
+                  if (_isShippingOptionAvailable(
+                    freightQuoteEntityData.quoteLand.doorDelivery,
+                  ))
+                    ShippingMethodListItemWidget(
+                      label: "Sea Freight",
+                      serviceType: "Upto Port",
+                      shippingFee:
+                          freightQuoteEntityData
+                              .quoteSea
+                              .portDelivery
+                              .totalAmount
+                              .toString(),
+                      transitEta:
+                          freightQuoteEntityData
+                              .quoteSea
+                              .portDelivery
+                              .portDeliveryTt
+                              .toString(),
+                      isSelected: localSelectedIndex == 5,
+                      onTap: () {
+                        setModalState(() {
+                          localSelectedIndex =
+                              localSelectedIndex == 5 ? null : 5;
+                        });
+                      },
+                    ),
+                  SizedBox(height: 30),
+
+                  // Action buttons
                   Row(
                     children: [
                       BlankButtonWidget(
                         title: 'Cancel',
                         width: MediaQuery.of(context).size.width * 0.4,
                         height: 50,
-                        onTap: () {
-                          context.pop();
-                        },
+                        onTap: () => context.pop(),
                       ),
                       Spacer(),
                       CustomFilledButtonWidget(
@@ -504,9 +616,10 @@ class _CartScreenState extends State<CartScreen> {
                         height: 50,
                         width: MediaQuery.of(context).size.width * 0.4,
                         onTap: () {
-                          if (selectedShippingIndex != null) {
+                          if (localSelectedIndex != null) {
                             _callSelectFreightServiceApi(
-                              freightQuoteEntityData!.quoteToken,
+                              quoteToken: freightQuoteEntityData.quoteToken,
+                              serviceIndex: localSelectedIndex,
                             );
                             context.pop();
                           } else {
@@ -526,6 +639,10 @@ class _CartScreenState extends State<CartScreen> {
         );
       },
     );
+  }
+
+  bool _isShippingOptionAvailable(dynamic deliveryOption) {
+    return deliveryOption != null && deliveryOption.totalAmount != -1;
   }
 
   void _setLocationWidget() async {
@@ -557,7 +674,7 @@ class _CartScreenState extends State<CartScreen> {
                       width: 2,
                     ),
                   ),
-                  hintText: 'City name where it needs to be delivered',
+                  hintText: 'Enter city name',
                   hintStyle: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w400,
@@ -571,14 +688,6 @@ class _CartScreenState extends State<CartScreen> {
                 debounceTime: 800,
                 isLatLngRequired: true,
                 getPlaceDetailWithLatLng: (Prediction prediction) async {
-                  // double lat = double.parse(prediction.lat!);
-                  // double lng = double.parse(prediction.lng!);
-                  // address = prediction.terms?.first.value ?? "";
-                  // final List<Placemark> placemarks = await placemarkFromCoordinates(
-                  //   lat,
-                  //   lng,
-                  // );
-                  // countryCode = placemarks[0].isoCountryCode!;
                   _callManualLocationApi(
                     GetManualLocationParams(
                       latitude: double.tryParse(prediction.lat ?? "") ?? 0.0,
@@ -591,11 +700,6 @@ class _CartScreenState extends State<CartScreen> {
                   _addCtrl.selection = TextSelection.fromPosition(
                     TextPosition(offset: prediction.description!.length),
                   );
-                  // setState(() {
-                  //   address = prediction.terms?.first.value ?? "";
-                  // });
-
-                  // context.pop();
                 },
                 itemBuilder: (context, index, Prediction prediction) {
                   return Container(
@@ -621,42 +725,21 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  void _callLocationApi() async {
-    await context.read<CartCubit>().getCurrentLocation();
-  }
-
+  // API call methods
   void _callManualLocationApi(GetManualLocationParams params) async {
-    await context.read<CartCubit>().getManualLocation(params);
-  }
-
-  void _callGetCartItemApi() {
-    context.read<CartCubit>().getCartItems();
-  }
-
-  void _callUpdateCartApi({
-    required int cartId,
-    required String productId,
-    required int quantity,
-    required bool checked,
-  }) {
-    context.read<CartCubit>().updateCart(
-      UpdateCartParams(
-        cartId: cartId,
-        productId: productId,
-        quantity: quantity,
-        checked: checked,
-      ),
-    );
+    await context.read<CartShippingCubit>().getManualLocation(params);
+    context.pop();
   }
 
   void _callGetFreightQuoteApi({
     required List<CartItemEntity> cartItems,
     required LocationEntity location,
-  }) {
-    final items = cartItems.map((item) => item.toFreightItem()).toList();
+  }) async {
+    final checkedItems = cartItems.where((item) => item.isChecked).toList();
+    final items = checkedItems.map((item) => item.toFreightItem()).toList();
 
     if (items.isNotEmpty) {
-      context.read<ShippingCubit>().getFreightQuote(
+      await context.read<CartShippingCubit>().getFreightQuote(
         params: GetFreightQuoteParams(
           destinationCountry: location.country,
           destinationCountryShortName: location.isoCountryCode,
@@ -669,65 +752,25 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
-  void _callSelectFreightServiceApi(String quoteToken) {
-    context.read<ShippingCubit>().selectFreightService(
+  void _callSelectFreightServiceApi({
+    required String quoteToken,
+    int? serviceIndex,
+  }) {
+    context.read<CartShippingCubit>().selectFreightService(
       SelectFreightServiceParams(
         quoteToken: quoteToken,
-        selectedCourierType: _getCourierType(selectedShippingIndex),
+        serviceIndex: serviceIndex,
       ),
     );
-  }
-
-  String _getCourierType(int? shippingIndex) {
-    switch (shippingIndex) {
-      case 0:
-        return "DOORCOURIER";
-      case 1:
-        return "DOORAIR";
-      case 2:
-        return "PORTAIR";
-      case 3:
-        return "DOORSEA";
-      case 4:
-        return "PORTSEA";
-      case 5:
-        return "DOORLAND";
-      default:
-        return "";
-    }
   }
 
   void _callCalculateInsuranceApi(String quoteToken) {
-    context.read<ShippingCubit>().calculateInsurance(
+    context.read<CartShippingCubit>().calculateInsurance(
       CalculateInsuranceParams(quoteToken: quoteToken),
-    );
-  }
-
-  void _callConfirmInsuranceApi({
-    required String quoteToken,
-    required bool addInsurance,
-  }) {
-    context.read<ShippingCubit>().confirmInsurance(
-      ConfirmInsuranceParams(
-        quoteToken: quoteToken,
-        addInsurance: addInsurance,
-      ),
     );
   }
 
   bool _callCheckUserLoginApi() {
     return context.read<CommonCubit>().isUserLoggedIn();
-  }
-
-  double _calculateLocalTransitFees(List<CartItemEntity> cartItems) {
-    double totalTransitFee = 0.0;
-
-    for (CartItemEntity item in cartItems) {
-      if (item.isChecked) {
-        totalTransitFee += item.product.localTransitFee;
-      }
-    }
-
-    return totalTransitFee;
   }
 }

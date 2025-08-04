@@ -20,10 +20,12 @@ class SelectFreightServiceUseCase
 
 class SelectFreightServiceParams {
   final String quoteToken;
-  final String selectedCourierType;
+  // final String selectedCourierType;
+  final int? serviceIndex;
 
   SelectFreightServiceParams({
     required this.quoteToken,
-    required this.selectedCourierType,
+    // required this.selectedCourierType,
+    required this.serviceIndex,
   });
 }

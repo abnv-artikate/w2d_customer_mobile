@@ -42,6 +42,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freigh
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.dart';
@@ -112,6 +113,19 @@ Future<void> init() async {
       orderSuccessUseCase: sl<OrderSuccessUseCase>(),
       getOrdersByIdUseCase: sl<GetOrdersByIdUseCase>(),
       getOrdersListUseCase: sl<GetOrdersListUseCase>(),
+    ),
+  );
+  sl.registerFactory(
+    () => CartShippingCubit(
+      cartSyncUseCase: sl<CartSyncUseCase>(),
+      getCartItemUseCase: sl<GetCartUseCase>(),
+      getCurrentLocationUseCase: sl<GetCurrentLocationUseCase>(),
+      getManualLocationUseCase: sl<GetManualLocationUseCase>(),
+      updateCartUseCase: sl<UpdateCartUseCase>(),
+      getFreightQuoteUseCase: sl<GetFreightQuoteUseCase>(),
+      selectFreightServiceUseCase: sl<SelectFreightServiceUseCase>(),
+      calculateInsuranceUseCase: sl<CalculateInsuranceUseCase>(),
+      confirmInsuranceUseCase: sl<ConfirmInsuranceUseCase>(),
     ),
   );
 
@@ -241,7 +255,7 @@ Future<void> init() async {
       requestBody: true,
       responseHeader: true,
       responseBody: true,
-      logPrint: (value) => log(value.toString()),
+      logPrint: (value) => log(value.toString(), name: 'w2dClient'),
     ),
   );
 
@@ -261,7 +275,7 @@ Future<void> init() async {
       requestBody: true,
       responseHeader: true,
       responseBody: true,
-      logPrint: (value) => log(value.toString()),
+      logPrint: (value) => log(value.toString(), name: 'shippingClient'),
     ),
   );
 
@@ -282,7 +296,7 @@ Future<void> init() async {
       requestBody: true,
       responseHeader: true,
       responseBody: true,
-      logPrint: (value) => log(value.toString()),
+      logPrint: (value) => log(value.toString(), name: 'telrPaymentClient'),
     ),
   );
 
