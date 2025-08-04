@@ -154,6 +154,7 @@ final GoRouter router = GoRouter(
             BlocProvider<CartShippingCubit>(
               create: (context) => sl<CartShippingCubit>(),
             ),
+            BlocProvider(create: (context) => sl<CommonCubit>()),
           ],
           child: CheckoutScreen(
             checkOutScreenEntity: state.extra as CheckOutScreenEntity,

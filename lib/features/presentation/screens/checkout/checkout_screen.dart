@@ -18,6 +18,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_succes
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/pending_order_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/shipping/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
@@ -56,6 +57,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   bool? isTransitInsured;
   String countryCode = "";
+  String? userEmail;
 
   // int? selectedAdd;
   CustomerAddressesEntity? selectedAdd;
@@ -65,6 +67,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   initState() {
     _callGetSavedAddressApi();
+    userEmail = _callUserEmailApi();
     super.initState();
   }
 
@@ -218,22 +221,31 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   height: 50,
                   width: MediaQuery.of(context).size.width,
                   onTap: () {
-                    _callInitiatePaymentApi(
-                      PaymentRequestEntity(
-                        cartId: widget.checkOutScreenEntity.cartSessionKey,
-                        amount: '1000',
-                        currency: 'AED',
-                        firstName: selectedAdd?.fullName ?? "",
-                        lastName: "",
-                        street: selectedAdd?.addressLine1 ?? "",
-                        city: selectedAdd?.city ?? "",
-                        region: "",
-                        country: selectedAdd?.country ?? "",
-                        zip: "",
-                        email: "",
-                        phone: selectedAdd?.primaryPhoneNumber ?? "",
-                      ),
-                    );
+                    if (selectedAdd != null) {
+                      _callInitiatePaymentApi(
+                        PaymentRequestEntity(
+                          cartId: widget.checkOutScreenEntity.cartSessionKey,
+                          amount: '1000',
+                          currency: 'AED',
+                          firstName: selectedAdd?.fullName ?? "",
+                          lastName: "",
+                          street: selectedAdd?.addressLine1 ?? "",
+                          city: selectedAdd?.city ?? "",
+                          region: "",
+                          country: selectedAdd?.country ?? "",
+                          zip: "",
+                          email: userEmail ?? "",
+                          phone: selectedAdd?.primaryPhoneNumber ?? "",
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Select Address!!"),
+                          backgroundColor: AppColors.softWhite71,
+                        ),
+                      );
+                    }
                     // _clearTextFields();
                   },
                 ),
@@ -580,6 +592,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   void _callSaveAddressApi(CreateAddressParams params) {
     context.read<AddressCubit>().saveAddress(params);
+  }
+
+  String _callUserEmailApi() {
+    return context.read<CommonCubit>().getUserInfo();
   }
 }
 

@@ -56,10 +56,10 @@ class CommonCubit extends Cubit<CommonState> {
     final result = await getCollectionsUseCase.call(NoParams());
 
     result.fold(
-          (l) {
+      (l) {
         emit(CollectionsError(error: l.message));
       },
-          (res) {
+      (res) {
         for (CollectionsResultDataEntity item in res.results.data) {
           if (item.name.startsWith("Brand Mall")) {
             brandMallCollections.add(item);
@@ -78,11 +78,15 @@ class CommonCubit extends Cubit<CommonState> {
     );
   }
 
+  String getUserInfo() {
+    return localDatasource.getUserEmail() ?? "";
+  }
+
   bool isUserLoggedIn() {
     return localDatasource.getUserEmail() != null;
   }
 
-  void logout(){
+  void logout() {
     localDatasource.logout();
   }
 
