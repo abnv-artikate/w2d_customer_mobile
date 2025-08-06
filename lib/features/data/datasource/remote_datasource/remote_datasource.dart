@@ -9,6 +9,7 @@ import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.
 import 'package:w2d_customer_mobile/features/data/model/categories/category_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/orders/orders_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/search/search_result_autocomplete_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/calculate_insurance_model.dart';
@@ -74,7 +75,7 @@ abstract class RemoteDatasource {
 
   Future<TelrConfirmPaymentResponseModel> verifyPayment(String transCode);
 
-  ///
+  /// Address Datasource
   Future saveCustomerAddress(Map<String, dynamic> body);
 
   Future<CustomerAddressesModel> getCustomerAddresses();
@@ -87,7 +88,7 @@ abstract class RemoteDatasource {
   /// Orders Datasource
   Future getOrderByID(String id);
 
-  Future getOrdersList(Map<String, dynamic> json);
+  Future<OrderListModel> getOrdersList(Map<String, dynamic> json);
 
   Future updateOrder({required String id, required Map<String, dynamic> body});
 
@@ -383,7 +384,7 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   }
 
   @override
-  Future getOrdersList(Map<String, dynamic> body) async {
+  Future<OrderListModel> getOrdersList(Map<String, dynamic> body) async {
     try {
       return await w2dClient.getOrders(body);
     } on DioException catch (e) {

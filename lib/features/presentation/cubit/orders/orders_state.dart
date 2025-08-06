@@ -31,7 +31,11 @@ final class OrderSuccessError extends OrdersState {
 
 final class GetOrdersLoading extends OrdersState {}
 
-final class GetOrdersLoaded extends OrdersState {}
+final class GetOrdersLoaded extends OrdersState {
+  final OrderListEntity orderList;
+
+  GetOrdersLoaded({required this.orderList});
+}
 
 final class GetOrdersError extends OrdersState {
   final String error;

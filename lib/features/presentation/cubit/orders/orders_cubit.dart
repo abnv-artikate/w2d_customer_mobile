@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/orders/orders_list_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/get_orders_by_id_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/get_orders_list_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_success_usecase.dart';
@@ -62,7 +63,7 @@ class OrdersCubit extends Cubit<OrdersState> {
         emit(GetOrdersError(error: l.message));
       },
       (r) {
-        GetOrdersLoaded();
+        emit(GetOrdersLoaded(orderList: r));
       },
     );
   }

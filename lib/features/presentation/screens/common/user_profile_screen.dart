@@ -47,7 +47,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             Divider(),
             _profileListItem(
               title: 'Orders',
-              onItemTap: () {},
+              onItemTap: () {
+                context.push(AppRoutes.orderRoute);
+              },
               iconData: LucideIcons.package,
             ),
             Divider(),

@@ -12,6 +12,7 @@ import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.
 import 'package:w2d_customer_mobile/features/data/model/categories/category_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/orders/orders_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/search/search_result_autocomplete_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/success_message_model.dart';
@@ -186,7 +187,7 @@ abstract class W2DClient {
 
   /// Orders Client
   @GET(EndPoints.orders)
-  Future getOrders(@Queries() Map<String, dynamic> body);
+  Future<OrderListModel> getOrders(@Queries() Map<String, dynamic> body);
 
   @GET('${EndPoints.orders}/{id}/')
   Future getOrdersByID(@Path() String id);

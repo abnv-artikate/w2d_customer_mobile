@@ -6,6 +6,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/cart/updated_cart_e
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/orders/orders_list_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/search/search_result_autocomplete_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
@@ -117,5 +118,5 @@ abstract class Repository {
 
   Future<Either<Failure, String>> getOrderByID(String params);
 
-  Future<Either<Failure, String>> getOrdersList(GetOrdersListParams params);
+  Future<Either<Failure, OrderListEntity>> getOrdersList(GetOrdersListParams params);
 }
