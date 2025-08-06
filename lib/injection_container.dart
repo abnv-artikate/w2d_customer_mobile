@@ -115,7 +115,7 @@ Future<void> init() async {
       getOrdersListUseCase: sl<GetOrdersListUseCase>(),
     ),
   );
-  sl.registerFactory(
+  sl.registerLazySingleton<CartShippingCubit>(
     () => CartShippingCubit(
       cartSyncUseCase: sl<CartSyncUseCase>(),
       getCartItemUseCase: sl<GetCartUseCase>(),

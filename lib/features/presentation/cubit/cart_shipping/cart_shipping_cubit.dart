@@ -372,9 +372,7 @@ class CartShippingCubit extends Cubit<CartShippingState> {
     required double transitInsurance,
     required double destDutyTaxesOtherFees,
   }) {
-    return _currentInsuranceData == null
-        ? 0.0
-        : (_platformFeeRate *
+    return (_platformFeeRate *
             (goodsValue +
                 exportFreightPackingOtherFees +
                 transitInsurance +

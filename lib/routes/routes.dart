@@ -37,7 +37,15 @@ final GoRouter router = GoRouter(
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        return ScaffoldWithNav(child: child);
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<CartShippingCubit>.value(
+              value: sl<CartShippingCubit>(),
+            ),
+            BlocProvider<CommonCubit>(create: (context) => sl<CommonCubit>()),
+          ],
+          child: ScaffoldWithNav(child: child),
+        );
       },
       routes: [
         GoRoute(
@@ -48,9 +56,9 @@ final GoRouter router = GoRouter(
                 BlocProvider<CategoryCubit>(
                   create: (context) => sl<CategoryCubit>(),
                 ),
-                BlocProvider<CommonCubit>(
-                  create: (context) => sl<CommonCubit>(),
-                ),
+                // BlocProvider<CommonCubit>(
+                //   create: (context) => sl<CommonCubit>(),
+                // ),
               ],
               child: HomeScreen(),
             );
@@ -59,10 +67,7 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.exploreRoute,
           builder: (BuildContext context, GoRouterState state) {
-            return BlocProvider<CommonCubit>(
-              create: (context) => sl<CommonCubit>(),
-              child: ExploreCategoriesScreen(),
-            );
+            return ExploreCategoriesScreen();
           },
         ),
         GoRoute(
@@ -74,9 +79,9 @@ final GoRouter router = GoRouter(
                 BlocProvider<ShippingCubit>(
                   create: (context) => sl<ShippingCubit>(),
                 ),
-                BlocProvider<CartShippingCubit>(
-                  create: (context) => sl<CartShippingCubit>(),
-                ),
+                // BlocProvider<CartShippingCubit>(
+                //   create: (context) => sl<CartShippingCubit>(),
+                // ),
               ],
               child: CartScreen(),
             );
@@ -85,9 +90,9 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.profileRoute,
           builder: (BuildContext context, GoRouterState state) {
-            final bloc = BlocProvider.of<CommonCubit>(context);
+            final cubit = context.read<CommonCubit>();
 
-            if (bloc.isUserLoggedIn()) {
+            if (cubit.isUserLoggedIn()) {
               return UserProfileScreen();
             } else {
               return LoginScreen(isCheckout: false);
@@ -144,6 +149,9 @@ final GoRouter router = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         return MultiBlocProvider(
           providers: [
+            BlocProvider<CartShippingCubit>.value(
+              value: sl<CartShippingCubit>(),
+            ),
             BlocProvider<ShippingCubit>(
               create: (context) => sl<ShippingCubit>(),
             ),
@@ -151,10 +159,7 @@ final GoRouter router = GoRouter(
             BlocProvider<OrdersCubit>(create: (context) => sl<OrdersCubit>()),
             BlocProvider<AddressCubit>(create: (context) => sl<AddressCubit>()),
             BlocProvider<CartCubit>(create: (context) => sl<CartCubit>()),
-            BlocProvider<CartShippingCubit>(
-              create: (context) => sl<CartShippingCubit>(),
-            ),
-            BlocProvider(create: (context) => sl<CommonCubit>()),
+            BlocProvider<CommonCubit>(create: (context) => sl<CommonCubit>()),
           ],
           child: CheckoutScreen(
             checkOutScreenEntity: state.extra as CheckOutScreenEntity,
