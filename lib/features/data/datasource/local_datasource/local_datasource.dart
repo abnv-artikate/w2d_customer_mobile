@@ -9,6 +9,10 @@ abstract class LocalDatasource {
 
   setRefreshToken(String token);
 
+  String? getUserName();
+
+  setUserName(String name);
+
   String? getUserEmail();
 
   setUserEmail(String email);
@@ -61,6 +65,16 @@ class LocalDataSourceImpl extends LocalDatasource {
   @override
   setRefreshToken(String token) {
     return mySharedPref.saveRefreshToken(token);
+  }
+
+  @override
+  String? getUserName() {
+    return mySharedPref.getUserName();
+  }
+
+  @override
+  setUserName(String name) {
+    mySharedPref.saveUserName(name);
   }
 
   @override

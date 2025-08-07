@@ -3,23 +3,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/user_profile_widget.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 
-class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  State<UserProfileScreen> createState() => _UserProfileScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _UserProfileScreenState extends State<UserProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Profile',
+          'My Account',
           style: TextStyle(fontSize: 40, fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
@@ -28,23 +32,28 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         padding: EdgeInsets.symmetric(horizontal: 25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 50),
-            UserProfileWidget(),
-            SizedBox(height: 30),
-            Text(
-              'User Name',
-              style: TextStyle(fontSize: 40, fontWeight: FontWeight.w500),
+            _profileListItem(
+              title: 'Profile',
+              onItemTap: () {
+                context.push(AppRoutes.userProfileRoute);
+              },
+              iconData: LucideIcons.user2,
             ),
-            SizedBox(height: 30),
-            // _profileListItem(title: 'Profile',onItemTap: () {}, iconData: LucideIcons.user),
-            // Divider(),
+            Divider(),
             _profileListItem(
               title: 'Wishlist',
               onItemTap: () {},
               iconData: LucideIcons.heart,
             ),
             Divider(),
+            // _profileListItem(
+            //   title: 'Saved Address',
+            //   onItemTap: () {},
+            //   iconData: LucideIcons.mapPin,
+            // ),
+            // Divider(),
             _profileListItem(
               title: 'Orders',
               onItemTap: () {

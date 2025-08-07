@@ -87,6 +87,9 @@ class RepositoryImpl extends Repository {
         localDatasource.setUserEmail(
           RepositoryConv.convertVerifyOtpModelToUserEntity(result).email,
         );
+        localDatasource.setUserName(
+          RepositoryConv.convertVerifyOtpModelToUserEntity(result).name,
+        );
 
         return Right(RepositoryConv.convertVerifyOtpModelToUserEntity(result));
       } else {

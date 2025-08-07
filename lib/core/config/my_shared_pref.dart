@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MySharedPref {
   static const accessToken = "access_token";
   static const refreshToken = "refresh_token";
+  static const userName = "user_name";
   static const userEmail = "user_email";
   static const cartID = "cart_id";
   static const latitudeKey = "latitude";
@@ -30,6 +31,14 @@ class MySharedPref {
 
   String? getRefreshToken() {
     return _pref.getString(refreshToken);
+  }
+
+  void saveUserName(String name) async {
+    await _pref.setString(userName, name);
+  }
+
+  String? getUserName() {
+    return _pref.getString(userName);
   }
 
   void saveUserEmail(String email) async {
@@ -83,6 +92,7 @@ class MySharedPref {
   void logout() {
     _pref.remove(accessToken);
     _pref.remove(refreshToken);
+    _pref.remove(userName);
     _pref.remove(userEmail);
     _pref.remove(cartID);
   }

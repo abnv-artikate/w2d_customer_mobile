@@ -78,8 +78,12 @@ class CommonCubit extends Cubit<CommonState> {
     );
   }
 
-  String getUserInfo() {
+  String getUserEmail() {
     return localDatasource.getUserEmail() ?? "";
+  }
+
+  String getUserName() {
+    return localDatasource.getUserName() ?? "";
   }
 
   bool isUserLoggedIn() {

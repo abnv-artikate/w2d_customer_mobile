@@ -344,7 +344,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   String _callUserEmailApi() {
-    return context.read<CommonCubit>().getUserInfo();
+    return context.read<CommonCubit>().getUserEmail();
   }
 
   void _callResetShipping() {

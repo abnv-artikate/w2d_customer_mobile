@@ -16,10 +16,11 @@ import 'package:w2d_customer_mobile/features/presentation/screens/common/explore
 import 'package:w2d_customer_mobile/features/presentation/screens/common/home_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/common/scaffold_with_nav.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/common/search_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/screens/common/user_profile_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/common/profile_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/category_listing_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/product_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/orders/order_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/user/user_profile_screen.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.dart';
@@ -93,7 +94,7 @@ final GoRouter router = GoRouter(
             final cubit = context.read<CommonCubit>();
 
             if (cubit.isUserLoggedIn()) {
-              return UserProfileScreen();
+              return ProfileScreen();
             } else {
               return LoginScreen(isCheckout: false);
             }
@@ -189,6 +190,16 @@ final GoRouter router = GoRouter(
         return BlocProvider<OrdersCubit>(
           create: (context) => sl<OrdersCubit>(),
           child: OrderScreen(),
+        );
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.userProfileRoute,
+      builder: (BuildContext context, GoRouterState state) {
+        return BlocProvider<CommonCubit>(
+          create: (context) => sl<CommonCubit>(),
+          child: UserProfileScreen(),
         );
       },
     ),
