@@ -24,6 +24,23 @@ class CategoryCubit extends Cubit<CategoryState> {
   final CartSyncUseCase cartSyncUseCase;
   final GetCartUseCase getCartUseCase;
 
+  bool get isBrand {
+    final currentState = state;
+    if (currentState is BrandToggle) {
+      return currentState.isBrand;
+    }
+    return false;
+  }
+
+  void toggleBrand() {
+    final currentIsBrand = isBrand;
+    emit(BrandToggle(isBrand: !currentIsBrand));
+  }
+
+  void setBrand(bool value) {
+    emit(BrandToggle(isBrand: value));
+  }
+
   getProductCategoryList(ProductCategoryParams params) async {
     emit(CategoryLoading());
     List<CategoryProductEntity> hidden = [];

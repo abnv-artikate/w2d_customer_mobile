@@ -37,3 +37,9 @@ final class CategoryError extends CategoryState {
 
   CategoryError(this.error);
 }
+
+final class BrandToggle extends CategoryState {
+  final bool isBrand;
+
+  BrandToggle({required this.isBrand});
+}

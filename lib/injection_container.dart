@@ -70,7 +70,7 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerFactory<CategoryCubit>(
+  sl.registerLazySingleton<CategoryCubit>(
     () => CategoryCubit(
       productCategoryUseCase: sl<ProductCategoryUseCase>(),
       productViewUseCase: sl<ProductViewUseCase>(),
