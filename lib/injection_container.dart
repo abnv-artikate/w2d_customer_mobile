@@ -49,10 +49,22 @@ import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.
 import 'package:w2d_customer_mobile/features/presentation/cubit/shipping/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/view_models/auth_view_model.dart';
 
 final sl = GetIt.instance;
 
+void _registerViewModels() {
+  sl.registerFactory<AuthViewModel>(
+    () => AuthViewModel(
+      sendOtpUseCase: sl<SendOtpUseCase>(),
+      verifyOtpUseCase: sl<VerifyOtpUseCase>(),
+    ),
+  );
+}
+
 Future<void> init() async {
+  _registerViewModels();
+
   /// Cubit
   sl.registerLazySingleton<AuthCubit>(
     () => AuthCubit(

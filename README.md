@@ -1,4 +1,4 @@
-# w2d_customer_mobile
+# w2d_customer_mobile (MVVM)
 
 ## Getting Started
 

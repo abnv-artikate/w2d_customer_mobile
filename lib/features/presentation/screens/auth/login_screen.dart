@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import 'package:provider/provider.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
+import 'package:w2d_customer_mobile/features/presentation/view_models/auth_view_model.dart';
+import 'package:w2d_customer_mobile/injection_container.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
@@ -11,16 +15,30 @@ import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_w
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
-class LoginScreen extends StatefulWidget {
-  final bool isCheckout;
-
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key, required this.isCheckout});
 
+  final bool isCheckout;
+
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<AuthViewModel>(
+      create: (context) => sl<AuthViewModel>(),
+      child: LoginView(isCheckout: isCheckout),
+    );
+  }
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginView extends StatefulWidget {
+  final bool isCheckout;
+
+  const LoginView({super.key, required this.isCheckout});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
   bool isLogin = true;
   bool isVerify = false;
   String buttonText = "Continue";
@@ -46,40 +64,55 @@ class _LoginScreenState extends State<LoginScreen> {
         top: true,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-          child: BlocConsumer<AuthCubit, AuthState>(
-            listener: (context, state) {
-              if (state is SendOtpSuccess) {
-                buttonText = "Verify";
-                isVerify = true;
-                isLogin = true;
-              } else if (state is AuthError) {
-                widget.showErrorToast(context: context, message: state.error);
-              }
-
-              if (state is VerifyOtpSuccess) {
-                if (widget.isCheckout) {
-                  context.pop();
-                  context.push(AppRoutes.checkoutRoute);
-                } else {
-                  context.go(AppRoutes.initial, extra: state.userEntity);
-                }
-              } else if (state is AuthError) {
-                widget.showErrorToast(context: context, message: state.error);
-              }
-            },
-            builder: (context, state) {
+          child: Consumer<AuthViewModel>(
+            builder: (context, authViewModel, child) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _logo(),
+                  // _logo(),
+                  // _inputForm(
+                  //   context,
+                  //   emailCtrl: _emailCtrl,
+                  //   otpCtrl: _otpCtrl,
+                  //   nameCtrl: _nameCtrl,
+                  // ),
+                  // _guestOrSignUp(context),
+                  if (authViewModel.isLoading) LinearProgressIndicator(),
+                  SizedBox(height: 20),
+                  if (authViewModel.errorMessage != null)
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.red.shade200),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(LucideIcons.info, color: Colors.red.shade600),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              authViewModel.errorMessage!,
+                              style: TextStyle(color: Colors.red.shade600),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: authViewModel.clearError,
+                            icon: const Icon(Icons.close),
+                          ),
+                        ],
+                      ),
+                    ),
+                  SizedBox(height: 20),
                   _inputForm(
                     context,
                     emailCtrl: _emailCtrl,
                     otpCtrl: _otpCtrl,
                     nameCtrl: _nameCtrl,
                   ),
-                  _guestOrSignUp(context),
+                  SizedBox(height: 20),
                 ],
               );
             },

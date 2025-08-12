@@ -22,7 +22,6 @@ import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/pr
 import 'package:w2d_customer_mobile/features/presentation/screens/orders/order_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/user/user_profile_screen.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/shipping/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
@@ -106,10 +105,7 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: AppRoutes.loginRoute,
       builder: (BuildContext context, GoRouterState state) {
-        return BlocProvider<AuthCubit>(
-          create: (context) => sl<AuthCubit>(),
-          child: LoginScreen(isCheckout: state.extra as bool),
-        );
+        return LoginScreen(isCheckout: state.extra as bool);
       },
     ),
     GoRoute(
