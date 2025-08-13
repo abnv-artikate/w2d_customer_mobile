@@ -33,8 +33,6 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
   List<CategoryProductEntity> brandProductCategoryList = [];
   List<CategoryProductEntity> hiddenProductCategoryList = [];
 
-  // bool isBrand = false;
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CategoryCubit, CategoryState>(
@@ -57,7 +55,6 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
       builder: (context, state) {
         bool isBrand = context.read<CategoryCubit>().isBrand;
         return Scaffold(
-          // drawer: Drawer(child: _drawer()),
           appBar: AppBar(
             surfaceTintColor: AppColors.white,
             title: Text(widget.category.name),

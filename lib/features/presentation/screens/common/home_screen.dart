@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
     enableInfiniteScroll: false,
   );
 
-  bool isBrand = false;
+  // bool isBrand = false;
   String? address;
 
   List<CollectionsResultDataEntity> brandMallCollections = [];
@@ -74,60 +74,61 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 130,
-        iconTheme: IconThemeData(color: AppColors.deepBlue),
-        leadingWidth: 80,
-        leading: Container(
-          margin: EdgeInsets.only(left: 10),
-          child: Image.asset(
-            isBrand
-                ? Assets.iconsW2DLogoAspirationalGold
-                : Assets.iconsW2DLogoGreen,
-            fit: BoxFit.contain,
-          ),
-        ),
-        actions: [
-          BrandMallToggleWidget(
-            onTap: () {
-              setState(() {
-                isBrand = !isBrand;
-              });
-            },
-            isBrand: isBrand,
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: Size.zero,
-          child: Row(
-            children: [
-              SearchWidget(
+    return BlocConsumer<CategoryCubit, CategoryState>(
+      listener: (context, state) {
+        if (state is ProductViewLoaded) {
+          context.push(AppRoutes.productRoute, extra: state.productEntity);
+        }
+      },
+      builder: (context, state) {
+        bool isBrand = context.read<CategoryCubit>().isBrand;
+        return Scaffold(
+          appBar: AppBar(
+            toolbarHeight: 130,
+            iconTheme: IconThemeData(color: AppColors.deepBlue),
+            leadingWidth: 80,
+            leading: Container(
+              margin: EdgeInsets.only(left: 10),
+              child: Image.asset(
+                isBrand
+                    ? Assets.iconsW2DLogoAspirationalGold
+                    : Assets.iconsW2DLogoGreen,
+                fit: BoxFit.contain,
+              ),
+            ),
+            actions: [
+              BrandMallToggleWidget(
                 onTap: () {
-                  context.push(AppRoutes.searchRoute);
+                  context.read<CategoryCubit>().toggleBrand();
                 },
+                isBrand: isBrand,
               ),
             ],
+            bottom: PreferredSize(
+              preferredSize: Size.zero,
+              child: Row(
+                children: [
+                  SearchWidget(
+                    onTap: () {
+                      context.push(AppRoutes.searchRoute);
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-      body: BlocListener<CategoryCubit, CategoryState>(
-        listener: (context, state) {
-          if (state is ProductViewLoaded) {
-            context.push(AppRoutes.productRoute, extra: state.productEntity);
-          }
-        },
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _brandAndHiddenGems(),
-              _bestSellers(),
-              // _popularCategories(),
-            ],
+          body: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _brandAndHiddenGems(),
+                _bestSellers(isBrand),
+                // _popularCategories(),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -147,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _bestSellers() {
+  _bestSellers(bool isBrand) {
     return BlocConsumer<CommonCubit, CommonState>(
       listener: (context, state) {
         if (state is CollectionsLoaded) {

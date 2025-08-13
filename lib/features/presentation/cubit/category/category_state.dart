@@ -39,7 +39,4 @@ final class CategoryError extends CategoryState {
 }
 
 final class BrandToggle extends CategoryState {
-  final bool isBrand;
-
-  BrandToggle({required this.isBrand});
 }

@@ -54,12 +54,7 @@ final GoRouter router = GoRouter(
           builder: (BuildContext context, GoRouterState state) {
             return MultiBlocProvider(
               providers: [
-                BlocProvider<CategoryCubit>(
-                  create: (context) => sl<CategoryCubit>(),
-                ),
-                // BlocProvider<CommonCubit>(
-                //   create: (context) => sl<CommonCubit>(),
-                // ),
+                BlocProvider<CategoryCubit>.value(value: sl<CategoryCubit>()),
               ],
               child: HomeScreen(),
             );
@@ -80,9 +75,6 @@ final GoRouter router = GoRouter(
                 BlocProvider<ShippingCubit>(
                   create: (context) => sl<ShippingCubit>(),
                 ),
-                // BlocProvider<CartShippingCubit>(
-                //   create: (context) => sl<CartShippingCubit>(),
-                // ),
               ],
               child: CartScreen(),
             );
@@ -116,8 +108,8 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: AppRoutes.listingRoute,
       builder: (BuildContext context, GoRouterState state) {
-        return BlocProvider<CategoryCubit>(
-          create: (context) => sl<CategoryCubit>(),
+        return BlocProvider<CategoryCubit>.value(
+          value: sl<CategoryCubit>(),
           child: CategoryListingScreen(
             category: state.extra as SubCategoriesEntity,
           ),
