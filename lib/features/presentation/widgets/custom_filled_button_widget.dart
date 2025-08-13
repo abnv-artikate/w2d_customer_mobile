@@ -11,7 +11,7 @@ class CustomFilledButtonWidget extends StatelessWidget {
   final double verticalMargin;
   final double horizontalMargin;
   final double height;
-  final double width;
+  final double? width;
   final VoidCallback onTap;
 
   const CustomFilledButtonWidget({
@@ -19,8 +19,8 @@ class CustomFilledButtonWidget extends StatelessWidget {
     required this.title,
     required this.color,
     required this.height,
-    required this.width,
     required this.onTap,
+    this.width,
     this.fontSize = 24,
     this.borderRadius = 8,
     this.verticalPadding = 4,

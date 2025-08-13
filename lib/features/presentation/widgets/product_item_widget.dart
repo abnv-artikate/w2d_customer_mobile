@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
 class ProductItemWidget extends StatelessWidget {
@@ -11,171 +9,323 @@ class ProductItemWidget extends StatelessWidget {
     required this.width,
     required this.imgUrl,
     required this.itemName,
-    // required this.itemDescription,
     required this.regularPrice,
     required this.salePrice,
     required this.onViewTap,
     required this.onWishlistTap,
-    required this.onCartTap,
-    required this.isHomePage,
+    this.isGridView = false, // New parameter to distinguish layout context
+    this.aspectRatio = 1.0, // New parameter for image aspect ratio control
   });
 
   final double width;
   final String imgUrl;
   final String itemName;
-
-  // final String itemDescription;
   final String regularPrice;
   final String salePrice;
   final VoidCallback onViewTap;
   final VoidCallback onWishlistTap;
-  final VoidCallback onCartTap;
-  final bool isHomePage;
+  final bool isGridView;
+  final double aspectRatio;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onViewTap,
       child: Container(
-        height: isHomePage ? 200 : null,
-        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-        margin: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        width: width,
         decoration: BoxDecoration(
-          // border: Border.all(color: AppColors.black),
           borderRadius: BorderRadius.circular(4),
           color: AppColors.white,
           boxShadow: [
             BoxShadow(
               color: AppColors.black70,
               blurRadius: 2,
-              blurStyle: BlurStyle.outer,
+              // offset: Offset(0, 2),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: Image.network(
-                      imgUrl,
-                      fit: BoxFit.contain,
-                      width: width,
-                      height: width,
-                      errorBuilder: (context, widget, stack) {
-                        return SizedBox(
-                          height: 120,
-                          child: Center(child: Text('Image not available')),
-                        );
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 2,
-                    child: Container(
-                      padding: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        color: AppColors.white,
-                      ),
-                      child: Row(
-                        children: [
-                          Text('4.5', style: TextStyle(fontSize: 14)),
-                          SizedBox(width: 5),
-                          Image.asset(Assets.iconsReviewStartFilled),
-                          Text(' | 32', style: TextStyle(fontSize: 14)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+        child: isGridView ? _buildGridLayout(context) : _buildCarouselLayout(context),
+      ),
+    );
+  }
+
+  // Layout for grid view with Expanded widgets
+  Widget _buildGridLayout(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Image section - Constrained height for grid
+        Expanded(
+          flex: 3,
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(4),
+                topRight: Radius.circular(4),
               ),
             ),
-            SizedBox(height: 10),
-            Text(
-              itemName,
-              overflow: TextOverflow.fade,
-              maxLines: 2,
-              style: TextStyle(fontSize: 20),
-            ),
-            if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.worldGreen10,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text('${_calculateDiscount()}% off'),
-              ),
-            ],
-            Row(
+            child: Stack(
               children: [
-                if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
-                  CurrencyWidget(
-                    price: salePrice,
-                    fontSize: 15,
-                    strikeThrough: false,
-                    fontColor: AppColors.worldGreen,
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(4),
+                    topRight: Radius.circular(4),
                   ),
-                  SizedBox(width: 5),
-                  CurrencyWidget(
-                    price: regularPrice,
-                    fontSize: 15,
-                    strikeThrough: true,
-                    fontColor: AppColors.black70,
-                    strikeThroughColor: AppColors.black,
+                  child: Image.network(
+                    imgUrl,
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                    height: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      return _buildErrorWidget();
+                    },
                   ),
-                ] else ...[
-                  CurrencyWidget(
-                    price: regularPrice,
-                    fontSize: 15,
-                    strikeThrough: false,
-                  ),
-                ],
+                ),
+                _buildRatingBadge(),
               ],
             ),
-            if (!isHomePage) ...[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  BlankButtonWidget(
-                    title: 'Add to Wishlist',
-                    fontSize: 14,
-                    borderRadius: 4,
-                    height: 30,
-                    width: width * 0.45,
-                    onTap: onWishlistTap,
-                  ),
-                  SizedBox(width: 5),
-                  Expanded(
-                    child: CustomFilledButtonWidget(
-                      title: 'Add to Cart',
-                      color: AppColors.worldGreen,
-                      fontSize: 14,
-                      borderRadius: 4,
-                      height: 30,
-                      width: width * 0.45,
-                      onTap: onCartTap,
-                    ),
-                  ),
-                ],
+          ),
+        ),
+        // Content section - Constrained height
+        Expanded(
+          flex: 2,
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildProductInfo(),
+                _buildPriceSection(fontSize: 11),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Layout for carousel with fixed dimensions
+  Widget _buildCarouselLayout(BuildContext context) {
+    final imageHeight = width * aspectRatio; // Dynamic image height based on width
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Image section - Fixed height for carousel
+        Container(
+          height: imageHeight,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(4),
+              topRight: Radius.circular(4),
+            ),
+          ),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(4),
+                  topRight: Radius.circular(4),
+                ),
+                child: Image.network(
+                  imgUrl,
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                  height: double.infinity,
+                  errorBuilder: (context, error, stackTrace) {
+                    return _buildErrorWidget();
+                  },
+                ),
               ),
+              _buildRatingBadge(),
             ],
+          ),
+        ),
+        // Content section - Flexible for carousel
+        Padding(
+          padding: EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildProductInfo(),
+              SizedBox(height: 4),
+              _buildPriceSection(fontSize: 12),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProductInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          itemName,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+          style: TextStyle(
+            fontSize: isGridView ? 11 : 12,
+            fontWeight: FontWeight.w500,
+            height: 1.2,
+          ),
+        ),
+        if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
+          SizedBox(height: 4),
+          _buildDiscountBadge(),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildErrorWidget() {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.black70,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8),
+          topRight: Radius.circular(8),
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.image_not_supported,
+              size: isGridView ? 24 : 30,
+              color: AppColors.black70,
+            ),
+            SizedBox(height: 4),
+            Text(
+              'Image unavailable',
+              style: TextStyle(
+                fontSize: isGridView ? 8 : 10,
+                color: AppColors.black70,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildRatingBadge() {
+    return Positioned(
+      bottom: 6,
+      left: 6,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: isGridView ? 4 : 6,
+          vertical: 2,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          color: AppColors.white,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '4.5',
+              style: TextStyle(
+                fontSize: isGridView ? 8 : 10,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(width: 2),
+            Image.asset(
+              Assets.iconsReviewStartFilled,
+              width: isGridView ? 8 : 10,
+              height: isGridView ? 8 : 10,
+            ),
+            Text(
+              ' | 32',
+              style: TextStyle(fontSize: isGridView ? 8 : 10),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDiscountBadge() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 1, horizontal: 4),
+      decoration: BoxDecoration(
+        color: AppColors.worldGreen10,
+        borderRadius: BorderRadius.circular(3),
+      ),
+      child: Text(
+        '${_calculateDiscount()}% off',
+        style: TextStyle(
+          fontSize: isGridView ? 8 : 9,
+          fontWeight: FontWeight.w600,
+          color: AppColors.worldGreen,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPriceSection({required double fontSize}) {
+    return Row(
+      children: [
+        if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
+          Flexible(
+            child: CurrencyWidget(
+              price: salePrice,
+              fontSize: fontSize,
+              strikeThrough: false,
+              fontColor: AppColors.worldGreen,
+              svgHeight: fontSize * 0.8,
+              svgWidth: fontSize * 0.4,
+            ),
+          ),
+          SizedBox(width: 4),
+          Flexible(
+            child: CurrencyWidget(
+              price: regularPrice,
+              fontSize: fontSize - 1,
+              strikeThrough: true,
+              fontColor: AppColors.black70,
+              strikeThroughColor: AppColors.black,
+              svgHeight: (fontSize - 1) * 0.8,
+              svgWidth: (fontSize - 1) * 0.4,
+            ),
+          ),
+        ] else ...[
+          Flexible(
+            child: CurrencyWidget(
+              price: regularPrice,
+              fontSize: fontSize,
+              strikeThrough: false,
+              svgHeight: fontSize * 0.8,
+              svgWidth: fontSize * 0.4,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
   int _calculateDiscount() {
-    double sale = double.parse(salePrice);
-    double regular = double.parse(regularPrice);
-    return (((regular - sale) / regular) * 100).floor();
+    try {
+      double sale = double.parse(salePrice);
+      double regular = double.parse(regularPrice);
+      return (((regular - sale) / regular) * 100).floor();
+    } catch (e) {
+      return 0;
+    }
   }
 }

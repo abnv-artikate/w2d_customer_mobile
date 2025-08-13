@@ -10,15 +10,15 @@ class BlankButtonWidget extends StatelessWidget {
   final double verticalMargin;
   final double horizontalMargin;
   final double height;
-  final double width;
+  final double? width;
   final VoidCallback onTap;
 
   const BlankButtonWidget({
     super.key,
     required this.title,
-    required this.width,
     required this.height,
     required this.onTap,
+    this.width,
     this.fontSize = 24,
     this.borderRadius = 8,
     this.verticalPadding = 4,

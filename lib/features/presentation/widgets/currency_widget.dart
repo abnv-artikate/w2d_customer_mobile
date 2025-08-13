@@ -34,10 +34,6 @@ class CurrencyWidget extends StatelessWidget {
           width: svgWidth,
           fit: BoxFit.contain,
         ),
-        // Text(
-        //   '&#xea;',
-        //   style: TextStyle(fontFamily: 'AEDFont', fontSize: fontSize),
-        // ),
         SizedBox(width: 4),
         Text(
           price,
