@@ -37,6 +37,10 @@ abstract class LocalDatasource {
 
   String? getDestinationCountry();
 
+  setBrandMall(bool isBrandMall);
+
+  bool? getBrandMall();
+
   clearToken();
 
   logout();
@@ -115,6 +119,16 @@ class LocalDataSourceImpl extends LocalDatasource {
   @override
   setDestinationCountry(String country) {
     mySharedPref.saveDestinationCountry(country);
+  }
+
+  @override
+  bool? getBrandMall() {
+    return mySharedPref.getBrandMall();
+  }
+
+  @override
+  setBrandMall(bool isBrandMall) {
+    mySharedPref.setBrandMall(isBrandMall);
   }
 
   @override

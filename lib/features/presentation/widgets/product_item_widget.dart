@@ -13,8 +13,8 @@ class ProductItemWidget extends StatelessWidget {
     required this.salePrice,
     required this.onViewTap,
     required this.onWishlistTap,
-    this.isGridView = false, // New parameter to distinguish layout context
-    this.aspectRatio = 1.0, // New parameter for image aspect ratio control
+    this.isGridView = false,
+    this.aspectRatio = 1.0,
   });
 
   final double width;

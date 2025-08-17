@@ -70,12 +70,13 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerLazySingleton<CategoryCubit>(
+  sl.registerFactory<CategoryCubit>(
     () => CategoryCubit(
       productCategoryUseCase: sl<ProductCategoryUseCase>(),
       productViewUseCase: sl<ProductViewUseCase>(),
       cartSyncUseCase: sl<CartSyncUseCase>(),
       getCartUseCase: sl<GetCartUseCase>(),
+      localDatasource: sl<LocalDatasource>(),
     ),
   );
   sl.registerFactory<CartCubit>(

@@ -34,6 +34,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isBrand = context.select((CategoryCubit c) => c.isBrand);
     return BlocConsumer<CategoryCubit, CategoryState>(
       listener: (context, state) {
         if (state is CategoryLoaded) {
@@ -50,9 +51,12 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
         } else if (state is CategoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
+
+        // if (state is BrandToggle) {
+        //   isBrand = state.isBrandMall;
+        // }
       },
       builder: (context, state) {
-        bool isBrand = context.read<CategoryCubit>().isBrand;
         return Scaffold(
           appBar: AppBar(
             surfaceTintColor: AppColors.white,
@@ -67,16 +71,17 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
               ),
             ],
           ),
-          body: state is CategoryLoading
-              ? Center(
-            child: CircularProgressIndicator(
-              color: AppColors.worldGreen,
-            ),
-          )
-              : brandProductCategoryList.isEmpty &&
-              hiddenProductCategoryList.isEmpty
-              ? Center(child: Text('No items available'))
-              : _buildContent(context, isBrand),
+          body:
+              state is CategoryLoading
+                  ? Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.worldGreen,
+                    ),
+                  )
+                  : brandProductCategoryList.isEmpty &&
+                      hiddenProductCategoryList.isEmpty
+                  ? Center(child: Text('No items available'))
+                  : _buildContent(context, isBrand),
           bottomNavigationBar: _bottomNavigation(),
         );
       },
@@ -109,18 +114,15 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
             onTap: () {
               context
                   .push(
-                AppRoutes.listingRoute,
-                extra: widget.category.subcategories[index],
-              )
+                    AppRoutes.listingRoute,
+                    extra: widget.category.subcategories[index],
+                  )
                   .then((_) {
-                _callCategoryListApi();
-              });
+                    _callCategoryListApi();
+                  });
             },
             child: Container(
-              padding: EdgeInsets.symmetric(
-                vertical: 8,
-                horizontal: 16,
-              ),
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               decoration: BoxDecoration(
                 border: Border.all(color: AppColors.deepBlue),
                 borderRadius: BorderRadius.circular(8),
@@ -128,10 +130,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
               child: Center(
                 child: Text(
                   widget.category.subcategories[index].name,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
               ),
             ),
@@ -149,7 +148,8 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
     final crossAxisSpacing = 8.0;
 
     // Calculate dynamic item width
-    final availableWidth = screenWidth - (horizontalPadding * 2) - crossAxisSpacing;
+    final availableWidth =
+        screenWidth - (horizontalPadding * 2) - crossAxisSpacing;
     final itemWidth = availableWidth / 2;
 
     // Calculate aspect ratio based on screen size
@@ -157,7 +157,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
     if (screenWidth < 400) {
       aspectRatio = 0.65; // Taller items for smaller screens
     } else if (screenWidth < 600) {
-      aspectRatio = 0.7;  // Medium screens
+      aspectRatio = 0.7; // Medium screens
     } else {
       aspectRatio = 0.75; // Wider items for larger screens
     }
@@ -176,19 +176,24 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
         itemBuilder: (context, index) {
           return ProductItemWidget(
             width: itemWidth,
-            isGridView: true, // Specify this is grid context
-            imgUrl: isBrand
-                ? brandProductCategoryList[index].mainImage
-                : hiddenProductCategoryList[index].mainImage,
-            itemName: isBrand
-                ? brandProductCategoryList[index].productName
-                : hiddenProductCategoryList[index].productName,
-            regularPrice: isBrand
-                ? brandProductCategoryList[index].regularPrice
-                : hiddenProductCategoryList[index].regularPrice,
-            salePrice: isBrand
-                ? brandProductCategoryList[index].salePrice
-                : hiddenProductCategoryList[index].salePrice,
+            isGridView: true,
+            // Specify this is grid context
+            imgUrl:
+                isBrand
+                    ? brandProductCategoryList[index].mainImage
+                    : hiddenProductCategoryList[index].mainImage,
+            itemName:
+                isBrand
+                    ? brandProductCategoryList[index].productName
+                    : hiddenProductCategoryList[index].productName,
+            regularPrice:
+                isBrand
+                    ? brandProductCategoryList[index].regularPrice
+                    : hiddenProductCategoryList[index].regularPrice,
+            salePrice:
+                isBrand
+                    ? brandProductCategoryList[index].salePrice
+                    : hiddenProductCategoryList[index].salePrice,
             onViewTap: () {
               _callProductViewApi(
                 isBrand
@@ -201,9 +206,10 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
             },
           );
         },
-        itemCount: isBrand
-            ? brandProductCategoryList.length
-            : hiddenProductCategoryList.length,
+        itemCount:
+            isBrand
+                ? brandProductCategoryList.length
+                : hiddenProductCategoryList.length,
       ),
     );
   }
@@ -216,7 +222,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
         color: AppColors.white,
         boxShadow: [
           BoxShadow(
-            color: AppColors.black70.withOpacity(0.1),
+            color: AppColors.black70,
             blurRadius: 4,
             offset: Offset(0, -2),
           ),
@@ -237,20 +243,13 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                   SizedBox(width: 8),
                   Text(
                     'Filter',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
             ),
           ),
-          Container(
-            height: 30,
-            width: 1,
-            color: AppColors.black70.withOpacity(0.3),
-          ),
+          Container(height: 30, width: 1, color: AppColors.black70),
           Expanded(
             child: InkWell(
               onTap: () {
@@ -263,10 +262,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                   SizedBox(width: 8),
                   Text(
                     'Sort',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),

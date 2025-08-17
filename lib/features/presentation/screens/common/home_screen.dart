@@ -80,14 +80,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isBrand = context.select((CategoryCubit c) => c.isBrand);
     return BlocConsumer<CategoryCubit, CategoryState>(
       listener: (context, state) {
         if (state is ProductViewLoaded) {
           context.push(AppRoutes.productRoute, extra: state.productEntity);
         }
+        // if (state is BrandToggle) {
+        //   isBrand = state.isBrandMall;
+        // }
       },
       builder: (context, state) {
-        bool isBrand = context.read<CategoryCubit>().isBrand;
         return Scaffold(
           appBar: _buildAppBar(isBrand),
           body: SingleChildScrollView(

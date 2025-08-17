@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
+import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
@@ -17,20 +18,21 @@ class CategoryCubit extends Cubit<CategoryState> {
     required this.productCategoryUseCase,
     required this.cartSyncUseCase,
     required this.getCartUseCase,
+    required this.localDatasource,
   }) : super(CategoryInitial());
 
   final ProductCategoryUseCase productCategoryUseCase;
   final ProductViewUseCase productViewUseCase;
   final CartSyncUseCase cartSyncUseCase;
   final GetCartUseCase getCartUseCase;
+  final LocalDatasource localDatasource;
 
-  bool _isBrand = true;
-
-  bool get isBrand => _isBrand;
+  bool get isBrand => localDatasource.getBrandMall() ?? false;
 
   void toggleBrand() {
-    _isBrand = !_isBrand;
-    emit(BrandToggle());
+    final updated = !(localDatasource.getBrandMall() ?? false);
+    localDatasource.setBrandMall(updated);
+    emit(BrandToggle(isBrandMall: updated));
   }
 
   getProductCategoryList(ProductCategoryParams params) async {

@@ -12,6 +12,7 @@ class MySharedPref {
   static const longitudeKey = "longitude";
   static const destinationCity = "destination_city";
   static const destinationCountry = "destination_country";
+  static const brandMall = "brand_mall";
 
   final SharedPreferences _pref;
 
@@ -87,6 +88,14 @@ class MySharedPref {
 
   String? getDestinationCountry() {
     return _pref.getString(destinationCountry);
+  }
+
+  void setBrandMall(bool isBrandMall) async {
+    await _pref.setBool(brandMall, isBrandMall);
+  }
+
+  bool? getBrandMall() {
+    return _pref.getBool(brandMall);
   }
 
   void logout() {
