@@ -13,26 +13,27 @@ class SearchWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        // margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.black70),
+          // border: Border.all(color: AppColors.black70),
           borderRadius: BorderRadius.circular(8),
+          color: AppColors.softWhite71,
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4),
           child: Row(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Icon(LucideIcons.search, color: AppColors.black70,),
+              SizedBox(width: 10),
               Text(
                 'Search',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 22,
                   fontWeight: FontWeight.w400,
                   color: AppColors.black70,
                 ),
               ),
-              Icon(LucideIcons.search),
             ],
           ),
         ),

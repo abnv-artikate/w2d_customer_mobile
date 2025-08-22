@@ -46,6 +46,7 @@ class MyApp extends StatelessWidget {
         ),
         drawerTheme: DrawerThemeData(backgroundColor: AppColors.white),
         bottomAppBarTheme: BottomAppBarTheme(color: AppColors.white),
+        navigationBarTheme: NavigationBarThemeData(surfaceTintColor: AppColors.transparent),
         fontFamily: 'DMSans',
         useMaterial3: true,
       ),

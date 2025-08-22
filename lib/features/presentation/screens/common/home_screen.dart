@@ -61,11 +61,11 @@ class _HomeScreenState extends State<HomeScreen> {
     double carouselHeight;
     if (screenWidth < 400) {
       carouselHeight =
-          screenHeight * 0.28; // 32% of screen height for small devices
+          screenHeight * 0.25; // 32% of screen height for small devices
     } else if (screenWidth < 600) {
-      carouselHeight = screenHeight * 0.31; // 35% for medium devices
+      carouselHeight = screenHeight * 0.28; // 35% for medium devices
     } else {
-      carouselHeight = screenHeight * 0.34; // 38% for larger devices
+      carouselHeight = screenHeight * 0.32; // 38% for larger devices
     }
 
     return CarouselOptions(
@@ -86,9 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
         if (state is ProductViewLoaded) {
           context.push(AppRoutes.productRoute, extra: state.productEntity);
         }
-        // if (state is BrandToggle) {
-        //   isBrand = state.isBrandMall;
-        // }
       },
       builder: (context, state) {
         return Scaffold(
@@ -96,7 +93,11 @@ class _HomeScreenState extends State<HomeScreen> {
           body: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [_buildBannerSection(), _buildBestSellers(isBrand)],
+              children: [
+                _buildBannerSection(),
+                _buildBestSellers(isBrand),
+                SizedBox(height: 150),
+              ],
             ),
           ),
         );
@@ -109,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final isSmallScreen = screenWidth < 400;
 
     return AppBar(
-      toolbarHeight: isSmallScreen ? 110 : 130,
+      toolbarHeight: 80,
       // Responsive app bar height
       iconTheme: IconThemeData(color: AppColors.deepBlue),
       leadingWidth: isSmallScreen ? 60 : 80,
@@ -133,17 +134,17 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
-      bottom: PreferredSize(
-        preferredSize: Size.zero,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 8 : 16),
-          child: SearchWidget(
-            onTap: () {
-              context.push(AppRoutes.searchRoute);
-            },
-          ),
-        ),
-      ),
+      // bottom: PreferredSize(
+      //   preferredSize: Size.zero,
+      //   child: Padding(
+      //     padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 8 : 16),
+      //     child: SearchWidget(
+      //       onTap: () {
+      //         context.push(AppRoutes.searchRoute);
+      //       },
+      //     ),
+      //   ),
+      // ),
     );
   }
 
@@ -191,6 +192,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocConsumer<CommonCubit, CommonState>(
       listener: (context, state) {
         if (state is CollectionsLoaded) {
+          brandMallCollections.clear();
+          hiddenGemsCollections.clear();
           brandMallCollections = state.brandMallCollections;
           hiddenGemsCollections = state.hiddenGemsCollections;
         }

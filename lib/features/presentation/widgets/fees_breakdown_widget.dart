@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_method_dropdown_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 
 class FeesBreakdownWidget extends StatelessWidget {
   final VoidCallback? onShippingMethodDropdownTap;
 
-  const FeesBreakdownWidget({
-    super.key,
-    this.onShippingMethodDropdownTap,
-  });
+  const FeesBreakdownWidget({super.key, this.onShippingMethodDropdownTap});
 
   @override
   Widget build(BuildContext context) {
@@ -47,18 +45,24 @@ class FeesBreakdownWidget extends StatelessWidget {
       children: [
         Text(
           'Estimated Total:',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 4),
         if (state.hasFeeBreakdown)
-          Text(
-            '\$${state.feeBreakdown!.estimatedTotal.toStringAsFixed(2)}',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: AppColors.worldGreen,
-              fontWeight: FontWeight.bold,
-            ),
+          // Text(
+          //   '${state.feeBreakdown!.estimatedTotal.toStringAsFixed(2)}',
+          //   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+          //     color: AppColors.worldGreen,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          // )
+          CurrencyWidget(
+            price: state.feeBreakdown!.estimatedTotal.toStringAsFixed(2),
+            fontSize: 20,
+            strikeThrough: false,
+            fontColor: AppColors.worldGreen,
           )
         else if (state.isFeeCalculationLoading)
           Row(
@@ -68,7 +72,9 @@ class FeesBreakdownWidget extends StatelessWidget {
                 height: 16,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.worldGreen),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppColors.worldGreen,
+                  ),
                 ),
               ),
               SizedBox(width: 8),
@@ -76,17 +82,26 @@ class FeesBreakdownWidget extends StatelessWidget {
             ],
           )
         else
-          Text(
-            '\$0.00',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.grey,
-            ),
+          // Text(
+          //   '\$0.00',
+          //   style: Theme.of(
+          //     context,
+          //   ).textTheme.headlineSmall?.copyWith(color: Colors.grey),
+          // ),
+          CurrencyWidget(
+            price: "0.00",
+            fontSize: 20,
+            strikeThrough: false,
+            fontColor: AppColors.softWhite71,
           ),
       ],
     );
   }
 
-  Widget _buildShippingMethodSelector(BuildContext context, CartShippingState state) {
+  Widget _buildShippingMethodSelector(
+    BuildContext context,
+    CartShippingState state,
+  ) {
     return Row(
       children: [
         Expanded(
@@ -97,7 +112,8 @@ class FeesBreakdownWidget extends StatelessWidget {
         ),
         SizedBox(width: 10),
         ShippingMethodDropdownWidget(
-          shippingMethodText: context.read<CartShippingCubit>()
+          shippingMethodText: context
+              .read<CartShippingCubit>()
               .getShippingMethodName(state.selectedShippingIndex),
           onTap: onShippingMethodDropdownTap ?? () {},
         ),
@@ -112,7 +128,11 @@ class FeesBreakdownWidget extends StatelessWidget {
         children: [
           _buildFeeRow(context, 'Goods Value', breakdown.goodsValue),
           _buildFeeRow(context, 'Platform Fee', breakdown.platformFees),
-          _buildFeeRow(context, 'Local Transit Fee', breakdown.localTransitFees),
+          _buildFeeRow(
+            context,
+            'Local Transit Fee',
+            breakdown.localTransitFees,
+          ),
           _buildFeeRow(
             context,
             'Export Freight / Packing / Other Fees',
@@ -124,7 +144,11 @@ class FeesBreakdownWidget extends StatelessWidget {
             breakdown.destDutyTaxesOtherFees,
           ),
           if (state.hasInsuranceData) ...[
-            _buildTransitInsuranceRow(context, state, breakdown.transitInsurance),
+            _buildTransitInsuranceRow(
+              context,
+              state,
+              breakdown.transitInsurance,
+            ),
           ],
         ],
       );
@@ -141,15 +165,12 @@ class FeesBreakdownWidget extends StatelessWidget {
           ],
         ],
       );
-    } else if (state.hasError && state.feeCalculationStatus == LoadingStatus.error) {
+    } else if (state.hasError &&
+        state.feeCalculationStatus == LoadingStatus.error) {
       return Center(
         child: Column(
           children: [
-            Icon(
-              Icons.error_outline,
-              color: Colors.red,
-              size: 48,
-            ),
+            Icon(Icons.error_outline, color: Colors.red, size: 48),
             SizedBox(height: 8),
             Text(
               'Error calculating fees',
@@ -164,7 +185,6 @@ class FeesBreakdownWidget extends StatelessWidget {
             SizedBox(height: 8),
             ElevatedButton(
               onPressed: () {
-                // Retry fee calculation
                 context.read<CartShippingCubit>().getCartItems();
               },
               style: ElevatedButton.styleFrom(
@@ -194,16 +214,18 @@ class FeesBreakdownWidget extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
           ),
-          Text(
-            '\$${amount.toStringAsFixed(2)}',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
+          // Text(
+          //   '${amount.toStringAsFixed(2)}',
+          //   style: Theme.of(
+          //     context,
+          //   ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+          // ),
+          CurrencyWidget(
+            price: amount.toStringAsFixed(2),
+            fontSize: 15,
+            strikeThrough: false,
           ),
         ],
       ),
@@ -216,10 +238,7 @@ class FeesBreakdownWidget extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
           ),
           SizedBox(
             width: 16,
@@ -235,10 +254,10 @@ class FeesBreakdownWidget extends StatelessWidget {
   }
 
   Widget _buildTransitInsuranceRow(
-      BuildContext context,
-      CartShippingState state,
-      double amount,
-      ) {
+    BuildContext context,
+    CartShippingState state,
+    double amount,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -271,9 +290,9 @@ class FeesBreakdownWidget extends StatelessWidget {
   }
 
   Widget _buildLoadingTransitInsuranceRow(
-      BuildContext context,
-      CartShippingState state,
-      ) {
+    BuildContext context,
+    CartShippingState state,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4),
       child: Row(

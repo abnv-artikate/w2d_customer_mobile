@@ -29,4 +29,7 @@ class AppRoutes {
 
   /// user profile screen route
   static const String userProfileRoute = '/user_profile_route';
+
+  /// user address route
+  static const String addressRoute = '/address_route';
 }

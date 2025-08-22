@@ -8,6 +8,7 @@ import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/ca
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/address/address_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/auth/login_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/checkout/checkout_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/checkout/payment_screen.dart';
@@ -192,6 +193,16 @@ final GoRouter router = GoRouter(
         return BlocProvider<CommonCubit>(
           create: (context) => sl<CommonCubit>(),
           child: UserProfileScreen(),
+        );
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.addressRoute,
+      builder: (BuildContext context, GoRouterState state) {
+        return BlocProvider<AddressCubit>(
+          create: (context) => sl<AddressCubit>(),
+          child: AddressScreen(),
         );
       },
     ),

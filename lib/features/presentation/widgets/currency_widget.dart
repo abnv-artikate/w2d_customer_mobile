@@ -28,13 +28,15 @@ class CurrencyWidget extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SvgPicture.asset(
-          Assets.iconsUAEDirhamSymbol,
-          height: svgHeight,
-          width: svgWidth,
-          fit: BoxFit.contain,
-        ),
-        SizedBox(width: 4),
+        if (!strikeThrough) ...[
+          SvgPicture.asset(
+            Assets.iconsUAEDirhamSymbol,
+            height: svgHeight,
+            width: svgWidth,
+            fit: BoxFit.contain,
+          ),
+          SizedBox(width: 4),
+        ],
         Text(
           price,
           style: TextStyle(

@@ -20,33 +20,55 @@ class _ScaffoldWithNavState extends State<ScaffoldWithNav> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: widget.child,
-      bottomNavigationBar: NavigationBar(
+      floatingActionButton: _customNavigationBar(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget _customNavigationBar() {
+    final double iconSize = 25;
+    final Color iconColor = AppColors.black70;
+    return Container(
+      margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.softWhite80, width: 2),
+        borderRadius: BorderRadius.circular(8),
+        color: AppColors.white,
+      ),
+      child: NavigationBar(
+        height: 60,
         onDestinationSelected: (int index) {
           _goToScreen(index);
         },
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.transparent,
         elevation: 0.6,
-        shadowColor: AppColors.worldGreen10,
         indicatorColor: AppColors.worldGreen10,
         selectedIndex: navBarIndex,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         destinations: <Widget>[
-          CustomNavigationDestination(
-            icon: Icon(LucideIcons.home, size: 30),
-            label: 'Home',
+          NavigationDestination(
+            label: "",
+            icon: Icon(LucideIcons.home, size: iconSize, color: iconColor),
           ),
-          CustomNavigationDestination(
-            icon: Icon(LucideIcons.layoutList, size: 30),
-            label: 'Explore',
+          NavigationDestination(
+            label: "",
+            icon: Icon(
+              Icons.manage_search_outlined,
+              size: iconSize,
+              color: iconColor,
+            ),
           ),
-
-          CustomNavigationDestination(
-            icon: Icon(LucideIcons.shoppingCart, size: 30),
-            label: 'Cart',
+          NavigationDestination(
+            label: "",
+            icon: Icon(
+              LucideIcons.shoppingCart,
+              size: iconSize,
+              color: iconColor,
+            ),
           ),
-
-          CustomNavigationDestination(
-            icon: Icon(LucideIcons.user, size: 30),
-            label: 'Profile',
+          NavigationDestination(
+            label: "",
+            icon: Icon(LucideIcons.user, size: iconSize, color: iconColor),
           ),
         ],
       ),
@@ -66,12 +88,4 @@ class _ScaffoldWithNavState extends State<ScaffoldWithNav> {
       context.go(screens[index]);
     });
   }
-}
-
-class CustomNavigationDestination extends NavigationDestination {
-  const CustomNavigationDestination({
-    super.key,
-    required super.icon,
-    required super.label,
-  });
 }

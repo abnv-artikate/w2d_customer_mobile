@@ -51,10 +51,6 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
         } else if (state is CategoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
-
-        // if (state is BrandToggle) {
-        //   isBrand = state.isBrandMall;
-        // }
       },
       builder: (context, state) {
         return Scaffold(
@@ -98,6 +94,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
           ],
           // Products grid section
           _buildProductsGrid(context, isBrand),
+          SizedBox(height: 20,)
         ],
       ),
     );

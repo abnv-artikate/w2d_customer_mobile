@@ -107,22 +107,22 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  _termsAndCondition() {
-    return Column(
-      children: [
-        SizedBox(height: 20),
-        Text(
-          'By continuing, you agree to World 2 Door’s Conditions of Use and Privacy Notice.',
-          style: TextStyle(
-            fontFamily: 'CormorantGaramond',
-            fontWeight: FontWeight.w400,
-            fontSize: 12,
-          ),
-        ),
-        SizedBox(height: 20),
-      ],
-    );
-  }
+  // _termsAndCondition() {
+  //   return Column(
+  //     children: [
+  //       SizedBox(height: 20),
+  //       Text(
+  //         'By continuing, you agree to World 2 Door’s Conditions of Use and Privacy Notice.',
+  //         style: TextStyle(
+  //           fontFamily: 'CormorantGaramond',
+  //           fontWeight: FontWeight.w400,
+  //           fontSize: 12,
+  //         ),
+  //       ),
+  //       SizedBox(height: 20),
+  //     ],
+  //   );
+  // }
 
   _guestOrSignUp(BuildContext context) {
     return Column(
@@ -138,16 +138,16 @@ class _LoginScreenState extends State<LoginScreen> {
             });
           },
         ),
-        SizedBox(height: 10),
-        BlankButtonWidget(
-          title: 'Continue as Guest',
-          height: 50,
-          width: MediaQuery.of(context).size.width,
-          onTap: () {
-            context.go(AppRoutes.initial);
-          },
-        ),
-        _termsAndCondition(),
+        // SizedBox(height: 10),
+        // BlankButtonWidget(
+        //   title: 'Continue as Guest',
+        //   height: 50,
+        //   width: MediaQuery.of(context).size.width,
+        //   onTap: () {
+        //     context.go(AppRoutes.initial);
+        //   },
+        // ),
+        // _termsAndCondition(),
       ],
     );
   }

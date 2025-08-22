@@ -5,18 +5,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
-
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +38,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               iconData: LucideIcons.heart,
             ),
             Divider(),
-            // _profileListItem(
-            //   title: 'Saved Address',
-            //   onItemTap: () {},
-            //   iconData: LucideIcons.mapPin,
-            // ),
-            // Divider(),
+            _profileListItem(
+              title: 'Addresses',
+              onItemTap: () {
+                context.push(AppRoutes.addressRoute);
+              },
+              iconData: LucideIcons.mapPin,
+            ),
+            Divider(),
             _profileListItem(
               title: 'Orders',
               onItemTap: () {
@@ -65,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _profileListItem(
               title: 'Logout',
               onItemTap: () {
-                _callLogoutApi();
+                context.read<CommonCubit>().logout();
                 context.go(AppRoutes.initial);
               },
               iconData: LucideIcons.logOut,
@@ -97,9 +89,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
-  }
-
-  void _callLogoutApi() {
-    context.read<CommonCubit>().logout();
   }
 }

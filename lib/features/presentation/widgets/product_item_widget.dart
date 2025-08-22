@@ -14,7 +14,7 @@ class ProductItemWidget extends StatelessWidget {
     required this.onViewTap,
     required this.onWishlistTap,
     this.isGridView = false,
-    this.aspectRatio = 1.0,
+    this.aspectRatio = 1.05,
   });
 
   final double width;
@@ -33,6 +33,7 @@ class ProductItemWidget extends StatelessWidget {
       onTap: onViewTap,
       child: Container(
         width: width,
+        margin: EdgeInsets.symmetric(vertical: 2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
           color: AppColors.white,
@@ -44,7 +45,10 @@ class ProductItemWidget extends StatelessWidget {
             ),
           ],
         ),
-        child: isGridView ? _buildGridLayout(context) : _buildCarouselLayout(context),
+        child:
+            isGridView
+                ? _buildGridLayout(context)
+                : _buildCarouselLayout(context),
       ),
     );
   }
@@ -83,6 +87,9 @@ class ProductItemWidget extends StatelessWidget {
                   ),
                 ),
                 _buildRatingBadge(),
+                if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
+                  _buildDiscountBadge(),
+                ],
               ],
             ),
           ),
@@ -95,10 +102,7 @@ class ProductItemWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildProductInfo(),
-                _buildPriceSection(fontSize: 11),
-              ],
+              children: [_buildProductInfo(), _buildPriceSection(fontSize: 11)],
             ),
           ),
         ),
@@ -108,54 +112,64 @@ class ProductItemWidget extends StatelessWidget {
 
   // Layout for carousel with fixed dimensions
   Widget _buildCarouselLayout(BuildContext context) {
-    final imageHeight = width * aspectRatio; // Dynamic image height based on width
+    final imageHeight =
+        width * aspectRatio; // Dynamic image height based on width
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         // Image section - Fixed height for carousel
-        Container(
-          height: imageHeight,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(4),
-              topRight: Radius.circular(4),
-            ),
-          ),
-          child: Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(4),
-                  topRight: Radius.circular(4),
-                ),
-                child: Image.network(
-                  imgUrl,
-                  fit: BoxFit.contain,
-                  width: double.infinity,
-                  height: double.infinity,
-                  errorBuilder: (context, error, stackTrace) {
-                    return _buildErrorWidget();
-                  },
-                ),
+        Expanded(
+          flex: 3,
+          child: Container(
+            height: imageHeight,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(4),
+                topRight: Radius.circular(4),
               ),
-              _buildRatingBadge(),
-            ],
+            ),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(4),
+                    topRight: Radius.circular(4),
+                  ),
+                  child: Image.network(
+                    imgUrl,
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                    height: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      return _buildErrorWidget();
+                    },
+                  ),
+                ),
+                _buildRatingBadge(),
+                if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
+                  _buildDiscountBadge(),
+                ],
+              ],
+            ),
           ),
         ),
         // Content section - Flexible for carousel
-        Padding(
-          padding: EdgeInsets.all(8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildProductInfo(),
-              SizedBox(height: 4),
-              _buildPriceSection(fontSize: 12),
-            ],
+        Expanded(
+          flex: 2,
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildProductInfo(),
+                SizedBox(height: 4),
+                _buildPriceSection(fontSize: 12),
+              ],
+            ),
           ),
         ),
       ],
@@ -174,13 +188,8 @@ class ProductItemWidget extends StatelessWidget {
           style: TextStyle(
             fontSize: isGridView ? 11 : 12,
             fontWeight: FontWeight.w500,
-            height: 1.2,
           ),
         ),
-        if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
-          SizedBox(height: 4),
-          _buildDiscountBadge(),
-        ],
       ],
     );
   }
@@ -250,10 +259,7 @@ class ProductItemWidget extends StatelessWidget {
               width: isGridView ? 8 : 10,
               height: isGridView ? 8 : 10,
             ),
-            Text(
-              ' | 32',
-              style: TextStyle(fontSize: isGridView ? 8 : 10),
-            ),
+            Text(' | 32', style: TextStyle(fontSize: isGridView ? 8 : 10)),
           ],
         ),
       ),
@@ -261,18 +267,20 @@ class ProductItemWidget extends StatelessWidget {
   }
 
   Widget _buildDiscountBadge() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 1, horizontal: 4),
-      decoration: BoxDecoration(
-        color: AppColors.worldGreen10,
-        borderRadius: BorderRadius.circular(3),
-      ),
-      child: Text(
-        '${_calculateDiscount()}% off',
-        style: TextStyle(
-          fontSize: isGridView ? 8 : 9,
-          fontWeight: FontWeight.w600,
-          color: AppColors.worldGreen,
+    return Positioned(
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 1, horizontal: 4),
+        decoration: BoxDecoration(
+          color: AppColors.worldGreen10,
+          borderRadius: BorderRadius.circular(3),
+        ),
+        child: Text(
+          '${_calculateDiscount()}% off',
+          style: TextStyle(
+            fontSize: isGridView ? 8 : 9,
+            fontWeight: FontWeight.w600,
+            color: AppColors.worldGreen,
+          ),
         ),
       ),
     );

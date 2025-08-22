@@ -53,6 +53,8 @@ class CommonCubit extends Cubit<CommonState> {
 
   getCollections() async {
     emit(CollectionsLoading());
+    hiddenGemsCollections.clear();
+    brandMallCollections.clear();
     final result = await getCollectionsUseCase.call(NoParams());
 
     result.fold(

@@ -89,6 +89,8 @@ class _CartScreenState extends State<CartScreen> {
               SnackBar(
                 content: Text(state.successMessage ?? "Success Message"),
                 backgroundColor: AppColors.worldGreen80,
+                showCloseIcon: true,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
               ),
             );
           }
@@ -137,6 +139,7 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ),
                 _buildBottomSection(state),
+                SizedBox(height: 150,)
               ],
             );
           },
@@ -215,6 +218,10 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildShippingBreakdownSection(CartShippingState state) {
+    if (!state.hasCartData || state.cart!.items.isEmpty) {
+      return Container();
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: FeesBreakdownWidget(
