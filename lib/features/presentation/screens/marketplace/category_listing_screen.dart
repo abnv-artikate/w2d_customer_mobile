@@ -14,9 +14,9 @@ import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 
 class CategoryListingScreen extends StatefulWidget {
-  const CategoryListingScreen({super.key, required this.category});
+  const CategoryListingScreen({super.key, required this.params});
 
-  final SubCategoriesEntity category;
+  final CategoryListingScreenParams params;
 
   @override
   State<CategoryListingScreen> createState() => _CategoryListingScreenState();
@@ -56,7 +56,9 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
         return Scaffold(
           appBar: AppBar(
             surfaceTintColor: AppColors.white,
-            title: Text(widget.category.name),
+            title: Text(
+              widget.params.category?.name ?? widget.params.searchTerm ?? "",
+            ),
             centerTitle: true,
             actions: [
               BrandMallToggleWidget(
@@ -89,12 +91,12 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
       child: Column(
         children: [
           // Subcategories section
-          if (widget.category.subcategories.isNotEmpty) ...[
+          if (widget.params.category?.subcategories.isNotEmpty ?? false) ...[
             _buildSubcategoriesSection(),
           ],
           // Products grid section
           _buildProductsGrid(context, isBrand),
-          SizedBox(height: 20,)
+          SizedBox(height: 20),
         ],
       ),
     );
@@ -112,7 +114,9 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
               context
                   .push(
                     AppRoutes.listingRoute,
-                    extra: widget.category.subcategories[index],
+                    extra: CategoryListingScreenParams(
+                      category: widget.params.category?.subcategories[index],
+                    ),
                   )
                   .then((_) {
                     _callCategoryListApi();
@@ -126,7 +130,9 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
               ),
               child: Center(
                 child: Text(
-                  widget.category.subcategories[index].name,
+                  widget.params.category?.subcategories[index].name ??
+                      widget.params.searchTerm ??
+                      "",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
               ),
@@ -134,7 +140,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
           );
         },
         separatorBuilder: (context, index) => SizedBox(width: 8),
-        itemCount: widget.category.subcategories.length,
+        itemCount: widget.params.category?.subcategories.length ?? 0,
       ),
     );
   }
@@ -272,7 +278,10 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
 
   void _callCategoryListApi() {
     context.read<CategoryCubit>().getProductCategoryList(
-      ProductCategoryParams(categorySlug: widget.category.handle),
+      ProductCategoryParams(
+        categorySlug:
+            widget.params.category?.handle ?? widget.params.searchTerm ?? "",
+      ),
     );
   }
 
@@ -281,4 +290,11 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
       ProductViewParams(productId: productId),
     );
   }
+}
+
+class CategoryListingScreenParams {
+  final SubCategoriesEntity? category;
+  final String? searchTerm;
+
+  CategoryListingScreenParams({this.category, this.searchTerm});
 }

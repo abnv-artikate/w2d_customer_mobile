@@ -85,23 +85,31 @@ class _CartScreenState extends State<CartScreen> {
         listener: (context, state) {
           // Handle success messages
           if (state.hasSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.successMessage ?? "Success Message"),
-                backgroundColor: AppColors.worldGreen80,
-                showCloseIcon: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-              ),
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(
+            //     content: Text(state.successMessage ?? "Success Message"),
+            //     backgroundColor: AppColors.worldGreen80,
+            //     showCloseIcon: true,
+            //     clipBehavior: Clip.antiAliasWithSaveLayer,
+            //   ),
+            // );
+            widget.showErrorToast(
+              context: context,
+              message: state.successMessage ?? "Success Message",
             );
           }
 
           // Handle error messages
           if (state.hasError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage ?? "Error Message"),
-                backgroundColor: AppColors.techRed,
-              ),
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(
+            //     content: Text(state.errorMessage ?? "Error Message"),
+            //     backgroundColor: AppColors.techRed,
+            //   ),
+            // );
+            widget.showErrorToast(
+              context: context,
+              message: state.errorMessage ?? "Error Message",
             );
           }
 
@@ -139,7 +147,7 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ),
                 _buildBottomSection(state),
-                SizedBox(height: 150,)
+                SizedBox(height: 150),
               ],
             );
           },

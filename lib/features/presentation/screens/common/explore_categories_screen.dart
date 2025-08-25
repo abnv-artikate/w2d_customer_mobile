@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/category_listing_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/search_widget.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
@@ -87,14 +88,19 @@ class _ExploreCategoriesScreenState extends State<ExploreCategoriesScreen> {
                             context
                                 .push(
                                   AppRoutes.listingRoute,
-                                  extra: categoryList[index],
+                                  extra: CategoryListingScreenParams(
+                                    category: categoryList[index],
+                                  ),
                                 )
                                 .then((_) {
                                   _callCategoriesListingAPi();
                                 });
                           },
                           child: Container(
-                            margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                            margin: EdgeInsets.symmetric(
+                              vertical: 20,
+                              horizontal: 10,
+                            ),
                             decoration: BoxDecoration(
                               // border: Border.all(color: AppColors.deepBlue),
                               borderRadius: BorderRadius.circular(4),

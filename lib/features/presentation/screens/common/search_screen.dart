@@ -6,6 +6,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/search/search_resul
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/category_listing_screen.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 
@@ -49,11 +50,11 @@ class _SearchScreenState extends State<SearchScreen> {
                   controller: _searchCtrl,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(100),
+                      borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: AppColors.black70),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(100),
+                      borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: AppColors.black70),
                     ),
                     hintText: 'Search',
@@ -165,12 +166,15 @@ class _SearchScreenState extends State<SearchScreen> {
                                     itemBuilder: (context, index) {
                                       return InkWell(
                                         onTap: () {
-                                          // context
-                                          //     .push(
-                                          //   AppRoutes
-                                          //       .listingRoute,
-                                          //   extra: searchResult!.searchTerms[index],
-                                          // );
+                                          context.pop();
+                                          context.push(
+                                            AppRoutes.listingRoute,
+                                            extra: CategoryListingScreenParams(
+                                              searchTerm:
+                                                  searchResult!
+                                                      .searchTerms[index],
+                                            ),
+                                          );
                                         },
                                         child: Container(
                                           padding: EdgeInsets.symmetric(

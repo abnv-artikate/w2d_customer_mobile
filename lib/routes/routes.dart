@@ -112,7 +112,7 @@ final GoRouter router = GoRouter(
         return BlocProvider<CategoryCubit>.value(
           value: sl<CategoryCubit>(),
           child: CategoryListingScreen(
-            category: state.extra as SubCategoriesEntity,
+            params: state.extra as CategoryListingScreenParams,
           ),
         );
       },
