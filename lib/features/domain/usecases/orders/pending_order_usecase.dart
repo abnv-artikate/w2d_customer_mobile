@@ -1,15 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
 import 'package:w2d_customer_mobile/core/usecase/usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/orders/order_pending_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
 
-class OrderPendingUseCase extends UseCase<String, OrderPendingParams> {
+class OrderPendingUseCase extends UseCase<OrderPendingEntity, OrderPendingParams> {
   final Repository _repository;
 
   OrderPendingUseCase(this._repository);
 
   @override
-  Future<Either<Failure, String>> call(OrderPendingParams params) {
+  Future<Either<Failure, OrderPendingEntity>> call(OrderPendingParams params) {
     return _repository.orderPending(params);
     // throw UnimplementedError("Check if cart id error is fixed.");
   }

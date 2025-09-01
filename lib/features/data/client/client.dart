@@ -12,6 +12,7 @@ import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.
 import 'package:w2d_customer_mobile/features/data/model/categories/category_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/product_category_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/orders/order_pending_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/orders/orders_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/search/search_result_autocomplete_model.dart';
@@ -180,7 +181,7 @@ abstract class W2DClient {
 
   /// Order Client
   @POST(EndPoints.orderPending)
-  Future orderPending(@Body() Map<String, dynamic> body);
+  Future<OrderPendingModel> orderPending(@Body() Map<String, dynamic> body);
 
   @POST(EndPoints.orderSuccess)
   Future orderSuccess(@Body() Map<String, dynamic> body);

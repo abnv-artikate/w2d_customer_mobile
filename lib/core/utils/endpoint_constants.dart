@@ -45,7 +45,7 @@ class EndPoints {
 
   /// Order Endpoints
   static const String createOrder = '/order/create/';
-  static const String orderPending = '/order/pending/';
+  static const String orderPending = '/order/pending-mobile/';
   static const String orderSuccess = '/order/success/';
 
   /// Orders Endpoints

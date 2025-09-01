@@ -141,33 +141,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     onTap: () {},
                   ),
                 ),
-                // ShippingBreakdownWidget(
-                //   cartItems: widget.checkOutScreenEntity.cartItems,
-                //   location: null,
-                //   freightQuoteEntityData: null,
-                //   calculateInsuranceEntity:
-                //       widget.checkOutScreenEntity.calculateInsuranceEntity,
-                //   isTransitInsured:
-                //       isTransitInsured != null
-                //           ? isTransitInsured!
-                //           : widget.checkOutScreenEntity.isTransitInsured,
-                //   onShippingMethodDropdownTap: () {},
-                //   onTransitInsuranceTap: (bool? value) {
-                //     setState(() {
-                //       isTransitInsured = value!;
-                //     });
-                //     if (isTransitInsured != null) {
-                //       _callConfirmInsuranceApi(
-                //         quoteToken:
-                //             widget
-                //                 .checkOutScreenEntity
-                //                 .freightQuoteEntityData!
-                //                 .quoteToken,
-                //         addInsurance: isTransitInsured!,
-                //       );
-                //     }
-                //   },
-                // ),
                 FeesBreakdownWidget(),
                 SizedBox(height: 5),
                 BlocBuilder<CartShippingCubit, CartShippingState>(
