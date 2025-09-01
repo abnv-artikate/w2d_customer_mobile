@@ -484,10 +484,10 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
       // }
 
       // Validate product existence
-      if (product == null) {
-        print('CartItem ${id}: Product is null');
-        return null;
-      }
+      // if (product == null) {
+      //   print('CartItem ${id}: Product is null');
+      //   return null;
+      // }
 
       // Calculate total goods value
       double totalGoodsValue;
@@ -505,7 +505,7 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
       // Get product type safely
       String productTypeString;
       try {
-        productTypeString = product.productType?.name ?? 'other';
+        productTypeString = product.productType.name;
       } catch (e) {
         print('CartItem ${id}: Error getting product type: $e');
         productTypeString = 'other';
@@ -514,7 +514,7 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
       // Get shipping attribute safely
       String shippingAttribute;
       try {
-        shippingAttribute = product.shippingAttribute ?? '';
+        shippingAttribute = product.shippingAttribute;
       } catch (e) {
         print('CartItem ${id}: Error getting shipping attribute: $e');
         shippingAttribute = '';
@@ -532,7 +532,7 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
       // Get packaging details safely
       List<CartItemProductDimensionsEntity> packagingDetailsList;
       try {
-        packagingDetailsList = variant?.packagingDetails ?? product.packagingDetails ?? [];
+        packagingDetailsList = variant?.packagingDetails ?? product.packagingDetails;
 
         if (packagingDetailsList.isEmpty) {
           print('CartItem ${id}: No packaging details available');
@@ -567,9 +567,8 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
       // Get wooden box packaging flag safely
       bool woodenBoxPackaging;
       try {
-        woodenBoxPackaging = variant?.attributes?.woodenBoxPackaging ??
-            product.attributes?.woodenBoxPackaging ??
-            false;
+        woodenBoxPackaging = variant?.attributes.woodenBoxPackaging ??
+            product.attributes.woodenBoxPackaging;
       } catch (e) {
         print('CartItem ${id}: Error getting wooden box packaging flag: $e');
         woodenBoxPackaging = false;

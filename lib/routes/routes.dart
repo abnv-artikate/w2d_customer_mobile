@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
@@ -24,8 +23,6 @@ import 'package:w2d_customer_mobile/features/presentation/screens/orders/order_s
 import 'package:w2d_customer_mobile/features/presentation/screens/user/user_profile_screen.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/shipping/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/injection_container.dart';
 
@@ -70,13 +67,8 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.cartRoute,
           builder: (BuildContext context, GoRouterState state) {
-            return MultiBlocProvider(
-              providers: [
-                BlocProvider<CartCubit>(create: (context) => sl<CartCubit>()),
-                BlocProvider<ShippingCubit>(
-                  create: (context) => sl<ShippingCubit>(),
-                ),
-              ],
+            return BlocProvider<CartShippingCubit>.value(
+              value: sl<CartShippingCubit>(),
               child: CartScreen(),
             );
           },
@@ -146,13 +138,9 @@ final GoRouter router = GoRouter(
             BlocProvider<CartShippingCubit>.value(
               value: sl<CartShippingCubit>(),
             ),
-            BlocProvider<ShippingCubit>(
-              create: (context) => sl<ShippingCubit>(),
-            ),
             BlocProvider<PaymentCubit>(create: (context) => sl<PaymentCubit>()),
             BlocProvider<OrdersCubit>(create: (context) => sl<OrdersCubit>()),
             BlocProvider<AddressCubit>(create: (context) => sl<AddressCubit>()),
-            BlocProvider<CartCubit>(create: (context) => sl<CartCubit>()),
             BlocProvider<CommonCubit>(create: (context) => sl<CommonCubit>()),
           ],
           child: CheckoutScreen(
@@ -167,8 +155,8 @@ final GoRouter router = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         return MultiBlocProvider(
           providers: [
-            BlocProvider<ShippingCubit>(
-              create: (context) => sl<ShippingCubit>(),
+            BlocProvider<CartShippingCubit>.value(
+              value: sl<CartShippingCubit>(),
             ),
             BlocProvider<PaymentCubit>(create: (context) => sl<PaymentCubit>()),
           ],

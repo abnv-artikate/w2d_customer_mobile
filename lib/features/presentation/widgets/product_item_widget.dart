@@ -102,7 +102,7 @@ class ProductItemWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [_buildProductInfo(), _buildPriceSection(fontSize: 11)],
+              children: [_buildProductInfo(), _buildPriceSection(fontSize: 12)],
             ),
           ),
         ),
@@ -167,7 +167,7 @@ class ProductItemWidget extends StatelessWidget {
               children: [
                 _buildProductInfo(),
                 SizedBox(height: 4),
-                _buildPriceSection(fontSize: 12),
+                _buildPriceSection(fontSize: 14),
               ],
             ),
           ),
@@ -186,7 +186,7 @@ class ProductItemWidget extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           maxLines: 2,
           style: TextStyle(
-            fontSize: isGridView ? 11 : 12,
+            fontSize: isGridView ? 12 : 14,
             fontWeight: FontWeight.w500,
           ),
         ),

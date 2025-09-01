@@ -11,17 +11,14 @@ import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/paymen
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_success_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/pending_order_usecase.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/shipping/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/fees_breakdown_widget.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_breakdown_widget.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -267,17 +264,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  void _callConfirmInsuranceApi({
-    required String quoteToken,
-    required bool addInsurance,
-  }) {
-    context.read<ShippingCubit>().confirmInsurance(
-      ConfirmInsuranceParams(
-        quoteToken: quoteToken,
-        addInsurance: addInsurance,
-      ),
-    );
-  }
+  // void _callConfirmInsuranceApi({
+  //   required String quoteToken,
+  //   required bool addInsurance,
+  // }) {
+  //   context.read<CartShippingCubit>().confirmInsurance(
+  //     ConfirmInsuranceParams(
+  //       quoteToken: quoteToken,
+  //       addInsurance: addInsurance,
+  //     ),
+  //   );
+  // }
 
   void _callInitiatePaymentApi(PaymentRequestEntity request) {
     context.read<PaymentCubit>().initiatePayment(request);

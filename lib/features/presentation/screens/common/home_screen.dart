@@ -10,7 +10,6 @@ import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/product_item_widget.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/search_widget.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
 final List<String> imgList = [

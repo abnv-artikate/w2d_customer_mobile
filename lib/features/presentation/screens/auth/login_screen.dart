@@ -7,7 +7,6 @@ import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
 

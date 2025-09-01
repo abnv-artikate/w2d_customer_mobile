@@ -47,7 +47,7 @@ class _CartScreenState extends State<CartScreen> {
     // Load cart items first
     cubit.getCartItems();
     // Get current location
-    cubit.getCurrentLocation();
+    // cubit.getCurrentLocation();
   }
 
   @override
@@ -452,19 +452,19 @@ class _CartScreenState extends State<CartScreen> {
                     freightQuoteEntityData.quoteCourier.doorDelivery,
                   ))
                     ShippingMethodListItemWidget(
-                      label: "Sea Freight",
+                      label: "Courier (Air)",
                       serviceType: "Upto Port",
                       shippingFee:
                           freightQuoteEntityData
-                              .quoteSea
-                              .portDelivery
+                              .quoteCourier
+                              .doorDelivery
                               .totalAmount
                               .toString(),
                       transitEta:
                           freightQuoteEntityData
-                              .quoteSea
-                              .portDelivery
-                              .portDeliveryTt
+                              .quoteCourier
+                              .doorDelivery
+                              .doorDeliveryTt
                               .toString(),
                       isSelected: localSelectedIndex == 0,
                       onTap: () {
@@ -484,15 +484,15 @@ class _CartScreenState extends State<CartScreen> {
                       serviceType: "Upto Port",
                       shippingFee:
                           freightQuoteEntityData
-                              .quoteSea
-                              .portDelivery
+                              .quoteAir
+                              .doorDelivery
                               .totalAmount
                               .toString(),
                       transitEta:
                           freightQuoteEntityData
-                              .quoteSea
-                              .portDelivery
-                              .portDeliveryTt
+                              .quoteAir
+                              .doorDelivery
+                              .doorDeliveryTt
                               .toString(),
                       isSelected: localSelectedIndex == 1,
                       onTap: () {
@@ -512,13 +512,13 @@ class _CartScreenState extends State<CartScreen> {
                       serviceType: "Upto Port",
                       shippingFee:
                           freightQuoteEntityData
-                              .quoteSea
+                              .quoteAir
                               .portDelivery
                               .totalAmount
                               .toString(),
                       transitEta:
                           freightQuoteEntityData
-                              .quoteSea
+                              .quoteAir
                               .portDelivery
                               .portDeliveryTt
                               .toString(),
@@ -541,14 +541,14 @@ class _CartScreenState extends State<CartScreen> {
                       shippingFee:
                           freightQuoteEntityData
                               .quoteSea
-                              .portDelivery
+                              .doorDelivery
                               .totalAmount
                               .toString(),
                       transitEta:
                           freightQuoteEntityData
                               .quoteSea
-                              .portDelivery
-                              .portDeliveryTt
+                              .doorDelivery
+                              .doorDeliveryTt
                               .toString(),
                       isSelected: localSelectedIndex == 3,
                       onTap: () {
@@ -595,15 +595,15 @@ class _CartScreenState extends State<CartScreen> {
                       serviceType: "Upto Port",
                       shippingFee:
                           freightQuoteEntityData
-                              .quoteSea
-                              .portDelivery
+                              .quoteLand
+                              .doorDelivery
                               .totalAmount
                               .toString(),
                       transitEta:
                           freightQuoteEntityData
-                              .quoteSea
-                              .portDelivery
-                              .portDeliveryTt
+                              .quoteLand
+                              .doorDelivery
+                              .doorDeliveryTt
                               .toString(),
                       isSelected: localSelectedIndex == 5,
                       onTap: () {

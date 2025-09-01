@@ -15,25 +15,20 @@ class FreightQuoteModel {
     this.data,
   });
 
-  factory FreightQuoteModel.fromRawJson(String str) => FreightQuoteModel.fromJson(json.decode(str));
+  factory FreightQuoteModel.fromRawJson(String str) =>
+      FreightQuoteModel.fromJson(json.decode(str));
 
-  String toRawJson() => json.encode(toJson());
-
-  factory FreightQuoteModel.fromJson(Map<String, dynamic> json) => FreightQuoteModel(
-    code: json["code"],
-    status: json["status"],
-    info: json["info"],
-    message: json["message"],
-    data: json["data"] == null ? null : FreightQuoteModelData.fromJson(json["data"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "code": code,
-    "status": status,
-    "info": info,
-    "message": message,
-    "data": data?.toJson(),
-  };
+  factory FreightQuoteModel.fromJson(Map<String, dynamic> json) =>
+      FreightQuoteModel(
+        code: json["code"],
+        status: json["status"],
+        info: json["info"],
+        message: json["message"],
+        data:
+            json["data"] == null
+                ? null
+                : FreightQuoteModelData.fromJson(json["data"]),
+      );
 }
 
 class FreightQuoteModelData {
@@ -51,49 +46,46 @@ class FreightQuoteModelData {
     this.quoteLand,
   });
 
-  factory FreightQuoteModelData.fromRawJson(String str) => FreightQuoteModelData.fromJson(json.decode(str));
+  factory FreightQuoteModelData.fromRawJson(String str) =>
+      FreightQuoteModelData.fromJson(json.decode(str));
 
-  String toRawJson() => json.encode(toJson());
-
-  factory FreightQuoteModelData.fromJson(Map<String, dynamic> json) => FreightQuoteModelData(
+  factory FreightQuoteModelData.fromJson(
+    Map<String, dynamic> json,
+  ) => FreightQuoteModelData(
     quoteToken: json["quote_token"],
-    quoteAir: json["quote_air"] == null ? null : Quote.fromJson(json["quote_air"]),
-    quoteSea: json["quote_sea"] == null ? null : Quote.fromJson(json["quote_sea"]),
-    quoteCourier: json["quote_courier"] == null ? null : DataQuoteCourier.fromJson(json["quote_courier"]),
-    quoteLand: json["quote_land"] == null ? null : DataQuoteLand.fromJson(json["quote_land"]),
+    quoteAir:
+        json["quote_air"] == null ? null : Quote.fromJson(json["quote_air"]),
+    quoteSea:
+        json["quote_sea"] == null ? null : Quote.fromJson(json["quote_sea"]),
+    quoteCourier:
+        json["quote_courier"] == null
+            ? null
+            : DataQuoteCourier.fromJson(json["quote_courier"]),
+    quoteLand:
+        json["quote_land"] == null
+            ? null
+            : DataQuoteLand.fromJson(json["quote_land"]),
   );
-
-  Map<String, dynamic> toJson() => {
-    "quote_token": quoteToken,
-    "quote_air": quoteAir?.toJson(),
-    "quote_sea": quoteSea?.toJson(),
-    "quote_courier": quoteCourier?.toJson(),
-    "quote_land": quoteLand?.toJson(),
-  };
 }
 
 class Quote {
   TentacledPortDelivery? portDelivery;
   IndigoDoorDelivery? doorDelivery;
 
-  Quote({
-    this.portDelivery,
-    this.doorDelivery,
-  });
+  Quote({this.portDelivery, this.doorDelivery});
 
   factory Quote.fromRawJson(String str) => Quote.fromJson(json.decode(str));
 
-  String toRawJson() => json.encode(toJson());
-
   factory Quote.fromJson(Map<String, dynamic> json) => Quote(
-    portDelivery: json["port_delivery"] == null ? null : TentacledPortDelivery.fromJson(json["port_delivery"]),
-    doorDelivery: json["door_delivery"] == null ? null : IndigoDoorDelivery.fromJson(json["door_delivery"]),
+    portDelivery:
+        json["port_delivery"] == null
+            ? null
+            : TentacledPortDelivery.fromJson(json["port_delivery"]),
+    doorDelivery:
+        json["door_delivery"] == null
+            ? null
+            : IndigoDoorDelivery.fromJson(json["door_delivery"]),
   );
-
-  Map<String, dynamic> toJson() => {
-    "port_delivery": portDelivery?.toJson(),
-    "door_delivery": doorDelivery?.toJson(),
-  };
 }
 
 class IndigoDoorDelivery {
@@ -111,25 +103,17 @@ class IndigoDoorDelivery {
     this.doorDeliveryTt,
   });
 
-  factory IndigoDoorDelivery.fromRawJson(String str) => IndigoDoorDelivery.fromJson(json.decode(str));
+  factory IndigoDoorDelivery.fromRawJson(String str) =>
+      IndigoDoorDelivery.fromJson(json.decode(str));
 
-  String toRawJson() => json.encode(toJson());
-
-  factory IndigoDoorDelivery.fromJson(Map<String, dynamic> json) => IndigoDoorDelivery(
-    message: json["message"],
-    totalAmount: json["total_amount"],
-    totalDutyTax: json["total_duty_tax"],
-    doorGrantTotal: json["door_grant_total"],
-    doorDeliveryTt: json["door_delivery_tt"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "message": message,
-    "total_amount": totalAmount,
-    "total_duty_tax": totalDutyTax,
-    "door_grant_total": doorGrantTotal,
-    "door_delivery_tt": doorDeliveryTt,
-  };
+  factory IndigoDoorDelivery.fromJson(Map<String, dynamic> json) =>
+      IndigoDoorDelivery(
+        message: json["message"],
+        totalAmount: json["total_amount"],
+        totalDutyTax: json["total_duty_tax"],
+        doorGrantTotal: json["door_grant_total"],
+        doorDeliveryTt: json["door_delivery_tt"],
+      );
 }
 
 class TentacledPortDelivery {
@@ -147,45 +131,34 @@ class TentacledPortDelivery {
     this.portDeliveryTt,
   });
 
-  factory TentacledPortDelivery.fromRawJson(String str) => TentacledPortDelivery.fromJson(json.decode(str));
+  factory TentacledPortDelivery.fromRawJson(String str) =>
+      TentacledPortDelivery.fromJson(json.decode(str));
 
-  String toRawJson() => json.encode(toJson());
-
-  factory TentacledPortDelivery.fromJson(Map<String, dynamic> json) => TentacledPortDelivery(
-    message: json["message"],
-    totalAmount: json["total_amount"],
-    totalDutyTax: json["total_duty_tax"],
-    portGrantTotal: json["port_grant_total"],
-    portDeliveryTt: json["port_delivery_tt"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "message": message,
-    "total_amount": totalAmount,
-    "total_duty_tax": totalDutyTax,
-    "port_grant_total": portGrantTotal,
-    "port_delivery_tt": portDeliveryTt,
-  };
+  factory TentacledPortDelivery.fromJson(Map<String, dynamic> json) =>
+      TentacledPortDelivery(
+        message: json["message"],
+        totalAmount: json["total_amount"],
+        totalDutyTax: json["total_duty_tax"],
+        portGrantTotal: json["port_grant_total"],
+        portDeliveryTt: json["port_delivery_tt"],
+      );
 }
 
 class DataQuoteCourier {
   IndecentDoorDelivery? doorDelivery;
 
-  DataQuoteCourier({
-    this.doorDelivery,
-  });
+  DataQuoteCourier({this.doorDelivery});
 
-  factory DataQuoteCourier.fromRawJson(String str) => DataQuoteCourier.fromJson(json.decode(str));
+  factory DataQuoteCourier.fromRawJson(String str) =>
+      DataQuoteCourier.fromJson(json.decode(str));
 
-  String toRawJson() => json.encode(toJson());
-
-  factory DataQuoteCourier.fromJson(Map<String, dynamic> json) => DataQuoteCourier(
-    doorDelivery: json["door_delivery"] == null ? null : IndecentDoorDelivery.fromJson(json["door_delivery"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "door_delivery": doorDelivery?.toJson(),
-  };
+  factory DataQuoteCourier.fromJson(Map<String, dynamic> json) =>
+      DataQuoteCourier(
+        doorDelivery:
+            json["door_delivery"] == null
+                ? null
+                : IndecentDoorDelivery.fromJson(json["door_delivery"]),
+      );
 }
 
 class IndecentDoorDelivery {
@@ -203,43 +176,31 @@ class IndecentDoorDelivery {
     this.doorGrantTotal,
   });
 
-  factory IndecentDoorDelivery.fromRawJson(String str) => IndecentDoorDelivery.fromJson(json.decode(str));
+  factory IndecentDoorDelivery.fromRawJson(String str) =>
+      IndecentDoorDelivery.fromJson(json.decode(str));
 
-  String toRawJson() => json.encode(toJson());
-
-  factory IndecentDoorDelivery.fromJson(Map<String, dynamic> json) => IndecentDoorDelivery(
-    doorDeliveryTt: json["door_delivery_tt"],
-    message: json["message"],
-    totalAmount: json["total_amount"],
-    totalDutyTax: json["total_duty_tax"],
-    doorGrantTotal: json["door_grant_total"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "door_delivery_tt": doorDeliveryTt,
-    "message": message,
-    "total_amount": totalAmount,
-    "total_duty_tax": totalDutyTax,
-    "door_grant_total": doorGrantTotal,
-  };
+  factory IndecentDoorDelivery.fromJson(Map<String, dynamic> json) =>
+      IndecentDoorDelivery(
+        doorDeliveryTt: json["door_delivery_tt"],
+        message: json["message"],
+        totalAmount: json["total_amount"],
+        totalDutyTax: json["total_duty_tax"],
+        doorGrantTotal: json["door_grant_total"],
+      );
 }
 
 class DataQuoteLand {
   IndigoDoorDelivery? doorDelivery;
 
-  DataQuoteLand({
-    this.doorDelivery,
-  });
+  DataQuoteLand({this.doorDelivery});
 
-  factory DataQuoteLand.fromRawJson(String str) => DataQuoteLand.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
+  factory DataQuoteLand.fromRawJson(String str) =>
+      DataQuoteLand.fromJson(json.decode(str));
 
   factory DataQuoteLand.fromJson(Map<String, dynamic> json) => DataQuoteLand(
-    doorDelivery: json["door_delivery"] == null ? null : IndigoDoorDelivery.fromJson(json["door_delivery"]),
+    doorDelivery:
+        json["door_delivery"] == null
+            ? null
+            : IndigoDoorDelivery.fromJson(json["door_delivery"]),
   );
-
-  Map<String, dynamic> toJson() => {
-    "door_delivery": doorDelivery?.toJson(),
-  };
 }

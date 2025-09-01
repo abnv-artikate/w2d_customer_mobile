@@ -45,8 +45,6 @@ import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/cart/cart_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/shipping/shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
 
@@ -77,23 +75,6 @@ Future<void> init() async {
       cartSyncUseCase: sl<CartSyncUseCase>(),
       getCartUseCase: sl<GetCartUseCase>(),
       localDatasource: sl<LocalDatasource>(),
-    ),
-  );
-  sl.registerFactory<CartCubit>(
-    () => CartCubit(
-      cartSyncUseCase: sl<CartSyncUseCase>(),
-      getCartItemUseCase: sl<GetCartUseCase>(),
-      updateCartUseCase: sl<UpdateCartUseCase>(),
-      getCurrentLocationUseCase: sl<GetCurrentLocationUseCase>(),
-      getManualLocationUseCase: sl<GetManualLocationUseCase>(),
-    ),
-  );
-  sl.registerFactory<ShippingCubit>(
-    () => ShippingCubit(
-      getFreightQuoteUseCase: sl<GetFreightQuoteUseCase>(),
-      selectFreightServiceUseCase: sl<SelectFreightServiceUseCase>(),
-      calculateInsuranceUseCase: sl<CalculateInsuranceUseCase>(),
-      confirmInsuranceUseCase: sl<ConfirmInsuranceUseCase>(),
     ),
   );
   sl.registerFactory<PaymentCubit>(

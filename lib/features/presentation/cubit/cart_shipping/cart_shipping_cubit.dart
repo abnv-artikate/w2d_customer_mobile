@@ -108,6 +108,7 @@ class CartShippingCubit extends Cubit<CartShippingState> {
       },
       (location) {
         _currentLocation = location;
+        _calculateAndEmitFees();
         emit(
           state.copyWith(
             locationStatus: LoadingStatus.loaded,
@@ -373,10 +374,10 @@ class CartShippingCubit extends Cubit<CartShippingState> {
     required double destDutyTaxesOtherFees,
   }) {
     return (_platformFeeRate *
-            (goodsValue +
-                exportFreightPackingOtherFees +
-                transitInsurance +
-                destDutyTaxesOtherFees));
+        (goodsValue +
+            exportFreightPackingOtherFees +
+            transitInsurance +
+            destDutyTaxesOtherFees));
   }
 
   double _calculateLocalTransitFees(List<CartItemEntity> cartItems) {
