@@ -209,9 +209,12 @@ class CartShippingCubit extends Cubit<CartShippingState> {
   Future<void> selectFreightService(SelectFreightServiceParams params) async {
     // emit(state.copyWith(shippingSelectionStatus: LoadingStatus.loading));
 
+    _selectedShippingIndex = params.serviceIndex;
+
     final result = await selectFreightServiceUseCase.call(params);
     result.fold(
       (failure) {
+        _selectedShippingIndex = null;
         emit(
           state.copyWith(
             shippingSelectionStatus: LoadingStatus.error,
@@ -231,7 +234,7 @@ class CartShippingCubit extends Cubit<CartShippingState> {
         );
 
         // Recalculate fees after shipping selection
-        // _calculateAndEmitFees();
+        _calculateAndEmitFees();
       },
     );
   }
@@ -311,8 +314,7 @@ class CartShippingCubit extends Cubit<CartShippingState> {
       final exportFreightPackingOtherFees =
           _calculateExportFreightPackingOtherFees();
       final destDutyTaxesOtherFees = _calculateDestDutyTaxesOtherFees();
-      final transitInsurance =
-          _isTransitInsured ? _calculateTransitInsurance() : 0.0;
+      final transitInsurance = _calculateTransitInsurance();
 
       final platformFees = _calculatePlatformFees(
         goodsValue: goodsValue,
@@ -391,7 +393,33 @@ class CartShippingCubit extends Cubit<CartShippingState> {
   }
 
   double _calculateExportFreightPackingOtherFees() {
-    return _currentInsuranceData?.data.freightAmount ?? 0.0;
+    if (_currentFreightQuote == null || _selectedShippingIndex == null) {
+      return 0.0;
+    }
+
+    // Return the freight amount based on selected shipping method
+    switch (_selectedShippingIndex) {
+      case 0: // Courier (Air) - Door
+        return _currentFreightQuote!.quoteCourier.doorDelivery.totalAmount
+            .toDouble();
+      case 1: // Air Freight - Door
+        return _currentFreightQuote!.quoteAir.doorDelivery.totalAmount
+            .toDouble();
+      case 2: // Air Freight - Port
+        return _currentFreightQuote!.quoteAir.portDelivery.totalAmount
+            .toDouble();
+      case 3: // Sea Freight - Door
+        return _currentFreightQuote!.quoteSea.doorDelivery.totalAmount
+            .toDouble();
+      case 4: // Sea Freight - Port
+        return _currentFreightQuote!.quoteSea.portDelivery.totalAmount
+            .toDouble();
+      case 5: // Land Freight - Door
+        return _currentFreightQuote!.quoteLand.doorDelivery.totalAmount
+            .toDouble();
+      default:
+        return 0.0;
+    }
   }
 
   double _calculateDestDutyTaxesOtherFees() {

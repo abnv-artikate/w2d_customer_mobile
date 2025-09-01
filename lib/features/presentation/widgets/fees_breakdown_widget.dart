@@ -277,12 +277,18 @@ class FeesBreakdownWidget extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
-          Text(
-            '\$${amount.toStringAsFixed(2)}',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              color: state.isTransitInsured ? null : Colors.grey,
-            ),
+          // Text(
+          //   '\$${amount.toStringAsFixed(2)}',
+          //   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          //     fontWeight: FontWeight.w500,
+          //     color: state.isTransitInsured ? null : Colors.grey,
+          //   ),
+          // ),
+          CurrencyWidget(
+            price: amount.toStringAsFixed(2),
+            fontSize: 14,
+            strikeThrough: false,
+            fontColor: state.isTransitInsured ? null : Colors.grey,
           ),
         ],
       ),

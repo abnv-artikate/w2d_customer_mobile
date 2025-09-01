@@ -234,7 +234,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             margin: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
-              // border: Border.all(color: AppColors.deepBlue),
+              border:
+                  selectedAdd?.id == addressList[index].id
+                      ? Border.all(color: AppColors.worldGreen)
+                      : null,
               boxShadow: [
                 BoxShadow(
                   color:

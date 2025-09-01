@@ -453,7 +453,7 @@ class _CartScreenState extends State<CartScreen> {
                   ))
                     ShippingMethodListItemWidget(
                       label: "Courier (Air)",
-                      serviceType: "Upto Port",
+                      serviceType: "Upto Door",
                       shippingFee:
                           freightQuoteEntityData
                               .quoteCourier
@@ -480,8 +480,8 @@ class _CartScreenState extends State<CartScreen> {
                     freightQuoteEntityData.quoteAir.doorDelivery,
                   ))
                     ShippingMethodListItemWidget(
-                      label: "Sea Freight",
-                      serviceType: "Upto Port",
+                      label: "Air Freight",
+                      serviceType: "Upto Door",
                       shippingFee:
                           freightQuoteEntityData
                               .quoteAir
@@ -508,7 +508,7 @@ class _CartScreenState extends State<CartScreen> {
                     freightQuoteEntityData.quoteAir.portDelivery,
                   ))
                     ShippingMethodListItemWidget(
-                      label: "Sea Freight",
+                      label: "Air Freight",
                       serviceType: "Upto Port",
                       shippingFee:
                           freightQuoteEntityData
@@ -537,7 +537,7 @@ class _CartScreenState extends State<CartScreen> {
                   ))
                     ShippingMethodListItemWidget(
                       label: "Sea Freight",
-                      serviceType: "Upto Port",
+                      serviceType: "Upto Door",
                       shippingFee:
                           freightQuoteEntityData
                               .quoteSea
@@ -591,8 +591,8 @@ class _CartScreenState extends State<CartScreen> {
                     freightQuoteEntityData.quoteLand.doorDelivery,
                   ))
                     ShippingMethodListItemWidget(
-                      label: "Sea Freight",
-                      serviceType: "Upto Port",
+                      label: "Land Freight",
+                      serviceType: "Upto Door",
                       shippingFee:
                           freightQuoteEntityData
                               .quoteLand
@@ -632,11 +632,11 @@ class _CartScreenState extends State<CartScreen> {
                         width: MediaQuery.of(context).size.width * 0.4,
                         onTap: () {
                           if (localSelectedIndex != null) {
+                            context.pop();
                             _callSelectFreightServiceApi(
                               quoteToken: freightQuoteEntityData.quoteToken,
                               serviceIndex: localSelectedIndex,
                             );
-                            context.pop();
                           } else {
                             widget.showErrorToast(
                               context: context,
