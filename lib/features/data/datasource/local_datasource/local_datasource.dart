@@ -41,6 +41,14 @@ abstract class LocalDatasource {
 
   bool? getBrandMall();
 
+  String? getStoreID();
+
+  setStoreID(String storeID);
+
+  String? getStoreAuthKey();
+
+  setStoreAuthKey(String authKey);
+
   clearToken();
 
   logout();
@@ -140,6 +148,26 @@ class LocalDataSourceImpl extends LocalDatasource {
   @override
   logout() {
     mySharedPref.logout();
+  }
+
+  @override
+  String? getStoreAuthKey() {
+    return mySharedPref.getStoreAuthKey();
+  }
+
+  @override
+  setStoreAuthKey(String authKey) {
+    mySharedPref.saveStoreAuthKey(authKey);
+  }
+
+  @override
+  String? getStoreID() {
+    return mySharedPref.getStoreID();
+  }
+
+  @override
+  setStoreID(String storeId) {
+    mySharedPref.saveStoreID(storeId);
   }
 
   // @override

@@ -7,13 +7,11 @@ import 'package:w2d_customer_mobile/features/domain/entities/address/customer_ad
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
-import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/order_success_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/pending_order_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
@@ -32,7 +30,6 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   bool? isTransitInsured;
-  String? userEmail;
 
   // int? selectedAdd;
   CustomerAddressesEntity? selectedAdd;
@@ -42,7 +39,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   initState() {
     _callGetSavedAddressApi();
-    userEmail = _callUserEmailApi();
     super.initState();
   }
 
@@ -153,22 +149,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       onTap: () {
                         if (selectedAdd != null) {
                           _callInitiatePaymentApi(
-                            PaymentRequestEntity(
-                              cartId:
-                                  widget.checkOutScreenEntity.cartSessionKey,
-                              amount:
-                                  state.feeBreakdown!.estimatedTotal.toString(),
-                              currency: 'AED',
-                              firstName: selectedAdd?.fullName ?? "",
-                              lastName: "",
-                              street: selectedAdd?.addressLine1 ?? "",
-                              city: selectedAdd?.city ?? "",
-                              region: "",
-                              country: selectedAdd?.country ?? "",
-                              zip: "",
-                              email: userEmail ?? "",
-                              phone: selectedAdd?.primaryPhoneNumber ?? "",
-                            ),
+                            cartId: widget.checkOutScreenEntity.cartSessionKey,
+                            amount:
+                                state.feeBreakdown!.estimatedTotal.toString(),
+                            firstName: selectedAdd?.fullName ?? "",
+                            street: selectedAdd?.addressLine1 ?? "",
+                            city: selectedAdd?.city ?? "",
+                            country: selectedAdd?.country ?? "",
+                            phone: selectedAdd?.primaryPhoneNumber ?? "",
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -252,8 +240,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   //   );
   // }
 
-  void _callInitiatePaymentApi(PaymentRequestEntity request) {
-    context.read<PaymentCubit>().initiatePayment(request);
+  void _callInitiatePaymentApi({
+    required String cartId,
+    required String amount,
+    required String firstName,
+    required String street,
+    required String city,
+    required String country,
+    String zip = "",
+    required String phone,
+  }) {
+    context.read<PaymentCubit>().initiatePayment(
+      cartId: cartId,
+      amount: amount,
+      firstName: firstName,
+      street: street,
+      city: city,
+      country: country,
+      phone: phone,
+    );
   }
 
   void _callConfirmPaymentApi(String transCode) {
@@ -314,10 +319,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   void _callOrderSuccessApi(OrderSuccessParams params) {
     context.read<OrdersCubit>().orderSuccess(params);
-  }
-
-  String _callUserEmailApi() {
-    return context.read<CommonCubit>().getUserEmail();
   }
 
   void _callResetShipping() {

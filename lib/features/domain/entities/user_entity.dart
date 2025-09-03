@@ -1,6 +1,13 @@
 class UserEntity {
-  final String name;
+  final String fullName;
   final String email;
+  final String store;
+  final String authKey;
 
-  UserEntity({this.name = "Name Here", this.email = "Email here"});
+  UserEntity({
+    required this.fullName,
+    required this.email,
+    required this.store,
+    required this.authKey,
+  });
 }

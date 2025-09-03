@@ -13,6 +13,8 @@ class MySharedPref {
   static const destinationCity = "destination_city";
   static const destinationCountry = "destination_country";
   static const brandMall = "brand_mall";
+  static const storeID = "store_id";
+  static const storeAuthKey = "store_auth_key";
 
   final SharedPreferences _pref;
 
@@ -98,11 +100,29 @@ class MySharedPref {
     return _pref.getBool(brandMall);
   }
 
+  void saveStoreID(String storeId) async {
+    await _pref.setString(storeID, storeId);
+  }
+
+  String? getStoreID() {
+    return _pref.getString(storeID);
+  }
+
+  void saveStoreAuthKey(String authKey) async {
+    await _pref.setString(storeAuthKey, authKey);
+  }
+
+  String? getStoreAuthKey() {
+    return _pref.getString(storeAuthKey);
+  }
+
   void logout() {
     _pref.remove(accessToken);
     _pref.remove(refreshToken);
     _pref.remove(userName);
     _pref.remove(userEmail);
+    _pref.remove(storeID);
+    _pref.remove(storeAuthKey);
     _pref.remove(cartID);
   }
 }

@@ -147,7 +147,7 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ),
                 _buildBottomSection(state),
-                SizedBox(height: 150),
+                SizedBox(height: 100),
               ],
             );
           },
@@ -240,21 +240,23 @@ class _CartScreenState extends State<CartScreen> {
 
   Widget _buildBottomSection(CartShippingState state) {
     return Container(
-      padding: EdgeInsets.all(20),
+      // padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: AppColors.softWhite80,
             spreadRadius: 1,
             blurRadius: 5,
-            offset: Offset(0, -2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
       child: CustomFilledButtonWidget(
         title: _getButtonTitle(state),
-        color: AppColors.worldGreen,
+        color:
+            !state.hasCartData || state.cart!.items.isEmpty
+                ? AppColors.softWhite80
+                : AppColors.worldGreen80,
         height: 50,
         width: MediaQuery.of(context).size.width * 0.9,
         horizontalMargin: 0,

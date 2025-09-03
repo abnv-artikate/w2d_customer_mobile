@@ -1,6 +1,6 @@
 class PaymentRequestEntity {
-  // final String storeId;
-  // final String authKey;
+  final String storeId;
+  final String authKey;
   final String cartId;
   final String amount;
   final String currency;
@@ -15,8 +15,8 @@ class PaymentRequestEntity {
   final String phone;
 
   PaymentRequestEntity({
-    // required this.storeId,
-    // required this.authKey,
+    required this.storeId,
+    required this.authKey,
     required this.cartId,
     required this.amount,
     required this.currency,

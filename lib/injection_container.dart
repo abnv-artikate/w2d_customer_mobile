@@ -81,6 +81,7 @@ Future<void> init() async {
     () => PaymentCubit(
       initiatePaymentUseCase: sl<InitiatePaymentUseCase>(),
       verifyPaymentUseCase: sl<VerifyPaymentUseCase>(),
+      localDatasource: sl<LocalDatasource>(),
     ),
   );
   sl.registerFactory<AddressCubit>(

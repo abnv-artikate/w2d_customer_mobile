@@ -27,7 +27,12 @@ import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 class RepositoryConv {
   static UserEntity convertVerifyOtpModelToUserEntity(VerifyOtpModel model) {
     Map<String, dynamic> parsedJson = DecodeJWT().parseJwt(model.data!.access!);
-    return UserEntity(email: parsedJson['email']);
+    return UserEntity(
+      email: parsedJson['email'],
+      fullName: parsedJson['full_name'],
+      store: parsedJson['store'],
+      authKey: parsedJson['authkey'],
+    );
   }
 
   static List<SubCategoriesEntity> convertCategoriesHierarchyModelToEntity(
