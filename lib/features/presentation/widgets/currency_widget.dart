@@ -44,7 +44,7 @@ class CurrencyWidget extends StatelessWidget {
             color: fontColor,
             decoration: strikeThrough ? TextDecoration.lineThrough : null,
             decorationColor: strikeThroughColor,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],

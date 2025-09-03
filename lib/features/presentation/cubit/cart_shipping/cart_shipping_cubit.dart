@@ -423,7 +423,45 @@ class CartShippingCubit extends Cubit<CartShippingState> {
   }
 
   double _calculateDestDutyTaxesOtherFees() {
-    return 0.0;
+    if (_currentFreightQuote == null || _selectedShippingIndex == null) {
+      return 0.0;
+    }
+
+    // Return the freight amount based on selected shipping method
+    switch (_selectedShippingIndex) {
+      case 0: // Courier (Air) - Door
+        return double.tryParse(
+              _currentFreightQuote!.quoteCourier.doorDelivery.totalDutyTax,
+            ) ??
+            0.0;
+      case 1: // Air Freight - Door
+        return double.tryParse(
+              _currentFreightQuote!.quoteAir.doorDelivery.totalDutyTax,
+            ) ??
+            0.0;
+      case 2: // Air Freight - Port
+        return double.tryParse(
+              _currentFreightQuote!.quoteAir.portDelivery.totalDutyTax,
+            ) ??
+            0.0;
+      case 3: // Sea Freight - Door
+        return double.tryParse(
+              _currentFreightQuote!.quoteSea.doorDelivery.totalDutyTax,
+            ) ??
+            0.0;
+      case 4: // Sea Freight - Port
+        return double.tryParse(
+              _currentFreightQuote!.quoteSea.portDelivery.totalDutyTax,
+            ) ??
+            0.0;
+      case 5: // Land Freight - Door
+        return double.tryParse(
+              _currentFreightQuote!.quoteLand.doorDelivery.totalDutyTax,
+            ) ??
+            0.0;
+      default:
+        return 0.0;
+    }
   }
 
   double _calculateTransitInsurance() {

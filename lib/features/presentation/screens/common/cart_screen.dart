@@ -240,13 +240,11 @@ class _CartScreenState extends State<CartScreen> {
 
   Widget _buildBottomSection(CartShippingState state) {
     return Container(
-      // padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
             color: AppColors.softWhite80,
-            spreadRadius: 1,
-            blurRadius: 5,
+            blurRadius: 2,
             offset: Offset(0, 2),
           ),
         ],

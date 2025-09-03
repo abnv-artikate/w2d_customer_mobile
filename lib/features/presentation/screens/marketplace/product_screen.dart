@@ -6,9 +6,7 @@ import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({super.key, required this.product});
@@ -26,7 +24,7 @@ class _ProductScreenState extends State<ProductScreen>
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
   bool _isWishListed = false;
-  int _quantity = 1;
+  int quantity = 1;
 
   @override
   void initState() {
@@ -83,8 +81,6 @@ class _ProductScreenState extends State<ProductScreen>
                     child: Column(
                       children: [
                         _buildProductInfo(),
-                        _buildProductDescription(),
-                        _buildQuantitySelector(),
                         const SizedBox(height: 20),
                       ],
                     ),
@@ -108,7 +104,7 @@ class _ProductScreenState extends State<ProductScreen>
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
       actions: [
-        _buildWishlistButton(),
+        // _buildWishlistButton(),
         _buildCartButton(),
         const SizedBox(width: 16),
       ],
@@ -219,11 +215,11 @@ class _ProductScreenState extends State<ProductScreen>
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
+          // BoxShadow(
+          //   color: Colors.black,
+          //   blurRadius: 10,
+          //   offset: const Offset(0, 2),
+          // ),
         ],
       ),
       child: Column(
@@ -249,6 +245,69 @@ class _ProductScreenState extends State<ProductScreen>
           ),
           const SizedBox(height: 20),
           _buildPriceSection(),
+          const Text(
+            'Quantity',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: AppColors.softWhite80),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(5.0),
+                  child: IconButton(
+                    icon: Icon(
+                      LucideIcons.plus,
+                      color: AppColors.black70,
+                      size: 15,
+                    ),
+                    onPressed: () {},
+                  ),
+                ),
+                Text(
+                  '$quantity',
+                  style: TextStyle(fontSize: 20, color: AppColors.black70),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(5.0),
+                  child: IconButton(
+                    icon: Icon(
+                      LucideIcons.minus,
+                      color: AppColors.black70,
+                      size: 15,
+                    ),
+                    onPressed: () {},
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              Icon(LucideIcons.info, size: 20, color: AppColors.worldGreen),
+              const SizedBox(width: 8),
+              const Text(
+                'Product Details',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            widget.product.shortDescription.isNotEmpty
+                ? widget.product.longDescription
+                : 'Premium quality product with excellent features and craftsmanship.',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[700],
+              height: 1.5,
+            ),
+          ),
         ],
       ),
     );
@@ -258,10 +317,32 @@ class _ProductScreenState extends State<ProductScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (widget.product.salePrice.isNotEmpty &&
+            widget.product.salePrice != widget.product.regularPrice) ...[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.worldGreen80, AppColors.worldGreen],
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '${_calculateDiscount()}% OFF',
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            if (widget.product.salePrice.isNotEmpty) ...[
+            if (widget.product.salePrice.isNotEmpty &&
+                widget.product.salePrice != widget.product.regularPrice) ...[
               CurrencyWidget(
                 price: widget.product.salePrice,
                 fontSize: 32,
@@ -290,179 +371,21 @@ class _ProductScreenState extends State<ProductScreen>
             ],
           ],
         ),
-        const SizedBox(height: 12),
-        if (widget.product.salePrice.isNotEmpty &&
-            widget.product.salePrice != widget.product.regularPrice) ...[
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.worldGreen,
-                  AppColors.worldGreen,
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              '${_calculateDiscount()}% OFF',
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
       ],
-    );
-  }
-
-  Widget _buildProductDescription() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(LucideIcons.info, size: 20, color: AppColors.worldGreen),
-              const SizedBox(width: 8),
-              const Text(
-                'Product Details',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            widget.product.shortDescription.isNotEmpty
-                ? widget.product.shortDescription
-                : 'Premium quality product with excellent features and craftsmanship.',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[700],
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuantitySelector() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Quantity',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              _buildQuantityButton(
-                icon: LucideIcons.minus,
-                onTap: () {
-                  if (_quantity > 1) {
-                    setState(() => _quantity--);
-                  }
-                },
-                enabled: _quantity > 1,
-              ),
-              const SizedBox(width: 16),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '$_quantity',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              _buildQuantityButton(
-                icon: LucideIcons.plus,
-                onTap: () {
-                  setState(() => _quantity++);
-                },
-                enabled: true,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuantityButton({
-    required IconData icon,
-    required VoidCallback onTap,
-    required bool enabled,
-  }) {
-    return Material(
-      color: enabled ? AppColors.worldGreen : Colors.grey[300],
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        onTap: enabled ? onTap : null,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Icon(
-            icon,
-            size: 20,
-            color: enabled ? Colors.white : Colors.grey[500],
-          ),
-        ),
-      ),
     );
   }
 
   Widget _buildBottomActionBar() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
-          BoxShadow(
-            color: Colors.black,
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
+          // BoxShadow(
+          //   color: Colors.black,
+          //   blurRadius: 10,
+          //   offset: const Offset(0, -2),
+          // ),
         ],
       ),
       child: SafeArea(
@@ -488,11 +411,11 @@ class _ProductScreenState extends State<ProductScreen>
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(
-            color: AppColors.worldGreen,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
+          // BoxShadow(
+          //   color: AppColors.worldGreen,
+          //   blurRadius: 8,
+          //   offset: const Offset(0, 4),
+          // ),
         ],
       ),
       child: Material(
@@ -500,7 +423,7 @@ class _ProductScreenState extends State<ProductScreen>
         child: InkWell(
           onTap: () {
             context.read<CategoryCubit>().cartSync(
-              CartSyncParams(productId: widget.product.id, quantity: _quantity),
+              CartSyncParams(productId: widget.product.id, quantity: quantity),
             );
           },
           borderRadius: BorderRadius.circular(16),
@@ -556,7 +479,7 @@ class _ProductScreenState extends State<ProductScreen>
           children: [
             const Icon(LucideIcons.check, color: Colors.white, size: 20),
             const SizedBox(width: 8),
-            Text('$_quantity item(s) added to cart'),
+            Text('$quantity item(s) added to cart'),
           ],
         ),
         backgroundColor: AppColors.worldGreen,

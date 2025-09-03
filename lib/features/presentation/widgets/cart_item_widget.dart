@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
 
 class CartItemWidget extends StatefulWidget {
   final CartItemEntity cartItem;
@@ -26,69 +27,98 @@ class _CartItemWidgetState extends State<CartItemWidget> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       decoration: BoxDecoration(
         border: Border.all(color: AppColors.black70),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Stack(
         children: [
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  height: 60,
-                  width: 80,
-                  child: Image.network(
-                    widget.cartItem.product.mainImage,
-                    width: 80,
-                    height: 60,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, obj, stackTrace) {
-                      return Container(
-                        height: 60,
-                        width: 80,
-                        padding: EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 10,
-                        ),
-                        child: Text("error: $stackTrace"),
-                      );
-                    },
-                  ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: 100,
+                width: 100,
+                child: Image.network(
+                  widget.cartItem.product.mainImage,
+                  height: 100,
+                  width: 100,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, obj, stackTrace) {
+                    return Container(
+                      height: 60,
+                      width: 80,
+                      padding: EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 10,
+                      ),
+                      child: Text("error: $stackTrace"),
+                    );
+                  },
                 ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.cartItem.product.name,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.cartItem.product.name,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      Text(
-                        widget.cartItem.product.salePrice.toStringAsFixed(2),
-                        style: TextStyle(fontSize: 18),
+                      maxLines: 3,
+                    ),
+                    // Text(
+                    //   widget.cartItem.product.salePrice.toStringAsFixed(2),
+                    //   style: TextStyle(fontSize: 18),
+                    // ),
+                    if (widget.cartItem.product.salePrice <
+                        widget.cartItem.product.regularPrice) ...[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          CurrencyWidget(
+                            price: widget.cartItem.product.salePrice
+                                .toStringAsFixed(2),
+                            fontSize: 18,
+                            fontColor: AppColors.black,
+                            strikeThrough: false,
+                          ),
+                          SizedBox(width: 5),
+                          CurrencyWidget(
+                            price: widget.cartItem.product.regularPrice
+                                .toStringAsFixed(2),
+                            fontSize: 16,
+                            strikeThrough: true,
+                            fontColor: AppColors.softWhite80,
+                          ),
+                        ],
                       ),
-                      _incrementWidget(
-                        number: widget.cartItem.quantity,
-                        onPlusTap: widget.onIncrementTap,
-                        onMinusTap: widget.onDecrementTap,
+                    ] else ...[
+                      CurrencyWidget(
+                        price: widget.cartItem.product.regularPrice
+                            .toStringAsFixed(2),
+                        fontSize: 18,
+                        strikeThrough: false,
                       ),
                     ],
-                  ),
+
+                    _incrementWidget(
+                      number: widget.cartItem.quantity,
+                      onPlusTap: widget.onIncrementTap,
+                      onMinusTap: widget.onDecrementTap,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           Positioned(
-            top: 10,
+            top: 1,
             child: InkWell(
               onTap: widget.onCheckBoxTap,
               child: _checkBox(widget.cartItem.isChecked),
@@ -102,18 +132,21 @@ class _CartItemWidgetState extends State<CartItemWidget> {
   Widget _checkBox(bool isChecked) {
     return isChecked
         ? Container(
-          height: 30,
-          width: 30,
+          height: 22,
+          width: 22,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4),
             border: Border.all(color: AppColors.black70),
             color: AppColors.black,
           ),
-          child: Icon(LucideIcons.check, size: 30, color: AppColors.white),
+          child: Padding(
+            padding: const EdgeInsets.all(1.0),
+            child: Icon(LucideIcons.check, size: 18, color: AppColors.white),
+          ),
         )
         : Container(
-          height: 30,
-          width: 30,
+          height: 20,
+          width: 20,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4),
             border: Border.all(color: AppColors.black70),
@@ -127,38 +160,29 @@ class _CartItemWidgetState extends State<CartItemWidget> {
     VoidCallback? onMinusTap,
   }) {
     return Container(
-      width: 150,
       height: 40,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: AppColors.worldGreen),
+        border: Border.all(color: AppColors.black70),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
+          Container(
+            padding: const EdgeInsets.all(5.0),
             child: IconButton(
-              icon: Icon(
-                LucideIcons.plus,
-                color: AppColors.worldGreen,
-                size: 20,
-              ),
+              icon: Icon(LucideIcons.plus, color: AppColors.black70, size: 15),
               onPressed: onPlusTap,
             ),
           ),
           Text(
             '$number',
-            style: TextStyle(fontSize: 25, color: AppColors.worldGreen),
+            style: TextStyle(fontSize: 20, color: AppColors.black70),
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
+          Container(
+            padding: const EdgeInsets.all(5.0),
             child: IconButton(
-              icon: Icon(
-                LucideIcons.minus,
-                color: AppColors.worldGreen,
-                size: 20,
-              ),
+              icon: Icon(LucideIcons.minus, color: AppColors.black70, size: 15),
               onPressed: onMinusTap,
             ),
           ),
