@@ -62,7 +62,7 @@ class _ProductScreenState extends State<ProductScreen>
       listener: (context, state) {
         if (state is CartSyncLoaded) {
           widget.showErrorToast(context: context, message: state.message);
-          _showAddToCartAnimation();
+          // _showAddToCartAnimation();
         } else if (state is CategoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
@@ -97,12 +97,12 @@ class _ProductScreenState extends State<ProductScreen>
 
   Widget _buildSliverAppBar() {
     return SliverAppBar(
-      expandedHeight: MediaQuery.of(context).size.width,
+      expandedHeight: MediaQuery.of(context).size.width * 1.15,
       floating: false,
       pinned: true,
       elevation: 0,
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
+      // backgroundColor: Colors.white,
+      // foregroundColor: Colors.black,
       actions: [
         // _buildWishlistButton(),
         _buildCartButton(),
@@ -165,7 +165,7 @@ class _ProductScreenState extends State<ProductScreen>
             setState(() {
               _isWishListed = !_isWishListed;
             });
-            _showWishlistAnimation();
+            // _showWishlistAnimation();
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -233,7 +233,7 @@ class _ProductScreenState extends State<ProductScreen>
               height: 1.2,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 5),
           Text(
             widget.product.shortDescription,
             style: TextStyle(
@@ -241,7 +241,9 @@ class _ProductScreenState extends State<ProductScreen>
               fontWeight: FontWeight.w400,
               color: Colors.grey[600],
               height: 1.4,
+              overflow: TextOverflow.ellipsis,
             ),
+            maxLines: 2,
           ),
           const SizedBox(height: 20),
           _buildPriceSection(),
@@ -336,7 +338,7 @@ class _ProductScreenState extends State<ProductScreen>
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
         ],
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -353,7 +355,7 @@ class _ProductScreenState extends State<ProductScreen>
               const SizedBox(width: 12),
               CurrencyWidget(
                 price: widget.product.regularPrice,
-                fontSize: 20,
+                fontSize: 30,
                 strikeThrough: true,
                 fontColor: Colors.grey[500],
                 strikeThroughColor: Colors.grey[500],
@@ -405,7 +407,7 @@ class _ProductScreenState extends State<ProductScreen>
       height: 56,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.worldGreen, AppColors.worldGreen],
+          colors: [AppColors.worldGreen, AppColors.worldGreen80],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -449,46 +451,46 @@ class _ProductScreenState extends State<ProductScreen>
     );
   }
 
-  void _showWishlistAnimation() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              _isWishListed ? LucideIcons.heart : LucideIcons.heartOff,
-              color: Colors.white,
-              size: 20,
-            ),
-            const SizedBox(width: 8),
-            Text(_isWishListed ? 'Added to Wishlist' : 'Removed from Wishlist'),
-          ],
-        ),
-        backgroundColor: _isWishListed ? Colors.red : Colors.grey[600],
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
+  // void _showWishlistAnimation() {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Row(
+  //         children: [
+  //           Icon(
+  //             _isWishListed ? LucideIcons.heart : LucideIcons.heartOff,
+  //             color: Colors.white,
+  //             size: 20,
+  //           ),
+  //           const SizedBox(width: 8),
+  //           Text(_isWishListed ? 'Added to Wishlist' : 'Removed from Wishlist'),
+  //         ],
+  //       ),
+  //       backgroundColor: _isWishListed ? Colors.red : Colors.grey[600],
+  //       behavior: SnackBarBehavior.floating,
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  //       duration: const Duration(seconds: 2),
+  //     ),
+  //   );
+  // }
 
-  void _showAddToCartAnimation() {
-    // You can implement a more complex animation here
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(LucideIcons.check, color: Colors.white, size: 20),
-            const SizedBox(width: 8),
-            Text('$quantity item(s) added to cart'),
-          ],
-        ),
-        backgroundColor: AppColors.worldGreen,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
+  // void _showAddToCartAnimation() {
+  //   // You can implement a more complex animation here
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Row(
+  //         children: [
+  //           const Icon(LucideIcons.check, color: Colors.white, size: 20),
+  //           const SizedBox(width: 8),
+  //           Text('$quantity item(s) added to cart'),
+  //         ],
+  //       ),
+  //       backgroundColor: AppColors.worldGreen,
+  //       behavior: SnackBarBehavior.floating,
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  //       duration: const Duration(seconds: 2),
+  //     ),
+  //   );
+  // }
 
   int _calculateDiscount() {
     if (widget.product.salePrice.isEmpty ||

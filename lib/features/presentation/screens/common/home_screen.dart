@@ -80,27 +80,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isBrand = context.select((CategoryCubit c) => c.isBrand);
-    return BlocConsumer<CategoryCubit, CategoryState>(
-      listener: (context, state) {
-        if (state is ProductViewLoaded) {
-          context.push(AppRoutes.productRoute, extra: state.productEntity);
-        }
-      },
-      builder: (context, state) {
-        return Scaffold(
-          appBar: _buildAppBar(isBrand),
-          body: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildBannerSection(),
-                _buildBestSellers(isBrand),
-                SizedBox(height: 150),
-              ],
-            ),
-          ),
-        );
-      },
+    return Scaffold(
+      appBar: _buildAppBar(isBrand),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildBannerSection(),
+            _buildBestSellers(isBrand),
+            SizedBox(height: 150),
+          ],
+        ),
+      ),
     );
   }
 
@@ -205,14 +196,21 @@ class _HomeScreenState extends State<HomeScreen> {
           return SizedBox();
         }
 
-        return ListView.separated(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            return _buildCollectionSection(collections[index], isBrand);
+        return BlocListener<CategoryCubit, CategoryState>(
+          listener: (context, state) {
+            if (state is ProductViewLoaded) {
+              context.push(AppRoutes.productRoute, extra: state.productEntity);
+            }
           },
-          separatorBuilder: (context, index) => SizedBox(height: 16),
-          itemCount: collections.length,
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              return _buildCollectionSection(collections[index], isBrand);
+            },
+            separatorBuilder: (context, index) => SizedBox(height: 16),
+            itemCount: collections.length,
+          ),
         );
       },
     );
