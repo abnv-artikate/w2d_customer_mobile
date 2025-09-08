@@ -6,6 +6,7 @@ import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/add_wishlist_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
 
@@ -19,7 +20,7 @@ class ProductScreen extends StatefulWidget {
 }
 
 class _ProductScreenState extends State<ProductScreen> {
-  bool _isWishListed = false;
+  bool isWishListed = false;
   int quantity = 1;
 
   CarouselOptions get _imageCarouselOption {
@@ -42,7 +43,6 @@ class _ProductScreenState extends State<ProductScreen> {
       padEnds: false,
       height: carouselHeight,
       viewportFraction: 1,
-      // More items visible on small screens
       enableInfiniteScroll: false,
     );
   }
@@ -63,7 +63,6 @@ class _ProductScreenState extends State<ProductScreen> {
       listener: (context, state) {
         if (state is CartSyncLoaded) {
           widget.showErrorToast(context: context, message: state.message);
-          // _showAddToCartAnimation();
         } else if (state is CategoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
@@ -90,66 +89,64 @@ class _ProductScreenState extends State<ProductScreen> {
           decoration: BoxDecoration(),
           child: CarouselSlider(
             options: _imageCarouselOption,
-            items: widget.product.gallery.map((item) {
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 5),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    item,
-                    fit: BoxFit.contain,
-                    width: double.infinity,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Image not available',
-                            style: TextStyle(color: AppColors.black70),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              );
-            }).toList(),
+            items:
+                widget.product.gallery.map((item) {
+                  return Container(
+                    margin: EdgeInsets.symmetric(horizontal: 5),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        item,
+                        fit: BoxFit.contain,
+                        width: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Image not available',
+                                style: TextStyle(color: AppColors.black70),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                }).toList(),
           ),
         )
         : Container(
           decoration: const BoxDecoration(),
-          child: Hero(
-            tag: 'product_${widget.product.id}',
-            child: Image.network(
-              widget.product.mainImage,
-              fit: BoxFit.contain,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value:
-                        loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                    color: AppColors.worldGreen,
-                  ),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey[200],
-                  child: const Icon(
-                    LucideIcons.image,
-                    size: 64,
-                    color: Colors.grey,
-                  ),
-                );
-              },
-            ),
+          child: Image.network(
+            widget.product.mainImage,
+            fit: BoxFit.contain,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value:
+                      loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
+                  color: AppColors.worldGreen,
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.grey[200],
+                child: const Icon(
+                  LucideIcons.image,
+                  size: 64,
+                  color: Colors.grey,
+                ),
+              );
+            },
           ),
         );
   }
@@ -164,20 +161,17 @@ class _ProductScreenState extends State<ProductScreen> {
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: () {
-            setState(() {
-              _isWishListed = !_isWishListed;
-            });
-            // _showWishlistAnimation();
+            _callAddWishListApi();
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: Icon(
-                _isWishListed ? LucideIcons.heart : LucideIcons.heart,
-                key: ValueKey(_isWishListed),
+                isWishListed ? LucideIcons.heart : LucideIcons.heart,
+                key: ValueKey(isWishListed),
                 size: 24,
-                color: _isWishListed ? Colors.red : Colors.grey[600],
+                color: isWishListed ? Colors.red : Colors.grey[600],
               ),
             ),
           ),
@@ -215,13 +209,6 @@ class _ProductScreenState extends State<ProductScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          // BoxShadow(
-          //   color: Colors.black,
-          //   blurRadius: 10,
-          //   offset: const Offset(0, 2),
-          // ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,7 +256,11 @@ class _ProductScreenState extends State<ProductScreen> {
                       color: AppColors.black70,
                       size: 15,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        quantity += 1;
+                      });
+                    },
                   ),
                 ),
                 Text(
@@ -284,7 +275,13 @@ class _ProductScreenState extends State<ProductScreen> {
                       color: AppColors.black70,
                       size: 15,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      if (quantity > 1) {
+                        setState(() {
+                          quantity -= 1;
+                        });
+                      }
+                    },
                   ),
                 ),
               ],
@@ -381,16 +378,7 @@ class _ProductScreenState extends State<ProductScreen> {
   Widget _buildBottomActionBar() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          // BoxShadow(
-          //   color: Colors.black,
-          //   blurRadius: 10,
-          //   offset: const Offset(0, -2),
-          // ),
-        ],
-      ),
+      decoration: BoxDecoration(color: Colors.white),
       child: SafeArea(
         child: Row(
           children: [
@@ -413,13 +401,6 @@ class _ProductScreenState extends State<ProductScreen> {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          // BoxShadow(
-          //   color: AppColors.worldGreen,
-          //   blurRadius: 8,
-          //   offset: const Offset(0, 4),
-          // ),
-        ],
       ),
       child: Material(
         color: Colors.transparent,
@@ -452,47 +433,6 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  // void _showWishlistAnimation() {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Row(
-  //         children: [
-  //           Icon(
-  //             _isWishListed ? LucideIcons.heart : LucideIcons.heartOff,
-  //             color: Colors.white,
-  //             size: 20,
-  //           ),
-  //           const SizedBox(width: 8),
-  //           Text(_isWishListed ? 'Added to Wishlist' : 'Removed from Wishlist'),
-  //         ],
-  //       ),
-  //       backgroundColor: _isWishListed ? Colors.red : Colors.grey[600],
-  //       behavior: SnackBarBehavior.floating,
-  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-  //       duration: const Duration(seconds: 2),
-  //     ),
-  //   );
-  // }
-
-  // void _showAddToCartAnimation() {
-  //   // You can implement a more complex animation here
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Row(
-  //         children: [
-  //           const Icon(LucideIcons.check, color: Colors.white, size: 20),
-  //           const SizedBox(width: 8),
-  //           Text('$quantity item(s) added to cart'),
-  //         ],
-  //       ),
-  //       backgroundColor: AppColors.worldGreen,
-  //       behavior: SnackBarBehavior.floating,
-  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-  //       duration: const Duration(seconds: 2),
-  //     ),
-  //   );
-  // }
-
   int _calculateDiscount() {
     if (widget.product.salePrice.isEmpty ||
         widget.product.regularPrice.isEmpty) {
@@ -505,5 +445,11 @@ class _ProductScreenState extends State<ProductScreen> {
     } catch (e) {
       return 0;
     }
+  }
+
+  void _callAddWishListApi() {
+    context.read<CategoryCubit>().addWishList(
+      AddWishListParams(productId: widget.product.id),
+    );
   }
 }

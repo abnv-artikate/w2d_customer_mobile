@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 isVerify = true;
                 isLogin = true;
               } else if (state is AuthError) {
-                widget.showErrorToast(context: context, message: state.error);
+                _showError(state.error);
               }
 
               if (state is VerifyOtpSuccess) {
@@ -63,23 +63,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   context.go(AppRoutes.initial, extra: state.userEntity);
                 }
               } else if (state is AuthError) {
-                widget.showErrorToast(context: context, message: state.error);
+                _showError(state.error);
               }
             },
             builder: (context, state) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _logo(),
-                  _inputForm(
-                    context,
-                    emailCtrl: _emailCtrl,
-                    otpCtrl: _otpCtrl,
-                    nameCtrl: _nameCtrl,
-                  ),
-                  _guestOrSignUp(context),
-                ],
+                children: [_logo(), _inputForm(), _guestOrSignUp()],
               );
             },
           ),
@@ -123,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
   //   );
   // }
 
-  _guestOrSignUp(BuildContext context) {
+  _guestOrSignUp() {
     return Column(
       children: [
         CustomFilledButtonWidget(
@@ -137,30 +128,15 @@ class _LoginScreenState extends State<LoginScreen> {
             });
           },
         ),
-        // SizedBox(height: 10),
-        // BlankButtonWidget(
-        //   title: 'Continue as Guest',
-        //   height: 50,
-        //   width: MediaQuery.of(context).size.width,
-        //   onTap: () {
-        //     context.go(AppRoutes.initial);
-        //   },
-        // ),
-        // _termsAndCondition(),
       ],
     );
   }
 
-  _inputForm(
-    BuildContext context, {
-    required TextEditingController emailCtrl,
-    required TextEditingController otpCtrl,
-    required TextEditingController nameCtrl,
-  }) {
+  _inputForm() {
     return Column(
       children: [
         TextField(
-          controller: emailCtrl,
+          controller: _emailCtrl,
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -183,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (isVerify) ...[
           SizedBox(height: 10),
           TextField(
-            controller: otpCtrl,
+            controller: _otpCtrl,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
               border: OutlineInputBorder(
@@ -211,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (!isLogin) ...[
           SizedBox(height: 10),
           TextField(
-            controller: nameCtrl,
+            controller: _nameCtrl,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -242,34 +218,56 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 60,
           width: MediaQuery.of(context).size.width,
           onTap: () {
-            if (isLogin && !isVerify) {
-              if (emailCtrl.text.isNotEmpty) {
-                context.read<AuthCubit>().sendOtp(
-                  SendOtpParams(email: emailCtrl.text, type: "existing"),
-                );
+            if (!isLogin) {
+              if (_nameCtrl.text.isEmpty) {
+                _showError('Name cannot be blank');
+              } else if (_emailCtrl.text.isEmpty) {
+                _showError('Email cannot be blank');
               } else {
-                widget.showErrorToast(
-                  context: context,
-                  message: 'Email cannot be blank',
-                );
+                _callSendOtpApi(type: "new", fullName: _nameCtrl.text);
+              }
+            }
+
+            if (isLogin && !isVerify) {
+              if (_emailCtrl.text.isNotEmpty) {
+                _callSendOtpApi(type: "existing");
+              } else {
+                _showError('Email cannot be blank');
               }
             }
 
             if (isLogin && isVerify) {
-              if (emailCtrl.text.isNotEmpty && otpCtrl.text.isNotEmpty) {
-                context.read<AuthCubit>().verifyOtp(
-                  VerifyOtpParams(email: emailCtrl.text, otp: otpCtrl.text),
-                );
+              if (_emailCtrl.text.isNotEmpty && _otpCtrl.text.isNotEmpty) {
+                _callVerifyOtpApi();
               } else {
-                widget.showErrorToast(
-                  context: context,
-                  message: 'Email or OTP cannot be empty',
-                );
+                _showError('Email or OTP cannot be empty');
               }
             }
           },
         ),
       ],
     );
+  }
+
+  void _callVerifyOtpApi() {
+    context.read<AuthCubit>().verifyOtp(
+      VerifyOtpParams(email: _emailCtrl.text, otp: _otpCtrl.text),
+    );
+  }
+
+  void _callSendOtpApi({required String type, String fullName = ""}) {
+    context.read<AuthCubit>().sendOtp(
+      fullName.isEmpty
+          ? SendOtpParams(email: _emailCtrl.text, type: type)
+          : SendOtpParams(
+            email: _emailCtrl.text,
+            fullName: fullName,
+            type: type,
+          ),
+    );
+  }
+
+  void _showError(String text) {
+    widget.showErrorToast(context: context, message: text);
   }
 }

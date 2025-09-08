@@ -111,8 +111,13 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: AppRoutes.productRoute,
       builder: (BuildContext context, GoRouterState state) {
-        return BlocProvider<CategoryCubit>(
-          create: (context) => sl<CategoryCubit>(),
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<CategoryCubit>(
+              create: (context) => sl<CategoryCubit>(),
+            ),
+            BlocProvider<CommonCubit>(create: (context) => sl<CommonCubit>()),
+          ],
           child: ProductScreen(product: state.extra as ProductViewEntity),
         );
       },
