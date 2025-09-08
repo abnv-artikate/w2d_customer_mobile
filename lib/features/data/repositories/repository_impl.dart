@@ -25,6 +25,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/confir
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/wishlist/wishlist_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/address/create_address_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
@@ -40,6 +41,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/product/product_vie
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/add_wishlist_usecase.dart';
 
 class RepositoryImpl extends Repository {
   final LocalDatasource localDatasource;
@@ -549,6 +551,51 @@ class RepositoryImpl extends Repository {
         );
 
         return Right("result is here do something.");
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> addWishlist(AddWishListParams params) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.addWishlist(params.toJson());
+
+        return Right(result.message ?? "Add to Wishlist Success");
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> deleteWishList(String params) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.deleteWishlist(params);
+
+        return Right(result.message ?? "Wishlist item delete success");
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, WishListEntity>> getWishlist() async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.getWishlist();
+
+        return Right(result.toEntity());
       } else {
         return Left(ServerFailure(message: Constants.errorNoInternet));
       }

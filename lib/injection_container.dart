@@ -40,6 +40,9 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/add_wishlist_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/delete_wishlist_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/get_wishlist_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
@@ -74,6 +77,9 @@ Future<void> init() async {
       productViewUseCase: sl<ProductViewUseCase>(),
       cartSyncUseCase: sl<CartSyncUseCase>(),
       getCartUseCase: sl<GetCartUseCase>(),
+      addWishListUseCase: sl<AddWishListUseCase>(),
+      getWishListUseCase: sl<GetWishListUseCase>(),
+      deleteWishListUseCase: sl<DeleteWishListUseCase>(),
       localDatasource: sl<LocalDatasource>(),
     ),
   );
@@ -190,6 +196,15 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<CancelOrderUseCase>(
     () => CancelOrderUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<AddWishListUseCase>(
+    () => AddWishListUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<GetWishListUseCase>(
+    () => GetWishListUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<DeleteWishListUseCase>(
+    () => DeleteWishListUseCase(sl<Repository>()),
   );
 
   /// Repositories

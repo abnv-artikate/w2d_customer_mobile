@@ -431,10 +431,10 @@ class AllowedAttributes {
 }
 
 class Dimensions {
-  Height? width;
-  Height? height;
-  Height? length;
-  Height? weight;
+  Measurement? width;
+  Measurement? height;
+  Measurement? length;
+  Measurement? weight;
 
   Dimensions({this.width, this.height, this.length, this.weight});
 
@@ -444,10 +444,10 @@ class Dimensions {
   String toRawJson() => json.encode(toJson());
 
   factory Dimensions.fromJson(Map<String, dynamic> json) => Dimensions(
-    width: json["width"] == null ? null : Height.fromJson(json["width"]),
-    height: json["height"] == null ? null : Height.fromJson(json["height"]),
-    length: json["length"] == null ? null : Height.fromJson(json["length"]),
-    weight: json["weight"] == null ? null : Height.fromJson(json["weight"]),
+    width: json["width"] == null ? null : Measurement.fromJson(json["width"]),
+    height: json["height"] == null ? null : Measurement.fromJson(json["height"]),
+    length: json["length"] == null ? null : Measurement.fromJson(json["length"]),
+    weight: json["weight"] == null ? null : Measurement.fromJson(json["weight"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -458,17 +458,17 @@ class Dimensions {
   };
 }
 
-class Height {
+class Measurement {
   String? unit;
   double? value;
 
-  Height({this.unit, this.value});
+  Measurement({this.unit, this.value});
 
-  factory Height.fromRawJson(String str) => Height.fromJson(json.decode(str));
+  factory Measurement.fromRawJson(String str) => Measurement.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory Height.fromJson(Map<String, dynamic> json) {
+  factory Measurement.fromJson(Map<String, dynamic> json) {
     final val = json["value"];
 
     double parsedValue;
@@ -477,12 +477,12 @@ class Height {
       // Both int and double are subtypes of num
       parsedValue = val.toDouble();
     } else if (val is String) {
-      parsedValue = double.parse(val);
+      parsedValue = double.tryParse(val) ?? 0.0;
     } else {
       parsedValue = double.tryParse(val.toString()) ?? 0.0;
     }
 
-    return Height(
+    return Measurement(
       unit: json["unit"],
       value: parsedValue,
     );

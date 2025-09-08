@@ -50,4 +50,7 @@ class EndPoints {
 
   /// Orders Endpoints
   static const String orders = '/orders/';
+
+  /// Wishlist Endpoints
+  static const String wishlist = '/wishlist/';
 }

@@ -17,6 +17,7 @@ import 'package:w2d_customer_mobile/features/data/model/orders/orders_list_model
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/search/search_result_autocomplete_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/success_message_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/wishlist/get_wishlist_model.dart';
 
 part 'client.g.dart';
 
@@ -172,7 +173,7 @@ abstract class W2DClient {
     @Queries() Map<String, dynamic> queries,
   );
 
-  ///
+  /// Customer Address Client
   @POST(EndPoints.customerAddress)
   Future saveCustomerAddress(@Body() Map<String, dynamic> body);
 
@@ -201,4 +202,14 @@ abstract class W2DClient {
 
   @DELETE('${EndPoints.orders}/{id}/')
   Future deleteOrderByID(@Path() String id);
+
+  /// Wishlist Client
+  @POST(EndPoints.wishlist)
+  Future<SuccessMessageModel> addWishlist(@Body() Map<String, dynamic> body);
+
+  @GET(EndPoints.wishlist)
+  Future<GetWishListModel> getWishlist();
+
+  @DELETE('${EndPoints.wishlist}/{id}/')
+  Future<SuccessMessageModel> deleteWishlist(@Path() String id);
 }

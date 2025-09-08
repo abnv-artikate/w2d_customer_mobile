@@ -1,3 +1,4 @@
+import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -17,42 +18,42 @@ class ProductScreen extends StatefulWidget {
   State<ProductScreen> createState() => _ProductScreenState();
 }
 
-class _ProductScreenState extends State<ProductScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _fadeController;
-  late AnimationController _scaleController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
+class _ProductScreenState extends State<ProductScreen> {
   bool _isWishListed = false;
   int quantity = 1;
+
+  CarouselOptions get _imageCarouselOption {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // Dynamic height calculation based on screen size
+    double carouselHeight;
+    if (screenWidth < 400) {
+      carouselHeight =
+          screenHeight * 0.25; // 32% of screen height for small devices
+    } else if (screenWidth < 600) {
+      carouselHeight = screenHeight * 0.28; // 35% for medium devices
+    } else {
+      carouselHeight = screenHeight * 0.32; // 38% for larger devices
+    }
+
+    return CarouselOptions(
+      disableCenter: true,
+      padEnds: false,
+      height: carouselHeight,
+      viewportFraction: 1,
+      // More items visible on small screens
+      enableInfiniteScroll: false,
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-    _scaleController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
-    );
-    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
-    );
-
-    _fadeController.forward();
-    _scaleController.forward();
   }
 
   @override
   void dispose() {
-    _fadeController.dispose();
-    _scaleController.dispose();
     super.dispose();
   }
 
@@ -69,24 +70,12 @@ class _ProductScreenState extends State<ProductScreen>
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: Colors.grey[50],
-          body: CustomScrollView(
-            slivers: [
-              _buildSliverAppBar(),
-              SliverToBoxAdapter(
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: ScaleTransition(
-                    scale: _scaleAnimation,
-                    child: Column(
-                      children: [
-                        _buildProductInfo(),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+          appBar: AppBar(actions: [_buildCartButton()]),
+          body: ListView(
+            children: [
+              _buildProductImage(),
+              _buildProductInfo(),
+              const SizedBox(height: 20),
             ],
           ),
           bottomNavigationBar: _buildBottomActionBar(),
@@ -95,28 +84,43 @@ class _ProductScreenState extends State<ProductScreen>
     );
   }
 
-  Widget _buildSliverAppBar() {
-    return SliverAppBar(
-      expandedHeight: MediaQuery.of(context).size.width * 1.15,
-      floating: false,
-      pinned: true,
-      elevation: 0,
-      // backgroundColor: Colors.white,
-      // foregroundColor: Colors.black,
-      actions: [
-        // _buildWishlistButton(),
-        _buildCartButton(),
-        const SizedBox(width: 16),
-      ],
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.white, Color(0xFFF8F9FA)],
-            ),
+  Widget _buildProductImage() {
+    return widget.product.gallery.isNotEmpty
+        ? Container(
+          decoration: BoxDecoration(),
+          child: CarouselSlider(
+            options: _imageCarouselOption,
+            items: widget.product.gallery.map((item) {
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 5),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    item,
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Image not available',
+                            style: TextStyle(color: AppColors.black70),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
+            }).toList(),
           ),
+        )
+        : Container(
+          decoration: const BoxDecoration(),
           child: Hero(
             tag: 'product_${widget.product.id}',
             child: Image.network(
@@ -147,9 +151,7 @@ class _ProductScreenState extends State<ProductScreen>
               },
             ),
           ),
-        ),
-      ),
-    );
+        );
   }
 
   Widget _buildWishlistButton() {
@@ -209,8 +211,7 @@ class _ProductScreenState extends State<ProductScreen>
 
   Widget _buildProductInfo() {
     return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 18),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),

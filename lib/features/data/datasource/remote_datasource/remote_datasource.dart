@@ -22,6 +22,7 @@ import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_confir
 import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_payment_request_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_payment_response_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/telr_payment/terl_confirm_payment_request_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/wishlist/get_wishlist_model.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
 
 abstract class RemoteDatasource {
@@ -94,6 +95,13 @@ abstract class RemoteDatasource {
   Future updateOrder({required String id, required Map<String, dynamic> body});
 
   Future cancelOrder(String id);
+
+  /// Wishlist Datasource
+  Future<SuccessMessageModel> addWishlist(Map<String, dynamic> body);
+
+  Future<GetWishListModel> getWishlist();
+
+  Future<SuccessMessageModel> deleteWishlist(String id);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
@@ -402,6 +410,39 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   }) async {
     try {
       return await w2dClient.updateOrderByID(id: id, body: body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<SuccessMessageModel> addWishlist(Map<String, dynamic> body) async {
+    try {
+      return await w2dClient.addWishlist(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<GetWishListModel> getWishlist() async {
+    try {
+      return await w2dClient.getWishlist();
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<SuccessMessageModel> deleteWishlist(String id) async {
+    try {
+      return await w2dClient.deleteWishlist(id);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

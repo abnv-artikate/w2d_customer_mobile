@@ -43,3 +43,45 @@ final class BrandToggle extends CategoryState {
 
   BrandToggle({required this.isBrandMall});
 }
+
+final class AddWishListLoading extends CategoryState {}
+
+final class AddWishListLoaded extends CategoryState {
+  final String message;
+
+  AddWishListLoaded({required this.message});
+}
+
+final class AddWishListError extends CategoryState {
+  final String error;
+
+  AddWishListError({required this.error});
+}
+
+final class GetWishListLoading extends CategoryState {}
+
+final class GetWishListLoaded extends CategoryState {
+  final WishListEntity wishListEntity;
+
+  GetWishListLoaded({required this.wishListEntity});
+}
+
+final class GetWishListError extends CategoryState {
+  final String error;
+
+  GetWishListError({required this.error});
+}
+
+final class DeleteWishListLoading extends CategoryState {}
+
+final class DeleteWishListLoaded extends CategoryState {
+  final String message;
+
+  DeleteWishListLoaded({required this.message});
+}
+
+final class DeleteWishListError extends CategoryState {
+  final String error;
+
+  DeleteWishListError({required this.error});
+}

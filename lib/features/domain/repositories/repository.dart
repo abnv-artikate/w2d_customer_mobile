@@ -18,6 +18,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/confir
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/wishlist/wishlist_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/address/create_address_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
@@ -32,6 +33,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/product/product_vie
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/add_wishlist_usecase.dart';
 
 abstract class Repository {
   /// Auth Repositories
@@ -108,7 +110,9 @@ abstract class Repository {
   Future<Either<Failure, List<CustomerAddressesEntity>>> getCustomerAddresses();
 
   /// Order Repository
-  Future<Either<Failure, OrderPendingEntity>> orderPending(OrderPendingParams params);
+  Future<Either<Failure, OrderPendingEntity>> orderPending(
+    OrderPendingParams params,
+  );
 
   Future<Either<Failure, String>> orderSuccess(OrderSuccessParams params);
 
@@ -119,5 +123,14 @@ abstract class Repository {
 
   Future<Either<Failure, String>> getOrderByID(String params);
 
-  Future<Either<Failure, OrderListEntity>> getOrdersList(GetOrdersListParams params);
+  Future<Either<Failure, OrderListEntity>> getOrdersList(
+    GetOrdersListParams params,
+  );
+
+  /// Wishlist Repository
+  Future<Either<Failure, String>> addWishlist(AddWishListParams params);
+
+  Future<Either<Failure, WishListEntity>> getWishlist();
+
+  Future<Either<Failure, String>> deleteWishList(String params);
 }
