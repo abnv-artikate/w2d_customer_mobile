@@ -34,7 +34,9 @@ class ProfileScreen extends StatelessWidget {
             Divider(),
             _profileListItem(
               title: 'Wishlist',
-              onItemTap: () {},
+              onItemTap: () {
+                context.push(AppRoutes.wishlistRoute);
+              },
               iconData: LucideIcons.heart,
             ),
             Divider(),

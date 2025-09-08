@@ -21,6 +21,7 @@ import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/ca
 import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/product_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/orders/order_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/user/user_profile_screen.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/wishlist/wishlist_screen.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
@@ -194,6 +195,16 @@ final GoRouter router = GoRouter(
         return BlocProvider<AddressCubit>(
           create: (context) => sl<AddressCubit>(),
           child: AddressScreen(),
+        );
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: AppRoutes.wishlistRoute,
+      builder: (BuildContext context, GoRouterState state) {
+        return BlocProvider<CategoryCubit>(
+          create: (context) => sl<CategoryCubit>(),
+          child: WishlistScreen(),
         );
       },
     ),

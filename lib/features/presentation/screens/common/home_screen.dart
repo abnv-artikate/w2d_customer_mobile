@@ -157,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
                           decoration: BoxDecoration(
-                            color: AppColors.black70,
+                            color: AppColors.white,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Center(

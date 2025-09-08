@@ -111,7 +111,7 @@ class CategoryCubit extends Cubit<CategoryState> {
         emit(GetWishListError(error: l.message));
       },
       (r) {
-        GetWishListLoaded(wishListEntity: r);
+        emit(GetWishListLoaded(wishListEntity: r));
       },
     );
   }
@@ -126,7 +126,7 @@ class CategoryCubit extends Cubit<CategoryState> {
         emit(DeleteWishListError(error: l.message));
       },
       (r) {
-        DeleteWishListLoaded(message: r);
+        emit(DeleteWishListLoaded(message: r));
       },
     );
   }

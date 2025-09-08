@@ -32,4 +32,7 @@ class AppRoutes {
 
   /// user address route
   static const String addressRoute = '/address_route';
+
+  /// user wishlist route
+  static const String wishlistRoute = '/wishlist_route';
 }
