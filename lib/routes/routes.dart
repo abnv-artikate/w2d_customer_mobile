@@ -8,7 +8,6 @@ import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cu
 import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/address/address_screen.dart';
-import 'package:w2d_customer_mobile/features/presentation/screens/auth/login_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/checkout/checkout_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/checkout/payment_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/common/cart_screen.dart';
@@ -23,7 +22,6 @@ import 'package:w2d_customer_mobile/features/presentation/screens/orders/order_s
 import 'package:w2d_customer_mobile/features/presentation/screens/user/user_profile_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/wishlist/wishlist_screen.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/injection_container.dart';
 
@@ -75,27 +73,24 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: AppRoutes.profileRoute,
           builder: (BuildContext context, GoRouterState state) {
-            final cubit = context.read<CommonCubit>();
-
-            if (cubit.isUserLoggedIn()) {
-              return ProfileScreen();
-            } else {
-              return LoginScreen(isCheckout: false);
-            }
+            return BlocProvider<CommonCubit>(
+              create: (context) => sl<CommonCubit>(),
+              child: ProfileScreen(),
+            );
           },
         ),
       ],
     ),
-    GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
-      path: AppRoutes.loginRoute,
-      builder: (BuildContext context, GoRouterState state) {
-        return BlocProvider<AuthCubit>(
-          create: (context) => sl<AuthCubit>(),
-          child: LoginScreen(isCheckout: state.extra as bool),
-        );
-      },
-    ),
+    // GoRoute(
+    //   parentNavigatorKey: _rootNavigatorKey,
+    //   path: AppRoutes.loginRoute,
+    //   builder: (BuildContext context, GoRouterState state) {
+    //     return BlocProvider<AuthCubit>(
+    //       create: (context) => sl<AuthCubit>(),
+    //       child: LoginBottomSheet(),
+    //     );
+    //   },
+    // ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: AppRoutes.listingRoute,

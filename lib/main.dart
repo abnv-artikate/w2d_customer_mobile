@@ -4,7 +4,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/routes/routes.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
 import 'package:w2d_customer_mobile/injection_container.dart' as di;
 import 'package:w2d_customer_mobile/injection_container.dart';
 import 'core/utils/constants.dart';
@@ -14,11 +13,8 @@ void main() async {
   await di.init();
   await dotenv.load(fileName: ".env");
   runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider<CommonCubit>(create: (context) => sl<CommonCubit>()),
-        BlocProvider<AuthCubit>(create: (context) => sl<AuthCubit>()),
-      ],
+    BlocProvider<CommonCubit>(
+      create: (context) => sl<CommonCubit>(),
       child: MyApp(),
     ),
   );
@@ -46,7 +42,9 @@ class MyApp extends StatelessWidget {
         ),
         drawerTheme: DrawerThemeData(backgroundColor: AppColors.white),
         bottomAppBarTheme: BottomAppBarTheme(color: AppColors.white),
-        navigationBarTheme: NavigationBarThemeData(surfaceTintColor: AppColors.transparent),
+        navigationBarTheme: NavigationBarThemeData(
+          surfaceTintColor: AppColors.transparent,
+        ),
         fontFamily: 'DMSans',
         useMaterial3: true,
       ),

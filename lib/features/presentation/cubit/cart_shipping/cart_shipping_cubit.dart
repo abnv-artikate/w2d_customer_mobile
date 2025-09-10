@@ -108,6 +108,7 @@ class CartShippingCubit extends Cubit<CartShippingState> {
       },
       (location) {
         _currentLocation = location;
+        resetShipping();
         _calculateAndEmitFees();
         emit(
           state.copyWith(

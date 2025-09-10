@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 
 class CustomFilledButtonWidget extends StatelessWidget {
-  final String title;
+  final Widget title;
   final Color color;
   final double fontSize;
   final double borderRadius;
@@ -50,14 +49,7 @@ class CustomFilledButtonWidget extends StatelessWidget {
           border: Border.all(color: color),
         ),
         child: Center(
-          child: Text(
-            title,
-            style: TextStyle(
-              color: AppColors.white,
-              fontSize: fontSize,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          child: title,
         ),
       ),
     );

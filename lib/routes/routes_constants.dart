@@ -3,7 +3,7 @@ class AppRoutes {
   static const String splashRoute = '/splash_route';
 
   /// Auth screen routes
-  static const String loginRoute = '/login_route';
+  // static const String loginRoute = '/login_route';
 
   /// Navbar screen routes
   // static const String homeRoute = '/home_screen';

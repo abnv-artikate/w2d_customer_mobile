@@ -43,7 +43,6 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_fre
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/add_wishlist_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/delete_wishlist_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/get_wishlist_usecase.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
@@ -55,19 +54,14 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
   /// Cubit
-  sl.registerLazySingleton<AuthCubit>(
-    () => AuthCubit(
-      sendOtpUseCase: sl<SendOtpUseCase>(),
-      verifyOtpUseCase: sl<VerifyOtpUseCase>(),
-    ),
-  );
-
   sl.registerFactory<CommonCubit>(
     () => CommonCubit(
       categoriesHierarchyUseCase: sl<CategoriesHierarchyUseCase>(),
       getCollectionsUseCase: sl<GetCollectionsUseCase>(),
       searchProductAutoCompleteUseCase: sl<SearchProductAutoCompleteUseCase>(),
       localDatasource: sl<LocalDatasource>(),
+      sendOtpUseCase: sl<SendOtpUseCase>(),
+      verifyOtpUseCase: sl<VerifyOtpUseCase>(),
     ),
   );
 

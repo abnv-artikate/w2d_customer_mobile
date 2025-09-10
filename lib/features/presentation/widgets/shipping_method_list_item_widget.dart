@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
 
 class ShippingMethodListItemWidget extends StatefulWidget {
   const ShippingMethodListItemWidget({
@@ -77,9 +78,10 @@ class _ShippingMethodListItemWidgetState
                   widget.serviceType,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
                 ),
-                Text(
-                  widget.shippingFee,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+                CurrencyWidget(
+                  price: widget.shippingFee,
+                  fontSize: 18,
+                  strikeThrough: false,
                 ),
                 Text(
                   '${widget.transitEta} days',

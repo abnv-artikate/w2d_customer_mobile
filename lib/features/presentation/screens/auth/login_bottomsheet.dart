@@ -2,24 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
-import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
-import 'package:w2d_customer_mobile/features/presentation/cubit/auth/auth_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
-class LoginScreen extends StatefulWidget {
-  final bool isCheckout;
-
-  const LoginScreen({super.key, required this.isCheckout});
+class LoginBottomSheet extends StatefulWidget {
+  const LoginBottomSheet({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginBottomSheet> createState() => _LoginBottomSheetState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginBottomSheetState extends State<LoginBottomSheet> {
   bool isLogin = true;
   bool isVerify = false;
   String buttonText = "Continue";
@@ -37,44 +34,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(toolbarHeight: 10),
-      body: SafeArea(
-        bottom: true,
-        top: true,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-          child: BlocConsumer<AuthCubit, AuthState>(
-            listener: (context, state) {
-              if (state is SendOtpSuccess) {
-                buttonText = "Verify";
-                isVerify = true;
-                isLogin = true;
-              } else if (state is AuthError) {
-                _showError(state.error);
-              }
-
-              if (state is VerifyOtpSuccess) {
-                if (widget.isCheckout) {
-                  context.pop();
-                  context.push(AppRoutes.checkoutRoute);
-                } else {
-                  context.go(AppRoutes.initial, extra: state.userEntity);
-                }
-              } else if (state is AuthError) {
-                _showError(state.error);
-              }
-            },
-            builder: (context, state) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [_logo(), _inputForm(), _guestOrSignUp()],
-              );
-            },
-          ),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+      child: BlocConsumer<CommonCubit, CommonState>(
+        listener: (context, state) {
+          if (state is SendOtpSuccess) {
+            buttonText = "Verify";
+            isVerify = true;
+            isLogin = true;
+          } else if (state is VerifyOtpSuccess) {
+            context.pop();
+          } else if (state is AuthError) {
+            _showError(state.error);
+          }
+        },
+        builder: (context, state) {
+          return ListView(children: [_logo(), _inputForm(), _guestOrSignUp()]);
+        },
       ),
     );
   }
@@ -117,8 +93,16 @@ class _LoginScreenState extends State<LoginScreen> {
   _guestOrSignUp() {
     return Column(
       children: [
+        SizedBox(height: 50),
         CustomFilledButtonWidget(
-          title: isLogin ? 'Sign-Up' : 'Sign-In',
+          title: Text(
+            isLogin ? 'Sign-Up' : 'Sign-In',
+            style: TextStyle(
+              fontSize: 25,
+              color: AppColors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           color: AppColors.deepBlue,
           height: 60,
           width: MediaQuery.of(context).size.width,
@@ -213,7 +197,14 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
         SizedBox(height: 10),
         CustomFilledButtonWidget(
-          title: buttonText,
+          title: Text(
+            buttonText,
+            style: TextStyle(
+              fontSize: 25,
+              color: AppColors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           color: AppColors.worldGreen,
           height: 60,
           width: MediaQuery.of(context).size.width,
@@ -250,13 +241,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _callVerifyOtpApi() {
-    context.read<AuthCubit>().verifyOtp(
+    context.read<CommonCubit>().verifyOtp(
       VerifyOtpParams(email: _emailCtrl.text, otp: _otpCtrl.text),
     );
   }
 
   void _callSendOtpApi({required String type, String fullName = ""}) {
-    context.read<AuthCubit>().sendOtp(
+    context.read<CommonCubit>().sendOtp(
       fullName.isEmpty
           ? SendOtpParams(email: _emailCtrl.text, type: type)
           : SendOtpParams(

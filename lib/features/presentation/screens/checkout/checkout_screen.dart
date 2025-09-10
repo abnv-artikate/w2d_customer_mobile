@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/address/customer_address_entity.dart';
@@ -14,9 +15,10 @@ import 'package:w2d_customer_mobile/features/presentation/cubit/address/address_
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/payment/payment_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/orders/orders_cubit.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/checkout/address_bottomsheet.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/fees_breakdown_widget.dart';
+import 'package:w2d_customer_mobile/injection_container.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -96,7 +98,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               }
 
               if (state is OrderSuccessLoaded) {
-                _callResetShipping();
                 context.pop();
               } else if (state is OrderSuccessError) {
                 widget.showErrorToast(context: context, message: state.error);
@@ -111,6 +112,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                Text(
+                  "Saved Addresses",
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
+                ),
                 BlocConsumer<AddressCubit, AddressState>(
                   listener: (context, state) {
                     if (state is GetSavedAddressLoaded) {
@@ -127,22 +132,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     return _savedAddress();
                   },
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: BlankButtonWidget(
-                    title: "Add Address",
-                    width: (MediaQuery.of(context).size.width * 0.5),
-                    height: 50,
-                    borderRadius: 4,
-                    onTap: () {},
-                  ),
-                ),
+                _addAddressButtonWidget(),
                 FeesBreakdownWidget(),
                 SizedBox(height: 5),
                 BlocBuilder<CartShippingCubit, CartShippingState>(
                   builder: (context, state) {
                     return CustomFilledButtonWidget(
-                      title: "Proceed",
+                      title: Text(
+                        "Proceed",
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                       color: AppColors.worldGreen,
                       height: 50,
                       width: MediaQuery.of(context).size.width,
@@ -166,7 +169,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             ),
                           );
                         }
-                        // _clearTextFields();
                       },
                     );
                   },
@@ -176,6 +178,56 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _addAddressButtonWidget() {
+    return GestureDetector(
+      onTap: () {
+        _addNewAddress();
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.worldGreen),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(LucideIcons.plus),
+            SizedBox(width: 5),
+            Text("Add Address"),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _addNewAddress() {
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.white,
+      enableDrag: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      scrollControlDisabledMaxHeightRatio: 1,
+      builder: (BuildContext context) {
+        return BlocProvider<AddressCubit>(
+          create: (context) => sl<AddressCubit>(),
+          child: BlocListener<AddressCubit, AddressState>(
+            listener: (context, state) {
+              if (state is CreateAddressLoaded) {
+                context.pop();
+                _callGetSavedAddressApi();
+              } else if (state is CreateAddressError) {
+                widget.showErrorToast(context: context, message: state.error);
+              }
+            },
+            child: AddressBottomSheet(),
+          ),
+        );
+      },
     );
   }
 
@@ -210,15 +262,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ],
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView(
+              shrinkWrap: true,
               children: [
-                // Text('Address Id: ${addressList[index].id.toString()}'),
-                Text('Name: ${addressList[index].fullName}'),
-                Text('Phone No: ${addressList[index].primaryPhoneNumber}'),
-                Text('Address Type: ${addressList[index].addressType}'),
-                Text(
-                  'Address : ${addressList[index].addressLine1}, ${addressList[index].city}, ${addressList[index].country}',
+                _addressItem(
+                  placeHolder: "Name:",
+                  value: addressList[index].fullName,
+                ),
+                _addressItem(
+                  placeHolder: "Phone No:",
+                  value: addressList[index].primaryPhoneNumber,
+                ),
+                _addressItem(
+                  placeHolder: "Address Type:",
+                  value: addressList[index].addressType,
+                ),
+                _addressItem(
+                  placeHolder: "Name",
+                  value:
+                      '${addressList[index].addressLine1}, ${addressList[index].city}, ${addressList[index].country}',
                 ),
               ],
             ),
@@ -228,17 +290,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  // void _callConfirmInsuranceApi({
-  //   required String quoteToken,
-  //   required bool addInsurance,
-  // }) {
-  //   context.read<CartShippingCubit>().confirmInsurance(
-  //     ConfirmInsuranceParams(
-  //       quoteToken: quoteToken,
-  //       addInsurance: addInsurance,
-  //     ),
-  //   );
-  // }
+  Widget _addressItem({required String placeHolder, required String value}) {
+    return Row(
+      children: [
+        Text(
+          placeHolder,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
+        SizedBox(width: 10),
+        Text(value, style: TextStyle(fontSize: 18)),
+      ],
+    );
+  }
 
   void _callInitiatePaymentApi({
     required String cartId,

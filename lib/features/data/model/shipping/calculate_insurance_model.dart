@@ -15,17 +15,22 @@ class CalculateInsuranceModel {
     this.data,
   });
 
-  factory CalculateInsuranceModel.fromRawJson(String str) => CalculateInsuranceModel.fromJson(json.decode(str));
+  factory CalculateInsuranceModel.fromRawJson(String str) =>
+      CalculateInsuranceModel.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory CalculateInsuranceModel.fromJson(Map<String, dynamic> json) => CalculateInsuranceModel(
-    code: json["code"],
-    status: json["status"],
-    info: json["info"],
-    message: json["message"],
-    data: json["data"] == null ? null : CalculateInsuranceModelData.fromJson(json["data"]),
-  );
+  factory CalculateInsuranceModel.fromJson(Map<String, dynamic> json) =>
+      CalculateInsuranceModel(
+        code: json["code"],
+        status: json["status"],
+        info: json["info"],
+        message: json["message"],
+        data:
+            json["data"] == null
+                ? null
+                : CalculateInsuranceModelData.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "code": code,
@@ -37,11 +42,11 @@ class CalculateInsuranceModel {
 }
 
 class CalculateInsuranceModelData {
-  int? goodsValue;
-  int? freightAmount;
-  int? insuranceAmt;
+  double? goodsValue;
+  double? freightAmount;
+  double? insuranceAmt;
   dynamic totalDutyTax;
-  int? netTotal;
+  double? netTotal;
 
   CalculateInsuranceModelData({
     this.goodsValue,
@@ -51,17 +56,19 @@ class CalculateInsuranceModelData {
     this.netTotal,
   });
 
-  factory CalculateInsuranceModelData.fromRawJson(String str) => CalculateInsuranceModelData.fromJson(json.decode(str));
+  factory CalculateInsuranceModelData.fromRawJson(String str) =>
+      CalculateInsuranceModelData.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory CalculateInsuranceModelData.fromJson(Map<String, dynamic> json) => CalculateInsuranceModelData(
-    goodsValue: json["goods_value"],
-    freightAmount: json["freight_amount"],
-    insuranceAmt: json["insurance_amt"],
-    totalDutyTax: json["total_duty_tax"],
-    netTotal: json["net_total"],
-  );
+  factory CalculateInsuranceModelData.fromJson(Map<String, dynamic> json) =>
+      CalculateInsuranceModelData(
+        goodsValue: json["goods_value"],
+        freightAmount: json["freight_amount"],
+        insuranceAmt: json["insurance_amt"],
+        totalDutyTax: json["total_duty_tax"],
+        netTotal: json["net_total"],
+      );
 
   Map<String, dynamic> toJson() => {
     "goods_value": goodsValue,

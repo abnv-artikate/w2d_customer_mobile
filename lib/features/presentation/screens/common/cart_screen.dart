@@ -44,10 +44,8 @@ class _CartScreenState extends State<CartScreen> {
 
   void _initData() {
     final cubit = context.read<CartShippingCubit>();
-    // Load cart items first
+    cubit.resetShipping();
     cubit.getCartItems();
-    // Get current location
-    // cubit.getCurrentLocation();
   }
 
   @override
@@ -83,37 +81,20 @@ class _CartScreenState extends State<CartScreen> {
       ),
       body: BlocListener<CartShippingCubit, CartShippingState>(
         listener: (context, state) {
-          // Handle success messages
           if (state.hasSuccess) {
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(
-            //     content: Text(state.successMessage ?? "Success Message"),
-            //     backgroundColor: AppColors.worldGreen80,
-            //     showCloseIcon: true,
-            //     clipBehavior: Clip.antiAliasWithSaveLayer,
-            //   ),
-            // );
             widget.showErrorToast(
               context: context,
               message: state.successMessage ?? "Success Message",
             );
           }
 
-          // Handle error messages
           if (state.hasError) {
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(
-            //     content: Text(state.errorMessage ?? "Error Message"),
-            //     backgroundColor: AppColors.techRed,
-            //   ),
-            // );
             widget.showErrorToast(
               context: context,
               message: state.errorMessage ?? "Error Message",
             );
           }
 
-          // Handle location loaded - automatically get freight quote
           if (state.hasLocationData &&
               state.hasCartData &&
               !state.hasFreightQuoteData) {
@@ -123,7 +104,6 @@ class _CartScreenState extends State<CartScreen> {
             );
           }
 
-          // Handle freight quote loaded - automatically calculate insurance
           if (state.hasFreightQuoteData &&
               state.freightQuote?.quoteToken != null &&
               !state.hasInsuranceData &&
@@ -158,7 +138,7 @@ class _CartScreenState extends State<CartScreen> {
 
   Widget _buildCartItemsSection(CartShippingState state) {
     if (state.isCartLoading) {
-      return Container(
+      return SizedBox(
         height: 200,
         child: Center(
           child: CircularProgressIndicator(
@@ -169,7 +149,7 @@ class _CartScreenState extends State<CartScreen> {
     }
 
     if (!state.hasCartData || state.cart!.items.isEmpty) {
-      return Container(
+      return SizedBox(
         height: 200,
         child: Center(
           child: Column(
@@ -187,12 +167,8 @@ class _CartScreenState extends State<CartScreen> {
       );
     }
 
-    // final cartItems = state.cart!.items;
-    // final checkedItemsCount = cartItems.where((item) => item.isChecked).length;
-
     return Column(
       children: [
-        // Cart items list
         ListView.separated(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
@@ -250,7 +226,14 @@ class _CartScreenState extends State<CartScreen> {
         ],
       ),
       child: CustomFilledButtonWidget(
-        title: _getButtonTitle(state),
+        title: Text(
+          _getButtonTitle(state),
+          style: TextStyle(
+            color: AppColors.white,
+            fontSize: 25,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
         color:
             !state.hasCartData || state.cart!.items.isEmpty
                 ? AppColors.softWhite80
@@ -312,23 +295,6 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   _handleShippingMethodDropdown(CartShippingState state) {
-    // if (!state.hasLocationData) {
-    //   widget.showErrorToast(
-    //     context: context,
-    //     message: "Please set delivery location first",
-    //   );
-    //   _setLocationWidget();
-    //   return;
-    // }
-
-    // if (!state.hasCartData || state.cart!.items.isEmpty) {
-    //   widget.showErrorToast(
-    //     context: context,
-    //     message: "Please add items to cart first",
-    //   );
-    //   return;
-    // }
-
     final checkedItems =
         state.cart!.items.where((item) => item.isChecked).toList();
     if (checkedItems.isEmpty) {
@@ -337,18 +303,6 @@ class _CartScreenState extends State<CartScreen> {
         message: "Please select items from cart",
       );
     }
-
-    // if (!state.hasFreightQuoteData) {
-    //   widget.showErrorToast(
-    //     context: context,
-    //     message: "Getting shipping quotes...",
-    //   );
-    //   _callGetFreightQuoteApi(
-    //     cartItems: state.cart!.items,
-    //     location: state.location!,
-    //   );
-    //   return;
-    // }
 
     _shippingMethodBottomSheet(state);
   }
@@ -377,16 +331,7 @@ class _CartScreenState extends State<CartScreen> {
       return;
     }
 
-    // if (!state.hasFreightQuoteData) {
-    //   _callGetFreightQuoteApi(
-    //     cartItems: state.cart!.items,
-    //     location: state.location!,
-    //   );
-    //   return;
-    // }
-
     if (state.selectedShippingIndex == null) {
-      // _shippingMethodBottomSheet(state);
       _handleShippingMethodDropdown(state);
       return;
     }
@@ -399,7 +344,6 @@ class _CartScreenState extends State<CartScreen> {
       return;
     }
 
-    // Navigate to checkout
     _navigateToCheckout(state);
   }
 
@@ -417,7 +361,6 @@ class _CartScreenState extends State<CartScreen> {
           ),
         )
         .then((_) {
-          // Refresh data when returning from checkout
           _initData();
         });
   }
@@ -626,7 +569,14 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       Spacer(),
                       CustomFilledButtonWidget(
-                        title: 'Apply',
+                        title: Text(
+                          'Apply',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                         color: AppColors.worldGreen,
                         height: 50,
                         width: MediaQuery.of(context).size.width * 0.4,
@@ -709,6 +659,7 @@ class _CartScreenState extends State<CartScreen> {
                       longitude: double.tryParse(prediction.lng ?? "") ?? 0.0,
                     ),
                   );
+                  context.pop();
                 },
                 itemClick: (Prediction prediction) {
                   _addCtrl.text = prediction.description!;
@@ -743,7 +694,6 @@ class _CartScreenState extends State<CartScreen> {
   // API call methods
   void _callManualLocationApi(GetManualLocationParams params) async {
     await context.read<CartShippingCubit>().getManualLocation(params);
-    context.pop();
   }
 
   void _callGetFreightQuoteApi({
