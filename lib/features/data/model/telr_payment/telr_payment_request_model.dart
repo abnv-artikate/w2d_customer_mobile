@@ -77,7 +77,7 @@ class TelrPaymentRequestModel {
             builder.element(
               'test',
               nest: () {
-                builder.text('1');
+                builder.text('0');
               },
             );
             builder.element(

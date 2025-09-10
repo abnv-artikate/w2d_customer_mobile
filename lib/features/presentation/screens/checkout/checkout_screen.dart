@@ -68,6 +68,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   );
                 } else if(state.response.status == 'P'){
+                  widget.showErrorToast(
+                    context: context,
+                    message: "Payment Pending: Check Orders",
+                  );
                 }else {
                   widget.showErrorToast(
                     context: context,
