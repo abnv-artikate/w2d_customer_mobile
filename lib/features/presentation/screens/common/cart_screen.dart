@@ -16,6 +16,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freigh
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/auth/login_bottomsheet.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/checkout/checkout_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/cart_item_widget.dart';
@@ -337,14 +338,25 @@ class _CartScreenState extends State<CartScreen> {
     }
 
     if (!_callCheckUserLoginApi()) {
-      widget.showErrorToast(
-        context: context,
-        message: "You are not logged in!",
-      );
+      _showLoginBottomSheet();
       return;
     }
 
     _navigateToCheckout(state);
+  }
+
+  _showLoginBottomSheet() async {
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.white,
+      enableDrag: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      scrollControlDisabledMaxHeightRatio: 0.9,
+      builder: (BuildContext context) {
+        return LoginBottomSheet();
+      },
+    );
   }
 
   void _navigateToCheckout(CartShippingState state) {

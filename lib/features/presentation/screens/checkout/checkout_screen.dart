@@ -67,7 +67,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       cartId: widget.checkOutScreenEntity.cartSessionKey,
                     ),
                   );
-                } else {
+                } else if(state.response.status == 'P'){
+                }else {
                   widget.showErrorToast(
                     context: context,
                     message: state.response.message,
@@ -382,10 +383,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   void _callOrderSuccessApi(OrderSuccessParams params) {
     context.read<OrdersCubit>().orderSuccess(params);
-  }
-
-  void _callResetShipping() {
-    context.read<CartShippingCubit>().resetShipping();
   }
 }
 

@@ -287,6 +287,7 @@ class _ProductScreenState extends State<ProductScreen> {
               ],
             ),
           ),
+          const SizedBox(height: 12),
           Row(
             children: [
               Icon(LucideIcons.info, size: 20, color: AppColors.worldGreen),
@@ -299,7 +300,7 @@ class _ProductScreenState extends State<ProductScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            widget.product.shortDescription.isNotEmpty
+            widget.product.longDescription.isNotEmpty
                 ? widget.product.longDescription
                 : 'Premium quality product with excellent features and craftsmanship.',
             style: TextStyle(
@@ -322,9 +323,7 @@ class _ProductScreenState extends State<ProductScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.worldGreen80, AppColors.worldGreen],
-              ),
+              color: AppColors.worldGreen80,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -395,11 +394,7 @@ class _ProductScreenState extends State<ProductScreen> {
     return Container(
       height: 56,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.worldGreen, AppColors.worldGreen80],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: AppColors.worldGreen,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Material(

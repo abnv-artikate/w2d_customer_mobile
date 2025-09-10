@@ -18,8 +18,6 @@ class CalculateInsuranceModel {
   factory CalculateInsuranceModel.fromRawJson(String str) =>
       CalculateInsuranceModel.fromJson(json.decode(str));
 
-  String toRawJson() => json.encode(toJson());
-
   factory CalculateInsuranceModel.fromJson(Map<String, dynamic> json) =>
       CalculateInsuranceModel(
         code: json["code"],
@@ -31,14 +29,6 @@ class CalculateInsuranceModel {
                 ? null
                 : CalculateInsuranceModelData.fromJson(json["data"]),
       );
-
-  Map<String, dynamic> toJson() => {
-    "code": code,
-    "status": status,
-    "info": info,
-    "message": message,
-    "data": data?.toJson(),
-  };
 }
 
 class CalculateInsuranceModelData {
@@ -59,22 +49,13 @@ class CalculateInsuranceModelData {
   factory CalculateInsuranceModelData.fromRawJson(String str) =>
       CalculateInsuranceModelData.fromJson(json.decode(str));
 
-  String toRawJson() => json.encode(toJson());
-
   factory CalculateInsuranceModelData.fromJson(Map<String, dynamic> json) =>
       CalculateInsuranceModelData(
-        goodsValue: json["goods_value"],
-        freightAmount: json["freight_amount"],
-        insuranceAmt: json["insurance_amt"],
-        totalDutyTax: json["total_duty_tax"],
-        netTotal: json["net_total"],
+        goodsValue: double.tryParse(json["goods_value"].toString()) ?? 0.0,
+        freightAmount:
+            double.tryParse(json["freight_amount"].toString()) ?? 0.0,
+        insuranceAmt: double.tryParse(json["insurance_amt"].toString()) ?? 0.0,
+        totalDutyTax: double.tryParse(json["total_duty_tax"].toString()) ?? 0.0,
+        netTotal: double.tryParse(json["net_total"].toString()) ?? 0.0,
       );
-
-  Map<String, dynamic> toJson() => {
-    "goods_value": goodsValue,
-    "freight_amount": freightAmount,
-    "insurance_amt": insuranceAmt,
-    "total_duty_tax": totalDutyTax,
-    "net_total": netTotal,
-  };
 }
