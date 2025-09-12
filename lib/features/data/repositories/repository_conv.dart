@@ -41,20 +41,23 @@ class RepositoryConv {
     return model.data
             ?.map(
               (e) => SubCategoriesEntity(
-                name: e.name ?? "NotAvailable",
+                name: e.name ?? "",
                 handle: e.handle ?? "",
+                image: e.image ?? "",
                 subcategories:
                     e.subcategories
                         ?.map(
                           (e) => SubCategoriesEntity(
-                            name: e.name ?? "NotAvailable",
+                            name: e.name ?? "",
                             handle: e.handle ?? "",
+                            image: e.image ?? "",
                             subcategories:
                                 e.subcategories
                                     ?.map(
                                       (e) => SubCategoriesEntity(
-                                        name: e.name ?? "NotAvailable",
+                                        name: e.name ?? "",
                                         handle: e.handle ?? "",
+                                        image: e.image ?? "",
                                         subcategories: [],
                                       ),
                                     )
@@ -90,6 +93,7 @@ class RepositoryConv {
                   category: SubCategoriesEntity(
                     name: e.category?.name ?? "",
                     handle: "",
+                    image: "",
                     subcategories: [],
                   ),
                   brand: BrandEntity(
@@ -213,6 +217,7 @@ class RepositoryConv {
       category: SubCategoriesEntity(
         name: model.data?.category?.name ?? "",
         handle: "",
+        image: "",
         subcategories: [],
       ),
       brand: model.data?.brand,
