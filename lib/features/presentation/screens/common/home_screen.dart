@@ -2,9 +2,13 @@ import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/category_bubble_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/home_screen_brand_toggle.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
@@ -30,10 +34,12 @@ class _HomeScreenState extends State<HomeScreen> {
   String? address;
   List<CollectionsResultDataEntity> brandMallCollections = [];
   List<CollectionsResultDataEntity> hiddenGemsCollections = [];
+  List<SubCategoriesEntity> categoryList = [];
 
   @override
   void initState() {
     _callGetCollectionsApi();
+    _callCategoriesListingAPi();
     super.initState();
   }
 
@@ -87,6 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildBannerSection(),
+            _buildBrandMallToggle(isBrand),
+            _buildCategoriesSection(),
             _buildBestSellers(isBrand),
             SizedBox(height: 150),
           ],
@@ -152,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
                       item,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       width: double.infinity,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
@@ -175,6 +183,74 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildBrandMallToggle(bool isBrand) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          HomeScreenBrandToggle(
+            isBrand: !isBrand,
+            image:
+                isBrand
+                    ? Assets.iconsHiddenGemsActive
+                    : Assets.iconsHiddenGemsInactive,
+            text: "Hidden Gems",
+            gradient: AppColors.worldGreenGradiant,
+            borderColor: AppColors.worldGreen80,
+          ),
+          HomeScreenBrandToggle(
+            isBrand: isBrand,
+            image:
+                isBrand
+                    ? Assets.iconsBrandMallInactive
+                    : Assets.iconsBrandMallActive,
+            text: "Brand Mall",
+            gradient: AppColors.aspirationGold,
+            borderColor: AppColors.doorOchre,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoriesSection() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final horizontalPadding = screenWidth < 400 ? 8.0 : 16.0;
+
+    return BlocConsumer<CommonCubit, CommonState>(
+      listener: (context, state) {
+        if (state is CommonCategoriesLoaded) {
+          categoryList = state.categoriesList;
+        } else if (state is CommonError) {
+          widget.showErrorToast(context: context, message: state.error);
+        }
+      },
+      builder: (context, state) {
+        return Container(
+          margin: EdgeInsets.symmetric(vertical: 20),
+          height: 300,
+          alignment: Alignment.center,
+          child: GridView(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisExtent: 100,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 16,
+            ),
+            children:
+                categoryList
+                    .map((e) => CategoryBubble(category: e))
+                    .toList(),
+          ),
+        );
+      },
     );
   }
 
@@ -270,6 +346,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _callGetCollectionsApi() async {
     await context.read<CommonCubit>().getCollections();
+  }
+
+  void _callCategoriesListingAPi() {
+    context.read<CommonCubit>().getCategoriesList();
   }
 
   void _callProductViewApi(String productId) {
