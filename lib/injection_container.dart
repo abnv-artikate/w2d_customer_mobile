@@ -23,7 +23,7 @@ import 'package:w2d_customer_mobile/features/domain/usecases/cart/get_cart_useca
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/categories_hierarchy_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/get_collections_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/categories/get_collections_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_current_location_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/location/get_manual_location_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/orders/cancel_order_usecase.dart';
@@ -35,6 +35,8 @@ import 'package:w2d_customer_mobile/features/domain/usecases/orders/update_order
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/initiate_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/payment/verify_payment_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/realted_products/get_related_products_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/recommendations/get_recommendations_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/search/search_autocomplete_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
@@ -74,6 +76,8 @@ Future<void> init() async {
       addWishListUseCase: sl<AddWishListUseCase>(),
       getWishListUseCase: sl<GetWishListUseCase>(),
       deleteWishListUseCase: sl<DeleteWishListUseCase>(),
+      getRecommendationsUseCase: sl<GetRecommendationsUseCase>(),
+      getRelatedProductsUseCase: sl<GetRelatedProductsUseCase>(),
       localDatasource: sl<LocalDatasource>(),
     ),
   );
@@ -199,6 +203,12 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<DeleteWishListUseCase>(
     () => DeleteWishListUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<GetRecommendationsUseCase>(
+    () => GetRecommendationsUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<GetRelatedProductsUseCase>(
+    () => GetRelatedProductsUseCase(sl<Repository>()),
   );
 
   /// Repositories

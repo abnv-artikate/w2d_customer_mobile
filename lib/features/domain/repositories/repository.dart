@@ -9,6 +9,8 @@ import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.
 import 'package:w2d_customer_mobile/features/domain/entities/orders/order_pending_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/orders/orders_list_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/recommendations/recommendations_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/related_products/related_products_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/search/search_result_autocomplete_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
@@ -133,4 +135,14 @@ abstract class Repository {
   Future<Either<Failure, WishListEntity>> getWishlist();
 
   Future<Either<Failure, String>> deleteWishList(String params);
+
+  /// Recommendations Repository
+  Future<Either<Failure, RecommendationsEntity>> getRecommendations(
+    String productId,
+  );
+
+  /// Related Products Entity
+  Future<Either<Failure, RelatedProductsEntity>> getRelatedProducts(
+    String productId,
+  );
 }

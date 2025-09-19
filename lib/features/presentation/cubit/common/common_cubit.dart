@@ -11,7 +11,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/categories_hierarchy_usecase.dart';
-import 'package:w2d_customer_mobile/features/domain/usecases/get_collections_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/categories/get_collections_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/search/search_autocomplete_usecase.dart';
 
 part 'common_state.dart';

@@ -15,6 +15,8 @@ import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/orders/order_pending_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/orders/orders_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/recommendations/recommendations_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/related_products/related_products_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/search/search_result_autocomplete_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/success_message_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/wishlist/get_wishlist_model.dart';
@@ -212,4 +214,12 @@ abstract class W2DClient {
 
   @DELETE('${EndPoints.wishlist}/{id}/')
   Future<SuccessMessageModel> deleteWishlist(@Path() String id);
+
+  /// Recommendations Client
+  @GET('${EndPoints.recommendations}/{productId}')
+  Future<RecommendationsModel> getRecommendations(@Path() String productId);
+
+  /// Related Products Client
+  @GET('${EndPoints.related}/{productId}')
+  Future<RelatedProductsModel> getRelatedProducts(@Path() String productId);
 }

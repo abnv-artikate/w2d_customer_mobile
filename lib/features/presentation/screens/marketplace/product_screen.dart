@@ -5,10 +5,13 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/recommendations/recommendations_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/related_products/related_products_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/add_wishlist_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/product_item_widget.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({super.key, required this.product});
@@ -47,14 +50,44 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
+  CarouselOptions get _recommendationsAndRelatedProductsCarouselOption {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // Dynamic height calculation based on screen size
+    double carouselHeight;
+    if (screenWidth < 400) {
+      carouselHeight =
+          screenHeight * 0.25; // 32% of screen height for small devices
+    } else if (screenWidth < 600) {
+      carouselHeight = screenHeight * 0.28; // 35% for medium devices
+    } else {
+      carouselHeight = screenHeight * 0.32; // 38% for larger devices
+    }
+
+    return CarouselOptions(
+      disableCenter: true,
+      padEnds: false,
+      height: carouselHeight,
+      viewportFraction: screenWidth < 400 ? 0.55 : 0.5,
+      enableInfiniteScroll: false,
+    );
+  }
+
+  List<RecommendationsDataEntity> recommendations = [];
+  List<RelatedProductsDataEntity> relatedProducts = [];
+
   @override
   void initState() {
+    initialize();
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  void initialize() {
+    final cubit = context.read<CategoryCubit>();
+
+    cubit.getRecommendation(widget.product.id);
+    cubit.getRelatedProducts(widget.product.id);
   }
 
   @override
@@ -66,16 +99,30 @@ class _ProductScreenState extends State<ProductScreen> {
         } else if (state is CategoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
+
+        if (state is RecommendationsLoaded) {
+          recommendations = state.recommendationsEntity.data;
+        } else if (state is RelatedProductsLoaded) {
+          relatedProducts = state.relatedProductsEntity.data;
+        } else if (state is RecommendationsError) {
+          widget.showErrorToast(context: context, message: state.error);
+        } else if (state is RelatedProductsError) {
+          widget.showErrorToast(context: context, message: state.error);
+        }
       },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(actions: [_buildCartButton()]),
-          body: ListView(
-            children: [
-              _buildProductImage(),
-              _buildProductInfo(),
-              const SizedBox(height: 20),
-            ],
+          body: SafeArea(
+            bottom: true,
+            child: ListView(
+              children: [
+                _buildProductImage(),
+                _buildProductInfo(),
+                recommendations.isNotEmpty ? _buildRecommendations() : Container(),
+                relatedProducts.isNotEmpty ? _buildRelatedProducts() : Container(),
+              ],
+            ),
           ),
           bottomNavigationBar: _buildBottomActionBar(),
         );
@@ -308,6 +355,78 @@ class _ProductScreenState extends State<ProductScreen> {
               color: Colors.grey[700],
               height: 1.5,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _buildRecommendations() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      decoration: BoxDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Recommended Products",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+          ),
+          CarouselSlider(
+            options: _recommendationsAndRelatedProductsCarouselOption,
+            items:
+                recommendations
+                    .map(
+                      (e) => Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ProductItemWidget(
+                          width: MediaQuery.of(context).size.width,
+                          imgUrl: e.mainImage,
+                          itemName: e.name,
+                          regularPrice: e.regularPrice,
+                          salePrice: e.salePrice,
+                          onViewTap: () {},
+                          onWishlistTap: () {},
+                        ),
+                      ),
+                    )
+                    .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _buildRelatedProducts() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      decoration: BoxDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Related Products",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+          ),
+          CarouselSlider(
+            options: _recommendationsAndRelatedProductsCarouselOption,
+            items:
+                relatedProducts
+                    .map(
+                      (e) => Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ProductItemWidget(
+                          width: MediaQuery.of(context).size.width,
+                          imgUrl: e.mainImage,
+                          itemName: e.name,
+                          regularPrice: e.regularPrice,
+                          salePrice: e.salePrice,
+                          onViewTap: () {},
+                          onWishlistTap: () {},
+                        ),
+                      ),
+                    )
+                    .toList(),
           ),
         ],
       ),

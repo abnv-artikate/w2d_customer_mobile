@@ -12,6 +12,8 @@ import 'package:w2d_customer_mobile/features/data/model/collections_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/orders/order_pending_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/orders/orders_list_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/product/product_view_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/recommendations/recommendations_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/related_products/related_products_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/search/search_result_autocomplete_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/calculate_insurance_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/shipping/confirm_insurance_model.dart';
@@ -102,6 +104,12 @@ abstract class RemoteDatasource {
   Future<GetWishListModel> getWishlist();
 
   Future<SuccessMessageModel> deleteWishlist(String id);
+
+  /// Recommendation Model
+  Future<RecommendationsModel> getRecommendations(String productId);
+
+  /// Related Product Model
+  Future<RelatedProductsModel> getRelatedProducts(String productId);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
@@ -443,6 +451,28 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   Future<SuccessMessageModel> deleteWishlist(String id) async {
     try {
       return await w2dClient.deleteWishlist(id);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<RecommendationsModel> getRecommendations(String productId) async {
+    try {
+      return await w2dClient.getRecommendations(productId);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<RelatedProductsModel> getRelatedProducts(String productId) async {
+    try {
+      return await w2dClient.getRelatedProducts(productId);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

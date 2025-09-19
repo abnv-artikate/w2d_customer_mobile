@@ -116,19 +116,17 @@ class _CartScreenState extends State<CartScreen> {
           builder: (context, state) {
             return Column(
               children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        _buildCartItemsSection(state),
-                        SizedBox(height: 10),
-                        _buildShippingBreakdownSection(state),
-                      ],
-                    ),
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildCartItemsSection(state),
+                      SizedBox(height: 10),
+                      _buildShippingBreakdownSection(state),
+                    ],
                   ),
                 ),
                 _buildBottomSection(state),
-                SizedBox(height: 100),
+                SizedBox(height: 200),
               ],
             );
           },

@@ -85,3 +85,31 @@ final class DeleteWishListError extends CategoryState {
 
   DeleteWishListError({required this.error});
 }
+
+final class RecommendationsLoading extends CategoryState {}
+
+final class RecommendationsLoaded extends CategoryState {
+  final RecommendationsEntity recommendationsEntity;
+
+  RecommendationsLoaded({required this.recommendationsEntity});
+}
+
+final class RecommendationsError extends CategoryState {
+  final String error;
+
+  RecommendationsError({required this.error});
+}
+
+final class RelatedProductsLoading extends CategoryState {}
+
+final class RelatedProductsLoaded extends CategoryState {
+  final RelatedProductsEntity relatedProductsEntity;
+
+  RelatedProductsLoaded({required this.relatedProductsEntity});
+}
+
+final class RelatedProductsError extends CategoryState {
+  final String error;
+
+  RelatedProductsError({required this.error});
+}

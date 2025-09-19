@@ -16,6 +16,8 @@ import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.
 import 'package:w2d_customer_mobile/features/domain/entities/orders/order_pending_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/orders/orders_list_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/recommendations/recommendations_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/related_products/related_products_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/search/search_result_autocomplete_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
@@ -594,6 +596,40 @@ class RepositoryImpl extends Repository {
     try {
       if (await networkInfo.isConnected) {
         final result = await remoteDatasource.getWishlist();
+
+        return Right(result.toEntity());
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, RecommendationsEntity>> getRecommendations(
+    String productId,
+  ) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.getRecommendations(productId);
+
+        return Right(result.toEntity());
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, RelatedProductsEntity>> getRelatedProducts(
+    String productId,
+  ) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.getRelatedProducts(productId);
 
         return Right(result.toEntity());
       } else {

@@ -6,11 +6,15 @@ import 'package:w2d_customer_mobile/core/usecase/usecase.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/recommendations/recommendations_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/related_products/related_products_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/wishlist/wishlist_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/get_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/realted_products/get_related_products_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/recommendations/get_recommendations_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/add_wishlist_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/delete_wishlist_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/get_wishlist_usecase.dart';
@@ -26,6 +30,8 @@ class CategoryCubit extends Cubit<CategoryState> {
     required this.addWishListUseCase,
     required this.getWishListUseCase,
     required this.deleteWishListUseCase,
+    required this.getRecommendationsUseCase,
+    required this.getRelatedProductsUseCase,
     required this.localDatasource,
   }) : super(CategoryInitial());
 
@@ -36,6 +42,8 @@ class CategoryCubit extends Cubit<CategoryState> {
   final AddWishListUseCase addWishListUseCase;
   final GetWishListUseCase getWishListUseCase;
   final DeleteWishListUseCase deleteWishListUseCase;
+  final GetRecommendationsUseCase getRecommendationsUseCase;
+  final GetRelatedProductsUseCase getRelatedProductsUseCase;
   final LocalDatasource localDatasource;
 
   bool get isBrand => localDatasource.getBrandMall() ?? false;
@@ -127,6 +135,40 @@ class CategoryCubit extends Cubit<CategoryState> {
       },
       (r) {
         emit(DeleteWishListLoaded(message: r));
+      },
+    );
+  }
+
+  getRecommendation(String productId) async {
+    emit(RecommendationsLoading());
+
+    final result = await getRecommendationsUseCase.call(
+      GetRecommendationsParams(productId: productId),
+    );
+
+    result.fold(
+      (failure) {
+        emit(RecommendationsError(error: failure.message));
+      },
+      (entity) {
+        emit(RecommendationsLoaded(recommendationsEntity: entity));
+      },
+    );
+  }
+
+  getRelatedProducts(String productId) async {
+    emit(RelatedProductsLoading());
+
+    final result = await getRelatedProductsUseCase.call(
+      GetRelatedProductsParams(productId: productId),
+    );
+
+    result.fold(
+      (failure) {
+        emit(RelatedProductsError(error: failure.message));
+      },
+      (entity) {
+        emit(RelatedProductsLoaded(relatedProductsEntity: entity));
       },
     );
   }

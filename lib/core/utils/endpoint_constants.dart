@@ -25,7 +25,7 @@ class EndPoints {
   static const String cart = '/cart/';
   static const String cartUpdate = '/cart/update/';
 
-  /// Search Endpoints
+  /// Search Endpoint
   static const String searchAutoComplete = '/products/search/autocomplete/';
 
   /// Shipping Endpoints
@@ -48,9 +48,15 @@ class EndPoints {
   static const String orderPending = '/order/pending-mobile/';
   static const String orderSuccess = '/order/success/';
 
-  /// Orders Endpoints
+  /// Orders Endpoint
   static const String orders = '/orders/';
 
-  /// Wishlist Endpoints
+  /// Wishlist Endpoint
   static const String wishlist = '/wishlist/';
+
+  /// Recommendation Endpoint
+  static const String recommendations = '/recommendations/';
+
+  /// Related Endpoint
+  static const String related = '/related/';
 }
