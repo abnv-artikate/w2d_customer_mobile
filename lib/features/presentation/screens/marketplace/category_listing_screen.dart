@@ -151,9 +151,9 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
     final crossAxisSpacing = 8.0;
 
     // Calculate dynamic item width
-    final availableWidth =
-        screenWidth - (horizontalPadding * 2) - crossAxisSpacing;
-    final itemWidth = availableWidth / 2;
+    // final availableWidth =
+    //     screenWidth - (horizontalPadding * 2) - crossAxisSpacing;
+    // final itemWidth = availableWidth / 2;
 
     // Calculate aspect ratio based on screen size
     double aspectRatio;
@@ -178,7 +178,6 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
         shrinkWrap: true,
         itemBuilder: (context, index) {
           return ProductItemWidget(
-            width: itemWidth,
             isGridView: true,
             // Specify this is grid context
             imgUrl:

@@ -43,13 +43,11 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  // Dynamic carousel options based on screen size
   CarouselOptions get _bannerCarouselOptions {
     final screenWidth = MediaQuery.of(context).size.width;
     return CarouselOptions(
       disableCenter: true,
       height: screenWidth < 400 ? 160 : 200,
-      // Responsive height
       viewportFraction: 1,
       initialPage: 0,
       autoPlay: true,
@@ -59,26 +57,24 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   CarouselOptions get _categoriesCarouselOption {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    // Dynamic height calculation based on screen size
-    double carouselHeight;
-    if (screenWidth < 400) {
-      carouselHeight =
-          screenHeight * 0.25; // 32% of screen height for small devices
-    } else if (screenWidth < 600) {
-      carouselHeight = screenHeight * 0.28; // 35% for medium devices
-    } else {
-      carouselHeight = screenHeight * 0.32; // 38% for larger devices
-    }
+    // final screenWidth = MediaQuery.of(context).size.width;
+    // final screenHeight = MediaQuery.of(context).size.height;
+    //
+    // double carouselHeight;
+    // if (screenWidth < 400) {
+    //   carouselHeight =
+    //       screenHeight * 0.25; // 32% of screen height for small devices
+    // } else if (screenWidth < 600) {
+    //   carouselHeight = screenHeight * 0.28; // 35% for medium devices
+    // } else {
+    //   carouselHeight = screenHeight * 0.32; // 38% for larger devices
+    // }
 
     return CarouselOptions(
       disableCenter: true,
       padEnds: false,
-      height: carouselHeight,
-      viewportFraction: screenWidth < 400 ? 0.55 : 0.5,
-      // More items visible on small screens
+      height: 300,
+      viewportFraction: 0.45,
       enableInfiniteScroll: false,
     );
   }
@@ -94,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             _buildBannerSection(),
             _buildBrandMallToggle(isBrand),
+            _buildBannerSection(),
             _buildCategoriesSection(),
             _buildBestSellers(isBrand),
             SizedBox(height: 150),
@@ -109,7 +106,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return AppBar(
       toolbarHeight: 80,
-      // Responsive app bar height
       iconTheme: IconThemeData(color: AppColors.deepBlue),
       leadingWidth: isSmallScreen ? 60 : 80,
       leading: Container(
@@ -132,17 +128,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
-      // bottom: PreferredSize(
-      //   preferredSize: Size.zero,
-      //   child: Padding(
-      //     padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 8 : 16),
-      //     child: SearchWidget(
-      //       onTap: () {
-      //         context.push(AppRoutes.searchRoute);
-      //       },
-      //     ),
-      //   ),
-      // ),
     );
   }
 
@@ -192,25 +177,29 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          HomeScreenBrandToggle(
-            isBrand: !isBrand,
-            image:
-                isBrand
-                    ? Assets.iconsHiddenGemsActive
-                    : Assets.iconsHiddenGemsInactive,
-            text: "Hidden Gems",
-            gradient: AppColors.worldGreenGradiant,
-            borderColor: AppColors.worldGreen80,
+          Flexible(
+            child: HomeScreenBrandToggle(
+              isBrand: !isBrand,
+              image:
+                  isBrand
+                      ? Assets.iconsHiddenGemsActive
+                      : Assets.iconsHiddenGemsInactive,
+              text: "Hidden Gems",
+              gradient: AppColors.worldGreenGradiant,
+              borderColor: AppColors.worldGreen80,
+            ),
           ),
-          HomeScreenBrandToggle(
-            isBrand: isBrand,
-            image:
-                isBrand
-                    ? Assets.iconsBrandMallInactive
-                    : Assets.iconsBrandMallActive,
-            text: "Brand Mall",
-            gradient: AppColors.aspirationGold,
-            borderColor: AppColors.doorOchre,
+          Flexible(
+            child: HomeScreenBrandToggle(
+              isBrand: isBrand,
+              image:
+                  isBrand
+                      ? Assets.iconsBrandMallInactive
+                      : Assets.iconsBrandMallActive,
+              text: "Brand Mall",
+              gradient: AppColors.aspirationGold,
+              borderColor: AppColors.doorOchre,
+            ),
           ),
         ],
       ),
@@ -218,9 +207,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCategoriesSection() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final horizontalPadding = screenWidth < 400 ? 8.0 : 16.0;
-
     return BlocConsumer<CommonCubit, CommonState>(
       listener: (context, state) {
         if (state is CommonCategoriesLoaded) {
@@ -245,9 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 16,
             ),
             children:
-                categoryList
-                    .map((e) => CategoryBubble(category: e))
-                    .toList(),
+                categoryList.map((e) => CategoryBubble(category: e)).toList(),
           ),
         );
       },
@@ -299,10 +283,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final horizontalPadding = screenWidth < 400 ? 8.0 : 16.0;
 
-    // Calculate dynamic item width for carousel
-    final carouselItemWidth =
-        (screenWidth * (screenWidth < 400 ? 0.55 : 0.5)) -
-        (horizontalPadding * 2);
+    // final carouselItemWidth =
+    //     (screenWidth * (screenWidth < 400 ? 0.55 : 0.5)) -
+    //     (horizontalPadding * 2);
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -324,9 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return Container(
                 margin: EdgeInsets.symmetric(horizontal: 4),
                 child: ProductItemWidget(
-                  width: carouselItemWidth,
                   isGridView: false,
-                  // This is carousel context
                   imgUrl: collection.products[idx].mainImage,
                   itemName: collection.products[idx].name,
                   salePrice: collection.products[idx].salePrice,
@@ -344,8 +325,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _callGetCollectionsApi() async {
-    await context.read<CommonCubit>().getCollections();
+  void _callGetCollectionsApi() {
+    context.read<CommonCubit>().getCollections();
   }
 
   void _callCategoriesListingAPi() {

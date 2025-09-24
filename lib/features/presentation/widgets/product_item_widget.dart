@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
@@ -6,7 +7,7 @@ import 'package:w2d_customer_mobile/generated/assets.dart';
 class ProductItemWidget extends StatelessWidget {
   const ProductItemWidget({
     super.key,
-    required this.width,
+    // required this.width,
     required this.imgUrl,
     required this.itemName,
     required this.regularPrice,
@@ -14,10 +15,10 @@ class ProductItemWidget extends StatelessWidget {
     required this.onViewTap,
     required this.onWishlistTap,
     this.isGridView = false,
-    this.aspectRatio = 1.05,
+    this.aspectRatio = 1.15,
   });
 
-  final double width;
+  // final double width;
   final String imgUrl;
   final String itemName;
   final String regularPrice;
@@ -32,7 +33,7 @@ class ProductItemWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onViewTap,
       child: Container(
-        width: width,
+        // width: width,
         margin: EdgeInsets.symmetric(vertical: 2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
@@ -71,19 +72,22 @@ class ProductItemWidget extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(4),
-                    topRight: Radius.circular(4),
-                  ),
-                  child: Image.network(
-                    imgUrl,
-                    fit: BoxFit.contain,
-                    width: double.infinity,
-                    height: double.infinity,
-                    errorBuilder: (context, error, stackTrace) {
-                      return _buildErrorWidget();
-                    },
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(4),
+                      topRight: Radius.circular(4),
+                    ),
+                    child: Image.network(
+                      imgUrl,
+                      fit: BoxFit.contain,
+                      width: double.infinity,
+                      height: double.infinity,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _buildErrorWidget();
+                      },
+                    ),
                   ),
                 ),
                 _buildRatingBadge(),
@@ -112,9 +116,6 @@ class ProductItemWidget extends StatelessWidget {
 
   // Layout for carousel with fixed dimensions
   Widget _buildCarouselLayout(BuildContext context) {
-    final imageHeight =
-        width * aspectRatio; // Dynamic image height based on width
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -123,8 +124,8 @@ class ProductItemWidget extends StatelessWidget {
         Expanded(
           flex: 3,
           child: Container(
-            height: imageHeight,
-            width: double.infinity,
+            // height: double.infinity,
+            // width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(4),
@@ -133,19 +134,26 @@ class ProductItemWidget extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(4),
-                    topRight: Radius.circular(4),
-                  ),
-                  child: Image.network(
-                    imgUrl,
-                    fit: BoxFit.contain,
-                    width: double.infinity,
-                    height: double.infinity,
-                    errorBuilder: (context, error, stackTrace) {
-                      return _buildErrorWidget();
-                    },
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(4),
+                      topRight: Radius.circular(4),
+                    ),
+                    child: SizedBox(
+                      width: 250,
+                      height: 250,
+                      child: Image.network(
+                        imgUrl,
+                        fit: BoxFit.contain,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return _buildErrorWidget();
+                        },
+                      ),
+                    ),
                   ),
                 ),
                 _buildRatingBadge(),
@@ -157,19 +165,16 @@ class ProductItemWidget extends StatelessWidget {
           ),
         ),
         // Content section - Flexible for carousel
-        Expanded(
-          flex: 2,
-          child: Padding(
-            padding: EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildProductInfo(),
-                SizedBox(height: 4),
-                _buildPriceSection(fontSize: 14),
-              ],
-            ),
+        Padding(
+          padding: EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildProductInfo(),
+              SizedBox(height: 4),
+              _buildPriceSection(fontSize: 12),
+            ],
           ),
         ),
       ],
@@ -195,38 +200,8 @@ class ProductItemWidget extends StatelessWidget {
   }
 
   Widget _buildErrorWidget() {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8),
-          topRight: Radius.circular(8),
-        ),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.image_not_supported,
-              size: isGridView ? 24 : 30,
-              color: AppColors.black70,
-            ),
-            SizedBox(height: 4),
-            Text(
-              'Image unavailable',
-              style: TextStyle(
-                fontSize: isGridView ? 8 : 10,
-                color: AppColors.black70,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
+    return Center(
+      child: Icon(LucideIcons.imageOff, size: 24, color: AppColors.black70),
     );
   }
 
@@ -269,7 +244,7 @@ class ProductItemWidget extends StatelessWidget {
   Widget _buildDiscountBadge() {
     return Positioned(
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 1, horizontal: 4),
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 9),
         decoration: BoxDecoration(
           color: AppColors.worldGreen10,
           borderRadius: BorderRadius.circular(3),
@@ -277,7 +252,7 @@ class ProductItemWidget extends StatelessWidget {
         child: Text(
           '${_calculateDiscount()}% off',
           style: TextStyle(
-            fontSize: isGridView ? 8 : 9,
+            fontSize: isGridView ? 10 : 11,
             fontWeight: FontWeight.w600,
             color: AppColors.worldGreen,
           ),
@@ -290,21 +265,19 @@ class ProductItemWidget extends StatelessWidget {
     return Row(
       children: [
         if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
-          Flexible(
-            child: CurrencyWidget(
-              price: salePrice,
-              fontSize: fontSize,
-              strikeThrough: false,
-              fontColor: AppColors.worldGreen,
-              svgHeight: fontSize * 0.8,
-              svgWidth: fontSize * 0.4,
-            ),
+          CurrencyWidget(
+            price: salePrice,
+            fontSize: fontSize,
+            strikeThrough: false,
+            fontColor: AppColors.worldGreen,
+            svgHeight: fontSize * 0.8,
+            svgWidth: fontSize * 0.4,
           ),
           SizedBox(width: 4),
           Flexible(
             child: CurrencyWidget(
               price: regularPrice,
-              fontSize: fontSize - 1,
+              fontSize: fontSize - 2,
               strikeThrough: true,
               fontColor: AppColors.black70,
               strikeThroughColor: AppColors.black,

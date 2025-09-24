@@ -32,9 +32,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
     final crossAxisSpacing = 8.0;
 
     // Calculate dynamic item width
-    final availableWidth =
-        screenWidth - (horizontalPadding * 2) - crossAxisSpacing;
-    final itemWidth = availableWidth / 2;
+    // final availableWidth =
+    //     screenWidth - (horizontalPadding * 2) - crossAxisSpacing;
+    // final itemWidth = availableWidth / 2;
 
     // Calculate aspect ratio based on screen size
     double aspectRatio;
@@ -87,7 +87,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         return ProductItemWidget(
-                          width: itemWidth,
+                          // width: itemWidth,
                           isGridView: true,
                           imgUrl: items[index].product.mainImage,
                           itemName: items[index].product.name,

@@ -42,7 +42,7 @@ class _ProductScreenState extends State<ProductScreen> {
     }
 
     return CarouselOptions(
-      disableCenter: true,
+      disableCenter: false,
       padEnds: false,
       height: carouselHeight,
       viewportFraction: 1,
@@ -119,8 +119,12 @@ class _ProductScreenState extends State<ProductScreen> {
               children: [
                 _buildProductImage(),
                 _buildProductInfo(),
-                recommendations.isNotEmpty ? _buildRecommendations() : Container(),
-                relatedProducts.isNotEmpty ? _buildRelatedProducts() : Container(),
+                recommendations.isNotEmpty
+                    ? _buildRecommendations()
+                    : Container(),
+                relatedProducts.isNotEmpty
+                    ? _buildRelatedProducts()
+                    : Container(),
               ],
             ),
           ),
@@ -131,14 +135,14 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   Widget _buildProductImage() {
-    return widget.product.gallery.isNotEmpty
-        ? Container(
-          decoration: BoxDecoration(),
-          child: CarouselSlider(
-            options: _imageCarouselOption,
-            items:
-                widget.product.gallery.map((item) {
-                  return Container(
+    return Container(
+      decoration: BoxDecoration(),
+      child: CarouselSlider(
+        options: _imageCarouselOption,
+        items:
+            widget.product.productImages.map((item) {
+              return item.isNotEmpty
+                  ? Container(
                     margin: EdgeInsets.symmetric(horizontal: 5),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
@@ -147,55 +151,15 @@ class _ProductScreenState extends State<ProductScreen> {
                         fit: BoxFit.contain,
                         width: double.infinity,
                         errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Image not available',
-                                style: TextStyle(color: AppColors.black70),
-                              ),
-                            ),
-                          );
+                          return Center(child: Icon(LucideIcons.imageOff));
                         },
                       ),
                     ),
-                  );
-                }).toList(),
-          ),
-        )
-        : Container(
-          decoration: const BoxDecoration(),
-          child: Image.network(
-            widget.product.mainImage,
-            fit: BoxFit.contain,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Center(
-                child: CircularProgressIndicator(
-                  value:
-                      loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null,
-                  color: AppColors.worldGreen,
-                ),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                color: Colors.grey[200],
-                child: const Icon(
-                  LucideIcons.image,
-                  size: 64,
-                  color: Colors.grey,
-                ),
-              );
-            },
-          ),
-        );
+                  )
+                  : Center(child: Icon(LucideIcons.imageOff));
+            }).toList(),
+      ),
+    );
   }
 
   Widget _buildWishlistButton() {
@@ -272,7 +236,7 @@ class _ProductScreenState extends State<ProductScreen> {
           Text(
             widget.product.shortDescription,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: FontWeight.w400,
               color: Colors.grey[600],
               height: 1.4,
@@ -335,6 +299,63 @@ class _ProductScreenState extends State<ProductScreen> {
             ),
           ),
           const SizedBox(height: 12),
+
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+            decoration: BoxDecoration(
+              color: AppColors.softWhite71,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.black70,
+                  blurRadius: 5,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+
+            child: Row(
+              children: [
+                Text(
+                  'Seller: ',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  widget.product.seller.businessName,
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+                  selectionColor: AppColors.worldGreen80,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+            decoration: BoxDecoration(
+              color: AppColors.softWhite71,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.black70,
+                  blurRadius: 5,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+
+            child: Row(
+              children: [
+                Text(
+                  'Country of Origin: ',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  widget.product.countryOfOrigin,
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+                  selectionColor: AppColors.worldGreen80,
+                ),
+              ],
+            ),),
+          const SizedBox(height: 12),
           Row(
             children: [
               Icon(LucideIcons.info, size: 20, color: AppColors.worldGreen),
@@ -351,7 +372,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 ? widget.product.longDescription
                 : 'Premium quality product with excellent features and craftsmanship.',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 18,
               color: Colors.grey[700],
               height: 1.5,
             ),
@@ -380,7 +401,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       (e) => Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ProductItemWidget(
-                          width: MediaQuery.of(context).size.width,
+                          // width: MediaQuery.of(context).size.width,
                           imgUrl: e.mainImage,
                           itemName: e.name,
                           regularPrice: e.regularPrice,
@@ -416,7 +437,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       (e) => Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ProductItemWidget(
-                          width: MediaQuery.of(context).size.width,
+                          // width: MediaQuery.of(context).size.width,
                           imgUrl: e.mainImage,
                           itemName: e.name,
                           regularPrice: e.regularPrice,

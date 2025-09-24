@@ -1,3 +1,5 @@
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -13,9 +15,13 @@ void main() async {
   await di.init();
   await dotenv.load(fileName: ".env");
   runApp(
-    BlocProvider<CommonCubit>(
-      create: (context) => sl<CommonCubit>(),
-      child: MyApp(),
+    DevicePreview(
+      enabled: !kReleaseMode,
+      builder:
+          (context) => BlocProvider<CommonCubit>(
+            create: (context) => sl<CommonCubit>(),
+            child: MyApp(),
+          ),
     ),
   );
 }
@@ -26,6 +32,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
       title: Constants.appName,
       routerConfig: router,

@@ -44,6 +44,7 @@ class HomeScreenBrandToggle extends StatelessWidget {
             image,
             height: 30,
             width: 30,
+            fit: BoxFit.contain,
             color: isBrand ? AppColors.white : null,
           ),
           SizedBox(width: 10),

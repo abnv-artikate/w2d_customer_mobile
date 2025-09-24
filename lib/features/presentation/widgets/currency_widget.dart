@@ -11,8 +11,8 @@ class CurrencyWidget extends StatelessWidget {
     required this.strikeThrough,
     this.fontColor = AppColors.deepBlue,
     this.strikeThroughColor = AppColors.black,
-    this.svgHeight = 10,
-    this.svgWidth = 5,
+    this.svgHeight = 8,
+    this.svgWidth = 8,
   });
 
   final String price;
@@ -45,6 +45,7 @@ class CurrencyWidget extends StatelessWidget {
             decoration: strikeThrough ? TextDecoration.lineThrough : null,
             decorationColor: strikeThroughColor,
             fontWeight: FontWeight.w500,
+            overflow: TextOverflow.ellipsis
           ),
         ),
       ],

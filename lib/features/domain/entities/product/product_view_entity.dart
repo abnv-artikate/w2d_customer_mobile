@@ -118,6 +118,8 @@ class ProductViewEntity {
     required this.createdAt,
     required this.lastUpdatedAt,
   });
+
+  List<String> get productImages => [mainImage, ...gallery];
 }
 
 class ProductViewDimensionsEntity {

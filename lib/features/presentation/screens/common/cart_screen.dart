@@ -60,10 +60,11 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Cart',
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
-        ),
+        // title: Text(
+        //   'Cart',
+        //   style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
+        // ),
+        // centerTitle: false,
         actions: [
           BlocBuilder<CartShippingCubit, CartShippingState>(
             builder: (context, state) {
