@@ -25,10 +25,10 @@ class FeesBreakdownWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildEstimatedTotal(context, state),
-              if (state.hasFreightQuoteData) ...[
-                SizedBox(height: 10),
-                _buildShippingMethodSelector(context, state),
-              ],
+              // if (state.hasFreightQuoteData) ...[
+              SizedBox(height: 10),
+              _buildShippingMethodSelector(context, state),
+              // ],
               SizedBox(height: 10),
               Divider(),
               _buildFeeBreakdown(context, state),

@@ -4,11 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
 import 'package:w2d_customer_mobile/core/usecase/usecase.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/browsing_history/browsing_history_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/product_category_listing_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/recommendations/recommendations_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/related_products/related_products_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/wishlist/wishlist_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/browsing_history/add_browsing_history_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/browsing_history/get_browsing_history_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/get_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
@@ -32,6 +35,8 @@ class CategoryCubit extends Cubit<CategoryState> {
     required this.deleteWishListUseCase,
     required this.getRecommendationsUseCase,
     required this.getRelatedProductsUseCase,
+    required this.addBrowsingHistoryUseCase,
+    required this.getBrowsingHistoryUseCase,
     required this.localDatasource,
   }) : super(CategoryInitial());
 
@@ -44,6 +49,8 @@ class CategoryCubit extends Cubit<CategoryState> {
   final DeleteWishListUseCase deleteWishListUseCase;
   final GetRecommendationsUseCase getRecommendationsUseCase;
   final GetRelatedProductsUseCase getRelatedProductsUseCase;
+  final AddBrowsingHistoryUseCase addBrowsingHistoryUseCase;
+  final GetBrowsingHistoryUseCase getBrowsingHistoryUseCase;
   final LocalDatasource localDatasource;
 
   bool get isBrand => localDatasource.getBrandMall() ?? false;
@@ -171,6 +178,35 @@ class CategoryCubit extends Cubit<CategoryState> {
         emit(RelatedProductsLoaded(relatedProductsEntity: entity));
       },
     );
+  }
+
+  addBrowsingHistory(String productID) async {
+    emit(AddBrowsingHistoryLoading());
+
+    final result = await addBrowsingHistoryUseCase.call(
+      AddBrowsingHistoryParams(productId: productID),
+    );
+
+    result.fold(
+      (failure) {
+        emit(AddBrowsingHistoryError(error: failure.message));
+      },
+      (success) {
+        emit(AddBrowsingHistoryLoaded(message: success));
+      },
+    );
+  }
+
+  getBrowsingHistory() async {
+    emit(GetBrowsingHistoryLoading());
+
+    final result = await getBrowsingHistoryUseCase.call(NoParams());
+
+    result.fold((failure){
+      emit(GetBrowsingHistoryError(error: failure.message));
+    },(success){
+      emit(GetBrowsingHistoryLoaded(browsingHistoryData: success.data));
+    });
   }
 
   FutureOr<void> _emitFailure(Failure failure) async {

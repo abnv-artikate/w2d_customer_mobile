@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/browsing_history/browsing_history_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/product/product_view_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/recommendations/recommendations_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/related_products/related_products_entity.dart';
@@ -76,6 +77,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
   List<RecommendationsDataEntity> recommendations = [];
   List<RelatedProductsDataEntity> relatedProducts = [];
+  List<BrowsingHistoryDataEntity> browsingHistory = [];
 
   @override
   void initState() {
@@ -88,6 +90,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
     cubit.getRecommendation(widget.product.id);
     cubit.getRelatedProducts(widget.product.id);
+    cubit.getBrowsingHistory();
   }
 
   @override
@@ -99,14 +102,20 @@ class _ProductScreenState extends State<ProductScreen> {
         } else if (state is CategoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
-
         if (state is RecommendationsLoaded) {
           recommendations = state.recommendationsEntity.data;
-        } else if (state is RelatedProductsLoaded) {
-          relatedProducts = state.relatedProductsEntity.data;
         } else if (state is RecommendationsError) {
           widget.showErrorToast(context: context, message: state.error);
+        }
+        if (state is RelatedProductsLoaded) {
+          relatedProducts = state.relatedProductsEntity.data;
         } else if (state is RelatedProductsError) {
+          widget.showErrorToast(context: context, message: state.error);
+        }
+        if (state is GetBrowsingHistoryLoaded) {
+          browsingHistory = state.browsingHistoryData;
+          _callAddBrowsingHistoryAPI();
+        } else if (state is GetBrowsingHistoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
       },
@@ -124,6 +133,9 @@ class _ProductScreenState extends State<ProductScreen> {
                     : Container(),
                 relatedProducts.isNotEmpty
                     ? _buildRelatedProducts()
+                    : Container(),
+                browsingHistory.isNotEmpty
+                    ? _buildBrowsingHistory()
                     : Container(),
               ],
             ),
@@ -315,21 +327,29 @@ class _ProductScreenState extends State<ProductScreen> {
             ),
 
             child: Row(
+              mainAxisSize: MainAxisSize.max,
               children: [
                 Text(
                   'Seller: ',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                Text(
-                  widget.product.seller.businessName,
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
-                  selectionColor: AppColors.worldGreen80,
+                Expanded(
+                  child: Text(
+                    widget.product.seller.businessName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    selectionColor: AppColors.worldGreen80,
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 12),
-          Container(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
             decoration: BoxDecoration(
               color: AppColors.softWhite71,
               borderRadius: BorderRadius.circular(8),
@@ -348,13 +368,16 @@ class _ProductScreenState extends State<ProductScreen> {
                   'Country of Origin: ',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                Text(
-                  widget.product.countryOfOrigin,
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
-                  selectionColor: AppColors.worldGreen80,
+                Expanded(
+                  child: Text(
+                    widget.product.countryOfOrigin,
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+                    selectionColor: AppColors.worldGreen80,
+                  ),
                 ),
               ],
-            ),),
+            ),
+          ),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -442,6 +465,42 @@ class _ProductScreenState extends State<ProductScreen> {
                           itemName: e.name,
                           regularPrice: e.regularPrice,
                           salePrice: e.salePrice,
+                          onViewTap: () {},
+                          onWishlistTap: () {},
+                        ),
+                      ),
+                    )
+                    .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _buildBrowsingHistory() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      decoration: BoxDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Related Products",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+          ),
+          CarouselSlider(
+            options: _recommendationsAndRelatedProductsCarouselOption,
+            items:
+                browsingHistory
+                    .map(
+                      (e) => Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ProductItemWidget(
+                          // width: MediaQuery.of(context).size.width,
+                          imgUrl: e.product?.mainImage ?? "",
+                          itemName: e.product?.name ?? "",
+                          regularPrice: e.product?.regularPrice ?? "",
+                          salePrice: e.product?.salePrice ?? "",
                           onViewTap: () {},
                           onWishlistTap: () {},
                         ),
@@ -586,5 +645,9 @@ class _ProductScreenState extends State<ProductScreen> {
     context.read<CategoryCubit>().addWishList(
       AddWishListParams(productId: widget.product.id),
     );
+  }
+
+  void _callAddBrowsingHistoryAPI() {
+    context.read<CategoryCubit>().addBrowsingHistory(widget.product.id);
   }
 }

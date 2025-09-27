@@ -113,3 +113,31 @@ final class RelatedProductsError extends CategoryState {
 
   RelatedProductsError({required this.error});
 }
+
+final class AddBrowsingHistoryLoading extends CategoryState {}
+
+final class AddBrowsingHistoryLoaded extends CategoryState {
+  final String message;
+
+  AddBrowsingHistoryLoaded({required this.message});
+}
+
+final class AddBrowsingHistoryError extends CategoryState {
+  final String error;
+
+  AddBrowsingHistoryError({required this.error});
+}
+
+final class GetBrowsingHistoryLoading extends CategoryState {}
+
+final class GetBrowsingHistoryLoaded extends CategoryState {
+  final List<BrowsingHistoryDataEntity> browsingHistoryData;
+
+  GetBrowsingHistoryLoaded({required this.browsingHistoryData});
+}
+
+final class GetBrowsingHistoryError extends CategoryState {
+  final String error;
+
+  GetBrowsingHistoryError({required this.error});
+}

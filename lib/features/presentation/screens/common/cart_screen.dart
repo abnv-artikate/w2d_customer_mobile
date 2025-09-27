@@ -115,20 +115,16 @@ class _CartScreenState extends State<CartScreen> {
         },
         child: BlocBuilder<CartShippingCubit, CartShippingState>(
           builder: (context, state) {
-            return Column(
-              children: [
-                SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildCartItemsSection(state),
-                      SizedBox(height: 10),
-                      _buildShippingBreakdownSection(state),
-                    ],
-                  ),
-                ),
-                _buildBottomSection(state),
-                SizedBox(height: 200),
-              ],
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildCartItemsSection(state),
+                  SizedBox(height: 10),
+                  _buildShippingBreakdownSection(state),
+                  _buildBottomSection(state),
+                  SizedBox(height: 200),
+                ],
+              ),
             );
           },
         ),
@@ -209,7 +205,9 @@ class _CartScreenState extends State<CartScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: FeesBreakdownWidget(
-        onShippingMethodDropdownTap: () => _handleShippingMethodDropdown(state),
+        onShippingMethodDropdownTap: () {
+          _handleShippingMethodDropdown(state);
+        },
       ),
     );
   }
@@ -302,6 +300,10 @@ class _CartScreenState extends State<CartScreen> {
         context: context,
         message: "Please select items from cart",
       );
+    }
+
+    if (!state.hasFreightQuoteData) {
+      _setLocationWidget();
     }
 
     _shippingMethodBottomSheet(state);

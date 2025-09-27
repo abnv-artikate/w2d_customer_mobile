@@ -8,6 +8,7 @@ import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/lo
 import 'package:w2d_customer_mobile/features/data/datasource/remote_datasource/remote_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/repositories/repository_conv.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/address/customer_address_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/browsing_history/browsing_history_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/updated_cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
@@ -32,6 +33,7 @@ import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart
 import 'package:w2d_customer_mobile/features/domain/usecases/address/create_address_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/browsing_history/add_browsing_history_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
@@ -191,7 +193,7 @@ class RepositoryImpl extends Repository {
         if (localDatasource.getCartId() != null) {
           cartId = localDatasource.getCartId()!;
         } else {
-          localDatasource.setCartId(_generateCartId());
+          localDatasource.setCartId(_generateUniqueCartId());
           cartId = localDatasource.getCartId()!;
         }
 
@@ -215,12 +217,12 @@ class RepositoryImpl extends Repository {
     }
   }
 
-  String _generateCartId() {
+  String _generateUniqueCartId() {
     UuidV4 uuid = UuidV4();
 
-    String newCartId = uuid.generate();
+    String newId = uuid.generate();
 
-    return newCartId;
+    return newId;
   }
 
   @override
@@ -230,7 +232,7 @@ class RepositoryImpl extends Repository {
       if (localDatasource.getCartId() != null) {
         cartId = localDatasource.getCartId()!.toString();
       } else {
-        localDatasource.setCartId(_generateCartId());
+        localDatasource.setCartId(_generateUniqueCartId());
         cartId = localDatasource.getCartId()!.toString();
       }
       if (await networkInfo.isConnected) {
@@ -630,6 +632,59 @@ class RepositoryImpl extends Repository {
     try {
       if (await networkInfo.isConnected) {
         final result = await remoteDatasource.getRelatedProducts(productId);
+
+        return Right(result.toEntity());
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> addBrowsingHistory(
+    AddBrowsingHistoryParams params,
+  ) async {
+    try {
+      if (await networkInfo.isConnected) {
+        String uniqueId = "";
+        if (localDatasource.getUniqueId() != null) {
+          uniqueId = localDatasource.getUniqueId()!;
+        } else {
+          localDatasource.setUniqueId(_generateUniqueCartId());
+          uniqueId = localDatasource.getCartId()!;
+        }
+
+        final result = await remoteDatasource.addBrowsingHistory({
+          "product_id": params.productId,
+          "unique_id": uniqueId,
+        });
+
+        return Right(result.message ?? 'Add to browsing history');
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, BrowsingHistoryEntity>> getBrowsingHistory() async {
+    try {
+      if (await networkInfo.isConnected) {
+        String uniqueId = "";
+        if (localDatasource.getUniqueId() != null) {
+          uniqueId = localDatasource.getUniqueId()!;
+        } else {
+          localDatasource.setUniqueId(_generateUniqueCartId());
+          uniqueId = localDatasource.getCartId()!;
+        }
+
+        final result = await remoteDatasource.getBrowsingHistory({
+          "unique_id": uniqueId,
+        });
 
         return Right(result.toEntity());
       } else {

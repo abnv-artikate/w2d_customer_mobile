@@ -59,4 +59,8 @@ class EndPoints {
 
   /// Related Endpoint
   static const String related = '/related/';
+
+  /// Browsing History Endpoints
+  static const String browsingHistory = '/browsing-history/';
+  static const String browsingHistoryAdd = '/browsing-history/add/';
 }

@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/address/customer_address_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/browsing_history/browsing_history_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/updated_cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
@@ -24,6 +25,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/wishlist/wishlist_e
 import 'package:w2d_customer_mobile/features/domain/usecases/address/create_address_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/browsing_history/add_browsing_history_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/categories/product_category_usecase.dart';
@@ -141,8 +143,15 @@ abstract class Repository {
     String productId,
   );
 
-  /// Related Products Entity
+  /// Related Products Repository
   Future<Either<Failure, RelatedProductsEntity>> getRelatedProducts(
     String productId,
   );
+
+  /// Browsing History Repository
+  Future<Either<Failure, String>> addBrowsingHistory(
+    AddBrowsingHistoryParams params,
+  );
+
+  Future<Either<Failure, BrowsingHistoryEntity>> getBrowsingHistory();
 }

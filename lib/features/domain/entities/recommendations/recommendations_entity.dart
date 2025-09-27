@@ -17,11 +17,11 @@ class RecommendationsDataEntity {
   final String productType;
   final String regularPrice;
   final String mainImage;
-  final RecommendationsCategoryEntity category;
-  final RecommendationsBrandEntity brand;
+  final RecommendationsCategoryEntity? category;
+  final RecommendationsBrandEntity? brand;
   final String salePrice;
   final List<dynamic> reviews;
-  final RecommendationsSellerEntity seller;
+  final RecommendationsSellerEntity? seller;
   final String hsCode;
 
   RecommendationsDataEntity({
@@ -42,13 +42,13 @@ class RecommendationsDataEntity {
 
 class RecommendationsBrandEntity {
   final int id;
-  final String name;
-  final dynamic description;
+  final String? name;
+  final String? description;
 
   RecommendationsBrandEntity({
     required this.id,
-    required this.name,
-    required this.description,
+    this.name,
+    this.description,
   });
 }
 
@@ -56,33 +56,15 @@ class RecommendationsCategoryEntity {
   final int id;
   final String name;
   final int parent;
-  final List<dynamic> subcategories;
-  final RecommendationsAllowedAttributesEntity allowedAttributes;
+  // final List<dynamic> subcategories;
+  // final Map<String, List<String>> allowedAttributes;
 
   RecommendationsCategoryEntity({
     required this.id,
     required this.name,
     required this.parent,
-    required this.subcategories,
-    required this.allowedAttributes,
-  });
-}
-
-class RecommendationsAllowedAttributesEntity {
-  final List<String> form;
-  final List<String> size;
-  final List<String> duration;
-  final List<String> skinType;
-  final List<String> scentFamily;
-  final List<String> alcoholContent;
-
-  RecommendationsAllowedAttributesEntity({
-    required this.form,
-    required this.size,
-    required this.duration,
-    required this.skinType,
-    required this.scentFamily,
-    required this.alcoholContent,
+    // required this.subcategories,
+    // this.allowedAttributes = const {},
   });
 }
 

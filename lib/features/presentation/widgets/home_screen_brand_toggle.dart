@@ -20,6 +20,7 @@ class HomeScreenBrandToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
 
     return Container(
       width: screenWidth * 0.45,
@@ -42,8 +43,8 @@ class HomeScreenBrandToggle extends StatelessWidget {
         children: [
           Image.asset(
             image,
-            height: 30,
-            width: 30,
+            height: isSmallScreen ? 25 : 30,
+            width: isSmallScreen ? 25 : 30,
             fit: BoxFit.contain,
             color: isBrand ? AppColors.white : null,
           ),
@@ -51,7 +52,7 @@ class HomeScreenBrandToggle extends StatelessWidget {
           Text(
             text,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: isSmallScreen ? 14 : 18,
               fontWeight: FontWeight.w600,
               color: isBrand ? AppColors.white : null,
             ),

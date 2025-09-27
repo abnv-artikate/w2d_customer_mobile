@@ -18,6 +18,8 @@ import 'package:w2d_customer_mobile/features/domain/usecases/address/create_addr
 import 'package:w2d_customer_mobile/features/domain/usecases/address/get_address_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/send_otp_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/auth/verify_otp_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/browsing_history/add_browsing_history_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/browsing_history/get_browsing_history_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/get_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
@@ -78,6 +80,8 @@ Future<void> init() async {
       deleteWishListUseCase: sl<DeleteWishListUseCase>(),
       getRecommendationsUseCase: sl<GetRecommendationsUseCase>(),
       getRelatedProductsUseCase: sl<GetRelatedProductsUseCase>(),
+      addBrowsingHistoryUseCase: sl<AddBrowsingHistoryUseCase>(),
+      getBrowsingHistoryUseCase: sl<GetBrowsingHistoryUseCase>(),
       localDatasource: sl<LocalDatasource>(),
     ),
   );
@@ -209,6 +213,12 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<GetRelatedProductsUseCase>(
     () => GetRelatedProductsUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<AddBrowsingHistoryUseCase>(
+    () => AddBrowsingHistoryUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<GetBrowsingHistoryUseCase>(
+    () => GetBrowsingHistoryUseCase(sl<Repository>()),
   );
 
   /// Repositories

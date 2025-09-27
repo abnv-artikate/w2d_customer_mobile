@@ -2,11 +2,13 @@ import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
+import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/category_listing_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/category_bubble_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/home_screen_brand_toggle.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
@@ -31,7 +33,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String? address;
   List<CollectionsResultDataEntity> brandMallCollections = [];
   List<CollectionsResultDataEntity> hiddenGemsCollections = [];
   List<SubCategoriesEntity> categoryList = [];
@@ -44,14 +45,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   CarouselOptions get _bannerCarouselOptions {
-    final screenWidth = MediaQuery.of(context).size.width;
     return CarouselOptions(
-      disableCenter: true,
-      height: screenWidth < 400 ? 160 : 200,
-      viewportFraction: 1,
-      initialPage: 0,
+      disableCenter: false,
+      height: 200,
+      viewportFraction: 0.9,
       autoPlay: true,
-      autoPlayCurve: Curves.easeInOut,
+      enlargeStrategy: CenterPageEnlargeStrategy.zoom,
+      enlargeCenterPage: true,
       autoPlayAnimationDuration: Duration(milliseconds: 800),
     );
   }
@@ -132,76 +132,62 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBannerSection() {
-    return Column(
-      children: [
-        SizedBox(height: 10),
-        CarouselSlider(
-          options: _bannerCarouselOptions,
-          items:
-              imgList.map((item) {
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 5),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      item,
-                      fit: BoxFit.contain,
-                      width: double.infinity,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Image not available',
-                              style: TextStyle(color: AppColors.black70),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              }).toList(),
-        ),
-        SizedBox(height: 20),
-      ],
+    return CarouselSlider(
+      options: _bannerCarouselOptions,
+      items:
+          imgList.map((item) {
+            return Container(
+              margin: EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+              clipBehavior: Clip.hardEdge,
+              child: Image.asset(
+                item,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(child: Icon(LucideIcons.imageOff, size: 20));
+                },
+              ),
+            );
+          }).toList(),
     );
   }
 
   Widget _buildBrandMallToggle(bool isBrand) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Flexible(
-            child: HomeScreenBrandToggle(
-              isBrand: !isBrand,
-              image:
-                  isBrand
-                      ? Assets.iconsHiddenGemsActive
-                      : Assets.iconsHiddenGemsInactive,
-              text: "Hidden Gems",
-              gradient: AppColors.worldGreenGradiant,
-              borderColor: AppColors.worldGreen80,
+    return GestureDetector(
+      onTap: () {
+        context.read<CategoryCubit>().toggleBrand();
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              child: HomeScreenBrandToggle(
+                isBrand: !isBrand,
+                image:
+                    isBrand
+                        ? Assets.iconsHiddenGemsActive
+                        : Assets.iconsHiddenGemsInactive,
+                text: "Hidden Gems",
+                gradient: AppColors.worldGreenGradiant,
+                borderColor: AppColors.worldGreen80,
+              ),
             ),
-          ),
-          Flexible(
-            child: HomeScreenBrandToggle(
-              isBrand: isBrand,
-              image:
-                  isBrand
-                      ? Assets.iconsBrandMallInactive
-                      : Assets.iconsBrandMallActive,
-              text: "Brand Mall",
-              gradient: AppColors.aspirationGold,
-              borderColor: AppColors.doorOchre,
+            Flexible(
+              child: HomeScreenBrandToggle(
+                isBrand: isBrand,
+                image:
+                    isBrand
+                        ? Assets.iconsBrandMallInactive
+                        : Assets.iconsBrandMallActive,
+                text: "Brand Mall",
+                gradient: AppColors.aspirationGold,
+                borderColor: AppColors.doorOchre,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -231,7 +217,23 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 16,
             ),
             children:
-                categoryList.map((e) => CategoryBubble(category: e)).toList(),
+                categoryList
+                    .map(
+                      (e) => CategoryBubble(
+                        category: e,
+                        onTap: () {
+                          context
+                              .push(
+                                AppRoutes.listingRoute,
+                                extra: CategoryListingScreenParams(category: e),
+                              )
+                              .then((_) {
+                                _callCategoriesListingAPi();
+                              });
+                        },
+                      ),
+                    )
+                    .toList(),
           ),
         );
       },

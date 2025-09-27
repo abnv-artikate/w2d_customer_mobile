@@ -103,11 +103,11 @@ class RecommendationsDataModel {
       productType: productType ?? "",
       regularPrice: regularPrice ?? "",
       mainImage: mainImage ?? "",
-      category: category!.toEntity(),
-      brand: brand!.toEntity(),
+      category: category?.toEntity(),
+      brand: brand?.toEntity(),
       salePrice: salePrice ?? "",
       reviews: reviews ?? [],
-      seller: seller!.toEntity(),
+      seller: seller?.toEntity(),
       hsCode: hsCode ?? "",
     );
   }
@@ -139,12 +139,36 @@ class RecommendationsBrandModel {
   }
 }
 
+Map<String, List<String>> parseAllowedAttributes(dynamic raw) {
+  if (raw == null) return {};
+  if (raw is Map) {
+    final Map<String, List<String>> result = {};
+    raw.forEach((k, v) {
+      if (v == null) {
+        result[k.toString()] = [];
+      } else if (v is List) {
+        result[k.toString()] = v.map((e) => e?.toString() ?? '').where((s) => s.isNotEmpty).toList();
+      } else if (v is String || v is num || v is bool) {
+        result[k.toString()] = [v.toString()];
+      } else if (v is Map) {
+        // nested map -> flatten values to strings
+        final flat = v.values.map((e) => e?.toString() ?? '').where((s) => s.isNotEmpty).toList();
+        result[k.toString()] = flat;
+      } else {
+        result[k.toString()] = [v.toString()];
+      }
+    });
+    return result;
+  }
+  return {};
+}
+
 class RecommendationsDataCategoryModel {
   int? id;
   String? name;
   int? parent;
   List<dynamic>? subcategories;
-  RecommendationsDataAllowedAttributesModel? allowedAttributes;
+  Map<String, List<String>>? allowedAttributes;
 
   RecommendationsDataCategoryModel({
     this.id,
@@ -167,12 +191,7 @@ class RecommendationsDataCategoryModel {
         json["subcategories"] == null
             ? []
             : List<dynamic>.from(json["subcategories"]!.map((x) => x)),
-    allowedAttributes:
-        json["allowed_attributes"] == null
-            ? null
-            : RecommendationsDataAllowedAttributesModel.fromJson(
-              json["allowed_attributes"],
-            ),
+    allowedAttributes: parseAllowedAttributes(json["allowed_attributes"]),
   );
 
   RecommendationsCategoryEntity toEntity() {
@@ -180,8 +199,8 @@ class RecommendationsDataCategoryModel {
       id: id ?? -1,
       name: name ?? "",
       parent: parent ?? -1,
-      subcategories: subcategories ?? [],
-      allowedAttributes: allowedAttributes!.toEntity(),
+      // subcategories: subcategories ?? [],
+      // allowedAttributes: allowedAttributes,
     );
   }
 }
@@ -234,17 +253,6 @@ class RecommendationsDataAllowedAttributesModel {
             ? []
             : List<String>.from(json["Alcohol Content"]!.map((x) => x)),
   );
-
-  RecommendationsAllowedAttributesEntity toEntity() {
-    return RecommendationsAllowedAttributesEntity(
-      form: form ?? [],
-      size: size ?? [],
-      duration: duration ?? [],
-      skinType: skinType ?? [],
-      scentFamily: scentFamily ?? [],
-      alcoholContent: alcoholContent ?? [],
-    );
-  }
 }
 
 class RecommendationsDataSellerModel {

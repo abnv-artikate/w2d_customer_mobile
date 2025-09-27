@@ -7,6 +7,7 @@ import 'package:w2d_customer_mobile/core/utils/endpoint_constants.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/model/address/get_customer_addresses_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/browsing_history/browsing_history_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/category_model.dart';
@@ -222,4 +223,11 @@ abstract class W2DClient {
   /// Related Products Client
   @GET('${EndPoints.related}/{productId}')
   Future<RelatedProductsModel> getRelatedProducts(@Path() String productId);
+
+  /// Browsing History
+  @GET(EndPoints.browsingHistory)
+  Future<BrowsingHistoryModel> getBrowsingHistory(@Queries() Map<String, dynamic> queries);
+
+  @POST(EndPoints.browsingHistoryAdd)
+  Future<SuccessMessageModel> addBrowsingHistory(@Body() Map<String, dynamic> body);
 }

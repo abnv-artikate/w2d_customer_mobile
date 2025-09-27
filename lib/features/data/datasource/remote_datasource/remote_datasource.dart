@@ -4,6 +4,7 @@ import 'package:w2d_customer_mobile/features/data/client/shipping_client.dart';
 import 'package:w2d_customer_mobile/features/data/client/telr_payment_client.dart';
 import 'package:w2d_customer_mobile/features/data/model/address/get_customer_addresses_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/auth/verify_otp_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/browsing_history/browsing_history_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/cart/updated_cart_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/categories/category_model.dart';
@@ -105,11 +106,16 @@ abstract class RemoteDatasource {
 
   Future<SuccessMessageModel> deleteWishlist(String id);
 
-  /// Recommendation Model
+  /// Recommendation Datasource
   Future<RecommendationsModel> getRecommendations(String productId);
 
-  /// Related Product Model
+  /// Related Product Datasource
   Future<RelatedProductsModel> getRelatedProducts(String productId);
+
+  /// Browsing History Datasource
+  Future<BrowsingHistoryModel> getBrowsingHistory(Map<String, dynamic> query);
+
+  Future<SuccessMessageModel> addBrowsingHistory(Map<String, dynamic> body);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
@@ -473,6 +479,32 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   Future<RelatedProductsModel> getRelatedProducts(String productId) async {
     try {
       return await w2dClient.getRelatedProducts(productId);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<SuccessMessageModel> addBrowsingHistory(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await w2dClient.addBrowsingHistory(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<BrowsingHistoryModel> getBrowsingHistory(
+    Map<String, dynamic> query,
+  ) async {
+    try {
+      return await w2dClient.getBrowsingHistory(query);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

@@ -21,6 +21,10 @@ abstract class LocalDatasource {
 
   setCartId(String cartId);
 
+  String? getUniqueId();
+
+  setUniqueId(String uniqueId);
+
   // setLatitude(double latitude);
   //
   // double? getLatitude();
@@ -107,6 +111,16 @@ class LocalDataSourceImpl extends LocalDatasource {
   @override
   setCartId(String cartId) {
     mySharedPref.saveCartId(cartId);
+  }
+
+  @override
+  String? getUniqueId() {
+    return mySharedPref.getUniqueId();
+  }
+
+  @override
+  setUniqueId(String uniqueId) {
+    mySharedPref.saveUniqueId(uniqueId);
   }
 
   @override
