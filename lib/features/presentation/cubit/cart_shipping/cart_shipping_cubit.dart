@@ -113,6 +113,8 @@ class CartShippingCubit extends Cubit<CartShippingState> {
         emit(
           state.copyWith(
             locationStatus: LoadingStatus.loaded,
+            shippingSelectionStatus: LoadingStatus.loaded,
+            selectedShippingIndex: null,
             location: location,
           ),
         );

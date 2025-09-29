@@ -15,7 +15,7 @@ class MySharedPref {
   static const brandMall = "brand_mall";
   static const storeID = "store_id";
   static const storeAuthKey = "store_auth_key";
-  static const uniqueId = "unique_id";
+  static const uniqueID = "unique_id";
 
   final SharedPreferences _pref;
 
@@ -62,11 +62,11 @@ class MySharedPref {
   }
 
   void saveUniqueId(String uniqueId) async {
-    await _pref.setString(uniqueId, uniqueId);
+    await _pref.setString(uniqueID, uniqueId);
   }
 
   String? getUniqueId() {
-    return _pref.getString(uniqueId);
+    return _pref.getString(uniqueID);
   }
 
   void saveLatitude(double latitude) async {

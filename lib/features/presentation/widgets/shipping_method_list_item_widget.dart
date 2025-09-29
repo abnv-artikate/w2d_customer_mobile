@@ -29,6 +29,9 @@ class _ShippingMethodListItemWidgetState
     extends State<ShippingMethodListItemWidget> {
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmall = screenWidth < 400;
+
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
@@ -50,19 +53,31 @@ class _ShippingMethodListItemWidgetState
               children: [
                 Text(
                   'Delivery Mode: ',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: isSmall ? 16 : 18,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 Text(
                   'Service Type: ',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: isSmall ? 16 : 18,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 Text(
                   'Shipping Fee : ',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: isSmall ? 16 : 18,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 Text(
                   'Transit ETA: ',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: isSmall ? 16 : 18,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
             ),
@@ -72,20 +87,29 @@ class _ShippingMethodListItemWidgetState
               children: [
                 Text(
                   widget.label,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+                  style: TextStyle(
+                    fontSize: isSmall ? 16 : 18,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
                 Text(
                   widget.serviceType,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+                  style: TextStyle(
+                    fontSize: isSmall ? 16 : 18,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
                 CurrencyWidget(
                   price: widget.shippingFee,
-                  fontSize: 18,
+                  fontSize: isSmall ? 16 : 18,
                   strikeThrough: false,
                 ),
                 Text(
                   '${widget.transitEta} days',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+                  style: TextStyle(
+                    fontSize: isSmall ? 16 : 18,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ],
             ),

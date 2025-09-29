@@ -35,10 +35,10 @@ class _BrandMallToggleWidgetState extends State<BrandMallToggleWidget> {
                   ? AppColors.aspirationGold
                   : AppColors.worldGreenGradiant,
           borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: AppColors.white, width: 2),
+          // border: Border.all(color: AppColors.softWhite80, width: 2),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.shade400,
+              color: AppColors.softWhite71,
               spreadRadius: 2,
               blurRadius: 10,
             ),

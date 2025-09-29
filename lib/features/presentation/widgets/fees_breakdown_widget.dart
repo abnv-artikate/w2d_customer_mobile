@@ -214,7 +214,12 @@ class FeesBreakdownWidget extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium,
+              // overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
           ),
           // Text(
           //   '${amount.toStringAsFixed(2)}',

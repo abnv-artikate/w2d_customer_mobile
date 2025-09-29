@@ -10,7 +10,6 @@ import 'package:w2d_customer_mobile/features/presentation/cubit/category/categor
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/category_listing_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/category_bubble_widget.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/home_screen_brand_toggle.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
@@ -19,6 +18,7 @@ import 'package:w2d_customer_mobile/features/presentation/widgets/product_item_w
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
 final List<String> imgList = [
+  Assets.imagesHiddenGemBanners1,
   Assets.imagesHomepageBannersW2D08,
   Assets.imagesHomepageBannersW2D14,
   Assets.imagesHomepageBannersW2D15,
@@ -57,19 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   CarouselOptions get _categoriesCarouselOption {
-    // final screenWidth = MediaQuery.of(context).size.width;
-    // final screenHeight = MediaQuery.of(context).size.height;
-    //
-    // double carouselHeight;
-    // if (screenWidth < 400) {
-    //   carouselHeight =
-    //       screenHeight * 0.25; // 32% of screen height for small devices
-    // } else if (screenWidth < 600) {
-    //   carouselHeight = screenHeight * 0.28; // 35% for medium devices
-    // } else {
-    //   carouselHeight = screenHeight * 0.32; // 38% for larger devices
-    // }
-
     return CarouselOptions(
       disableCenter: true,
       padEnds: false,
@@ -88,10 +75,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildBannerSection(),
-            _buildBrandMallToggle(isBrand),
+            _buildHeroBanner(),
             _buildBannerSection(),
             _buildCategoriesSection(),
+            _buildBannerSection(),
             _buildBestSellers(isBrand),
             SizedBox(height: 150),
           ],
@@ -131,6 +118,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildHeroBanner() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Image.asset(Assets.imagesHeroBanner, fit: BoxFit.cover),
+    );
+  }
+
   Widget _buildBannerSection() {
     return CarouselSlider(
       options: _bannerCarouselOptions,
@@ -149,46 +143,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }).toList(),
-    );
-  }
-
-  Widget _buildBrandMallToggle(bool isBrand) {
-    return GestureDetector(
-      onTap: () {
-        context.read<CategoryCubit>().toggleBrand();
-      },
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Flexible(
-              child: HomeScreenBrandToggle(
-                isBrand: !isBrand,
-                image:
-                    isBrand
-                        ? Assets.iconsHiddenGemsActive
-                        : Assets.iconsHiddenGemsInactive,
-                text: "Hidden Gems",
-                gradient: AppColors.worldGreenGradiant,
-                borderColor: AppColors.worldGreen80,
-              ),
-            ),
-            Flexible(
-              child: HomeScreenBrandToggle(
-                isBrand: isBrand,
-                image:
-                    isBrand
-                        ? Assets.iconsBrandMallInactive
-                        : Assets.iconsBrandMallActive,
-                text: "Brand Mall",
-                gradient: AppColors.aspirationGold,
-                borderColor: AppColors.doorOchre,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 

@@ -25,6 +25,8 @@ class CurrencyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmall = screenWidth < 400;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -40,12 +42,12 @@ class CurrencyWidget extends StatelessWidget {
         Text(
           price,
           style: TextStyle(
-            fontSize: fontSize,
+            fontSize: isSmall ? fontSize - 1 : fontSize,
             color: fontColor,
             decoration: strikeThrough ? TextDecoration.lineThrough : null,
             decorationColor: strikeThroughColor,
             fontWeight: FontWeight.w500,
-            overflow: TextOverflow.ellipsis
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],

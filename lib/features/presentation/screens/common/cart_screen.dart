@@ -213,37 +213,26 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildBottomSection(CartShippingState state) {
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.softWhite80,
-            blurRadius: 2,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: CustomFilledButtonWidget(
-        title: Text(
-          _getButtonTitle(state),
-          style: TextStyle(
-            color: AppColors.white,
-            fontSize: 25,
-            fontWeight: FontWeight.w500,
-          ),
+    return CustomFilledButtonWidget(
+      title: Text(
+        _getButtonTitle(state),
+        style: TextStyle(
+          color: AppColors.white,
+          fontSize: 25,
+          fontWeight: FontWeight.w500,
         ),
-        color:
-            !state.hasCartData || state.cart!.items.isEmpty
-                ? AppColors.softWhite80
-                : AppColors.worldGreen80,
-        height: 50,
-        width: MediaQuery.of(context).size.width * 0.9,
-        horizontalMargin: 0,
-        borderRadius: 4,
-        onTap: () {
-          state.isAnyLoading ? null : _handleProceedToBuy(state);
-        },
       ),
+      color:
+          !state.hasCartData || state.cart!.items.isEmpty
+              ? AppColors.softWhite80
+              : AppColors.worldGreen80,
+      height: 50,
+      width: MediaQuery.of(context).size.width * 0.9,
+      horizontalMargin: 0,
+      borderRadius: 4,
+      onTap: () {
+        state.isAnyLoading ? null : _handleProceedToBuy(state);
+      },
     );
   }
 
@@ -379,9 +368,9 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void _shippingMethodBottomSheet(CartShippingState state) {
+    int? localSelectedIndex = state.selectedShippingIndex;
     final freightQuoteEntityData = state.freightQuote;
     if (freightQuoteEntityData == null) return;
-    int? localSelectedIndex = state.selectedShippingIndex;
 
     showModalBottomSheet(
       context: context,
@@ -569,8 +558,7 @@ class _CartScreenState extends State<CartScreen> {
                         });
                       },
                     ),
-                  SizedBox(height: 30),
-
+                  SizedBox(height: 10),
                   // Action buttons
                   Row(
                     children: [
@@ -610,6 +598,7 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     ],
                   ),
+                  SizedBox(height: 150),
                 ],
               ),
             );

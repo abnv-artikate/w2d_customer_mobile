@@ -75,11 +75,14 @@ class CartShippingState {
       location: location ?? this.location,
       freightQuoteStatus: freightQuoteStatus ?? this.freightQuoteStatus,
       freightQuote: freightQuote ?? this.freightQuote,
-      shippingSelectionStatus: shippingSelectionStatus ?? this.shippingSelectionStatus,
-      selectedShippingIndex: selectedShippingIndex ?? this.selectedShippingIndex,
+      shippingSelectionStatus:
+          shippingSelectionStatus ?? this.shippingSelectionStatus,
+      selectedShippingIndex:
+          selectedShippingIndex ?? this.selectedShippingIndex,
       insuranceStatus: insuranceStatus ?? this.insuranceStatus,
       insuranceData: insuranceData ?? this.insuranceData,
-      insuranceConfirmationStatus: insuranceConfirmationStatus ?? this.insuranceConfirmationStatus,
+      insuranceConfirmationStatus:
+          insuranceConfirmationStatus ?? this.insuranceConfirmationStatus,
       isTransitInsured: isTransitInsured ?? this.isTransitInsured,
       feeCalculationStatus: feeCalculationStatus ?? this.feeCalculationStatus,
       feeBreakdown: feeBreakdown ?? this.feeBreakdown,
@@ -90,31 +93,49 @@ class CartShippingState {
 
   // Convenience getters for checking loading states
   bool get isCartLoading => cartStatus == LoadingStatus.loading;
+
   bool get isLocationLoading => locationStatus == LoadingStatus.loading;
+
   bool get isFreightQuoteLoading => freightQuoteStatus == LoadingStatus.loading;
-  bool get isShippingSelectionLoading => shippingSelectionStatus == LoadingStatus.loading;
+
+  bool get isShippingSelectionLoading =>
+      shippingSelectionStatus == LoadingStatus.loading;
+
   bool get isInsuranceLoading => insuranceStatus == LoadingStatus.loading;
-  bool get isInsuranceConfirmationLoading => insuranceConfirmationStatus == LoadingStatus.loading;
-  bool get isFeeCalculationLoading => feeCalculationStatus == LoadingStatus.loading;
+
+  bool get isInsuranceConfirmationLoading =>
+      insuranceConfirmationStatus == LoadingStatus.loading;
+
+  bool get isFeeCalculationLoading =>
+      feeCalculationStatus == LoadingStatus.loading;
 
   bool get hasCartData => cart != null && cartStatus == LoadingStatus.loaded;
-  bool get hasLocationData => location != null && locationStatus == LoadingStatus.loaded;
-  bool get hasFreightQuoteData => freightQuote != null && freightQuoteStatus == LoadingStatus.loaded;
-  bool get hasInsuranceData => insuranceData != null && insuranceStatus == LoadingStatus.loaded;
-  bool get hasFeeBreakdown => feeBreakdown != null && feeCalculationStatus == LoadingStatus.loaded;
+
+  bool get hasLocationData =>
+      location != null && locationStatus == LoadingStatus.loaded;
+
+  bool get hasFreightQuoteData =>
+      freightQuote != null && freightQuoteStatus == LoadingStatus.loaded;
+
+  bool get hasInsuranceData =>
+      insuranceData != null && insuranceStatus == LoadingStatus.loaded;
+
+  bool get hasFeeBreakdown =>
+      feeBreakdown != null && feeCalculationStatus == LoadingStatus.loaded;
 
   bool get hasError => errorMessage != null;
+
   bool get hasSuccess => successMessage != null;
 
   // Check if any operation is loading
   bool get isAnyLoading =>
       isCartLoading ||
-          isLocationLoading ||
-          isFreightQuoteLoading ||
-          isShippingSelectionLoading ||
-          isInsuranceLoading ||
-          isInsuranceConfirmationLoading ||
-          isFeeCalculationLoading;
+      isLocationLoading ||
+      isFreightQuoteLoading ||
+      isShippingSelectionLoading ||
+      isInsuranceLoading ||
+      isInsuranceConfirmationLoading ||
+      isFeeCalculationLoading;
 }
 
 final class CartShippingInitial extends CartShippingState {
@@ -153,17 +174,19 @@ class FeeBreakdown {
       goodsValue: goodsValue ?? this.goodsValue,
       platformFees: platformFees ?? this.platformFees,
       localTransitFees: localTransitFees ?? this.localTransitFees,
-      exportFreightPackingOtherFees: exportFreightPackingOtherFees ?? this.exportFreightPackingOtherFees,
-      destDutyTaxesOtherFees: destDutyTaxesOtherFees ?? this.destDutyTaxesOtherFees,
+      exportFreightPackingOtherFees:
+          exportFreightPackingOtherFees ?? this.exportFreightPackingOtherFees,
+      destDutyTaxesOtherFees:
+          destDutyTaxesOtherFees ?? this.destDutyTaxesOtherFees,
       transitInsurance: transitInsurance ?? this.transitInsurance,
       estimatedTotal: estimatedTotal ?? this.estimatedTotal,
     );
   }
 
-  @override
-  String toString() {
-    return 'FeeBreakdown(goodsValue: $goodsValue, platformFees: $platformFees, localTransitFees: $localTransitFees, exportFreightPackingOtherFees: $exportFreightPackingOtherFees, destDutyTaxesOtherFees: $destDutyTaxesOtherFees, transitInsurance: $transitInsurance, estimatedTotal: $estimatedTotal)';
-  }
+  // @override
+  // String toString() {
+  //   return 'FeeBreakdown(goodsValue: $goodsValue, platformFees: $platformFees, localTransitFees: $localTransitFees, exportFreightPackingOtherFees: $exportFreightPackingOtherFees, destDutyTaxesOtherFees: $destDutyTaxesOtherFees, transitInsurance: $transitInsurance, estimatedTotal: $estimatedTotal)';
+  // }
 
   @override
   bool operator ==(Object other) {
@@ -181,11 +204,11 @@ class FeeBreakdown {
   @override
   int get hashCode {
     return goodsValue.hashCode ^
-    platformFees.hashCode ^
-    localTransitFees.hashCode ^
-    exportFreightPackingOtherFees.hashCode ^
-    destDutyTaxesOtherFees.hashCode ^
-    transitInsurance.hashCode ^
-    estimatedTotal.hashCode;
+        platformFees.hashCode ^
+        localTransitFees.hashCode ^
+        exportFreightPackingOtherFees.hashCode ^
+        destDutyTaxesOtherFees.hashCode ^
+        transitInsurance.hashCode ^
+        estimatedTotal.hashCode;
   }
 }

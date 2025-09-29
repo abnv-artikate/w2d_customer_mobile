@@ -49,7 +49,14 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
           }
         },
         builder: (context, state) {
-          return ListView(children: [_logo(), _inputForm(), _guestOrSignUp()]);
+          return ListView(
+            children: [
+              _logo(),
+              _inputForm(),
+              _guestOrSignUp(),
+              SizedBox(height: 150),
+            ],
+          );
         },
       ),
     );

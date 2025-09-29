@@ -98,7 +98,7 @@ class _ProductScreenState extends State<ProductScreen> {
     return BlocConsumer<CategoryCubit, CategoryState>(
       listener: (context, state) {
         if (state is CartSyncLoaded) {
-          widget.showErrorToast(context: context, message: state.message);
+          // widget.showErrorToast(context: context, message: state.message);
         } else if (state is CategoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
@@ -317,13 +317,13 @@ class _ProductScreenState extends State<ProductScreen> {
             decoration: BoxDecoration(
               color: AppColors.softWhite71,
               borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.black70,
-                  blurRadius: 5,
-                  offset: Offset(0, 2),
-                ),
-              ],
+              // boxShadow: [
+              //   BoxShadow(
+              //     color: AppColors.black70,
+              //     blurRadius: 5,
+              //     offset: Offset(0, 2),
+              //   ),
+              // ],
             ),
 
             child: Row(
@@ -353,13 +353,13 @@ class _ProductScreenState extends State<ProductScreen> {
             decoration: BoxDecoration(
               color: AppColors.softWhite71,
               borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.black70,
-                  blurRadius: 5,
-                  offset: Offset(0, 2),
-                ),
-              ],
+              // boxShadow: [
+              //   BoxShadow(
+              //     color: AppColors.black70,
+              //     blurRadius: 5,
+              //     offset: Offset(0, 2),
+              //   ),
+              // ],
             ),
 
             child: Row(

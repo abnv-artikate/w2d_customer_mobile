@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:uuid/data.dart';
 import 'package:uuid/v4.dart';
 import 'package:w2d_customer_mobile/core/error/exceptions.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
@@ -653,7 +654,7 @@ class RepositoryImpl extends Repository {
           uniqueId = localDatasource.getUniqueId()!;
         } else {
           localDatasource.setUniqueId(_generateUniqueCartId());
-          uniqueId = localDatasource.getCartId()!;
+          uniqueId = localDatasource.getUniqueId()!.toString();
         }
 
         final result = await remoteDatasource.addBrowsingHistory({
@@ -676,10 +677,10 @@ class RepositoryImpl extends Repository {
       if (await networkInfo.isConnected) {
         String uniqueId = "";
         if (localDatasource.getUniqueId() != null) {
-          uniqueId = localDatasource.getUniqueId()!;
+          uniqueId = localDatasource.getUniqueId()!.toString();
         } else {
           localDatasource.setUniqueId(_generateUniqueCartId());
-          uniqueId = localDatasource.getCartId()!;
+          uniqueId = localDatasource.getUniqueId()!.toString();
         }
 
         final result = await remoteDatasource.getBrowsingHistory({

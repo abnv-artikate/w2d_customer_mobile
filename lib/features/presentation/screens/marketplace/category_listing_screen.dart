@@ -38,6 +38,8 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
     return BlocConsumer<CategoryCubit, CategoryState>(
       listener: (context, state) {
         if (state is CategoryLoaded) {
+          brandProductCategoryList.clear();
+          hiddenProductCategoryList.clear();
           brandProductCategoryList = state.brandMallProductCategoryListing;
           hiddenProductCategoryList = state.hiddenGemsProductCategoryListing;
         } else if (state is CategoryError) {
@@ -76,9 +78,6 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                       color: AppColors.worldGreen,
                     ),
                   )
-                  : brandProductCategoryList.isEmpty &&
-                      hiddenProductCategoryList.isEmpty
-                  ? Center(child: Text('No items available'))
                   : _buildContent(context, isBrand),
           bottomNavigationBar: _bottomNavigation(),
         );
@@ -89,13 +88,17 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
   Widget _buildContent(BuildContext context, bool isBrand) {
     return SingleChildScrollView(
       child: Column(
+        mainAxisSize: MainAxisSize.max,
         children: [
           // Subcategories section
           if (widget.params.category?.subcategories.isNotEmpty ?? false) ...[
             _buildSubcategoriesSection(),
           ],
           // Products grid section
-          _buildProductsGrid(context, isBrand),
+          _buildProductsGrid(
+            context,
+            isBrand ? brandProductCategoryList : hiddenProductCategoryList,
+          ),
           SizedBox(height: 20),
         ],
       ),
@@ -125,15 +128,15 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: AppColors.deepBlue),
-                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.deepBlue, width: 1.5),
+                borderRadius: BorderRadius.circular(100),
               ),
               child: Center(
                 child: Text(
                   widget.params.category?.subcategories[index].name ??
                       widget.params.searchTerm ??
                       "",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -145,7 +148,10 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
     );
   }
 
-  Widget _buildProductsGrid(BuildContext context, bool isBrand) {
+  Widget _buildProductsGrid(
+    BuildContext context,
+    List<CategoryProductEntity> categoryProductList,
+  ) {
     final screenWidth = MediaQuery.of(context).size.width;
     final horizontalPadding = 12.0;
     final crossAxisSpacing = 8.0;
@@ -158,61 +164,42 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
     // Calculate aspect ratio based on screen size
     double aspectRatio;
     if (screenWidth < 400) {
-      aspectRatio = 0.65; // Taller items for smaller screens
+      aspectRatio = 0.5; // Taller items for smaller screens
     } else if (screenWidth < 600) {
-      aspectRatio = 0.7; // Medium screens
+      aspectRatio = 0.45; // Medium screens
     } else {
-      aspectRatio = 0.75; // Wider items for larger screens
+      aspectRatio = 0.4; // Wider items for larger screens
     }
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-      child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: crossAxisSpacing,
-          mainAxisSpacing: 10,
-          childAspectRatio: aspectRatio,
-        ),
-        physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          return ProductItemWidget(
-            isGridView: true,
-            // Specify this is grid context
-            imgUrl:
-                isBrand
-                    ? brandProductCategoryList[index].mainImage
-                    : hiddenProductCategoryList[index].mainImage,
-            itemName:
-                isBrand
-                    ? brandProductCategoryList[index].productName
-                    : hiddenProductCategoryList[index].productName,
-            regularPrice:
-                isBrand
-                    ? brandProductCategoryList[index].regularPrice
-                    : hiddenProductCategoryList[index].regularPrice,
-            salePrice:
-                isBrand
-                    ? brandProductCategoryList[index].salePrice
-                    : hiddenProductCategoryList[index].salePrice,
-            onViewTap: () {
-              _callProductViewApi(
-                isBrand
-                    ? brandProductCategoryList[index].id
-                    : hiddenProductCategoryList[index].id,
-              );
-            },
-            onWishlistTap: () {
-              // Handle wishlist action
-            },
-          );
-        },
-        itemCount:
-            isBrand
-                ? brandProductCategoryList.length
-                : hiddenProductCategoryList.length,
-      ),
+      child:
+          categoryProductList.isNotEmpty
+              ? GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: crossAxisSpacing,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: aspectRatio,
+                ),
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return ProductItemWidget(
+                    isGridView: true,
+                    imgUrl: categoryProductList[index].mainImage,
+                    itemName: categoryProductList[index].productName,
+                    regularPrice: categoryProductList[index].regularPrice,
+                    salePrice: categoryProductList[index].salePrice,
+                    onViewTap: () {
+                      _callProductViewApi(categoryProductList[index].id);
+                    },
+                    onWishlistTap: () {},
+                  );
+                },
+                itemCount: categoryProductList.length,
+              )
+              : Center(child: Column(children: [Text("No Items to display")])),
     );
   }
 

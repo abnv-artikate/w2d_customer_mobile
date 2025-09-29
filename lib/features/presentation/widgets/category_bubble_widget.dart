@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 
@@ -18,7 +19,7 @@ class CategoryBubble extends StatelessWidget {
     super.key,
     required this.category,
     this.diameter,
-    this.widthFraction = 0.22,
+    this.widthFraction = 0.42,
     this.minDiameter = 64,
     this.maxDiameter = 120,
     this.onTap,
@@ -63,11 +64,11 @@ class CategoryBubble extends StatelessWidget {
                     shape: BoxShape.circle,
                     color: AppColors.softWhite71,
                     boxShadow: [
-                      BoxShadow(
-                        color: AppColors.softWhite80,
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
+                      // BoxShadow(
+                      //   color: AppColors.softWhite80,
+                      //   blurRadius: 5,
+                      //   offset: const Offset(0, 2),
+                      // ),
                     ],
                   ),
                   child: Padding(
@@ -77,7 +78,7 @@ class CategoryBubble extends StatelessWidget {
                         category.image,
                         fit: BoxFit.contain,
                         errorBuilder: (_, __, ___) => Icon(
-                          Icons.image,
+                          LucideIcons.image,
                           size: 28,
                           color: Colors.grey.shade500,
                         ),

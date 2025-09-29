@@ -38,13 +38,13 @@ class ProductItemWidget extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
           color: AppColors.white,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.black70,
-              blurRadius: 2,
-              // offset: Offset(0, 2),
-            ),
-          ],
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: AppColors.black70,
+          //     blurRadius: 2,
+          //   offset: Offset(0, 2),
+          //   ),
+          // ],
         ),
         child:
             isGridView
@@ -64,21 +64,27 @@ class ProductItemWidget extends StatelessWidget {
           flex: 3,
           child: Container(
             width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(4),
-                topRight: Radius.circular(4),
-              ),
-            ),
+            // decoration: BoxDecoration(
+            //   borderRadius: BorderRadius.circular(
+            //     // topLeft: Radius.circular(4),
+            //     // topRight: Radius.circular(4),
+            //     12
+            //   ),
+            // ),
             child: Stack(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.softWhite71,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.all(4.0),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4),
-                    ),
+                    //   borderRadius: BorderRadius.circular(
+                    // topLeft: Radius.circular(4),
+                    // topRight: Radius.circular(4),
+                    //   20
+                    // ),
                     child: Image.network(
                       imgUrl,
                       fit: BoxFit.contain,
@@ -91,23 +97,23 @@ class ProductItemWidget extends StatelessWidget {
                   ),
                 ),
                 _buildRatingBadge(),
-                if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
-                  _buildDiscountBadge(),
-                ],
               ],
             ),
           ),
         ),
         // Content section - Constrained height
-        Expanded(
-          flex: 2,
-          child: Padding(
-            padding: EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [_buildProductInfo(), _buildPriceSection(fontSize: 12)],
-            ),
+        Padding(
+          padding: EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildProductInfo(),
+              if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
+                _buildDiscountBadge(),
+              ],
+              _buildPriceSection(fontSize: 14),
+            ],
           ),
         ),
       ],
@@ -127,23 +133,26 @@ class ProductItemWidget extends StatelessWidget {
             // height: double.infinity,
             // width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(4),
-                topRight: Radius.circular(4),
+              color: AppColors.softWhite71,
+              borderRadius: BorderRadius.circular(
+                // topLeft: Radius.circular(4),
+                // topRight: Radius.circular(4),
+                12,
               ),
             ),
             child: Stack(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+                Container(
+                  // padding: const EdgeInsets.all(8.0),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4),
+                    borderRadius: BorderRadius.circular(
+                      // topLeft: Radius.circular(4),
+                      // topRight: Radius.circular(4),
+                      20,
                     ),
                     child: SizedBox(
-                      width: 250,
-                      height: 250,
+                      // width: 250,
+                      // height: 250,
                       child: Image.network(
                         imgUrl,
                         fit: BoxFit.contain,
@@ -157,9 +166,6 @@ class ProductItemWidget extends StatelessWidget {
                   ),
                 ),
                 _buildRatingBadge(),
-                if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
-                  _buildDiscountBadge(),
-                ],
               ],
             ),
           ),
@@ -173,7 +179,11 @@ class ProductItemWidget extends StatelessWidget {
             children: [
               _buildProductInfo(),
               SizedBox(height: 4),
-              _buildPriceSection(fontSize: 12),
+              if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
+                _buildDiscountBadge(),
+              ],
+              SizedBox(height: 4),
+              _buildPriceSection(fontSize: 14),
             ],
           ),
         ),
@@ -189,9 +199,9 @@ class ProductItemWidget extends StatelessWidget {
         Text(
           itemName,
           overflow: TextOverflow.ellipsis,
-          maxLines: 2,
+          maxLines: 1,
           style: TextStyle(
-            fontSize: isGridView ? 12 : 14,
+            fontSize: isGridView ? 14 : 16,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -242,20 +252,18 @@ class ProductItemWidget extends StatelessWidget {
   }
 
   Widget _buildDiscountBadge() {
-    return Positioned(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 9),
-        decoration: BoxDecoration(
-          color: AppColors.worldGreen10,
-          borderRadius: BorderRadius.circular(3),
-        ),
-        child: Text(
-          '${_calculateDiscount()}% off',
-          style: TextStyle(
-            fontSize: isGridView ? 10 : 11,
-            fontWeight: FontWeight.w600,
-            color: AppColors.worldGreen,
-          ),
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 9),
+      decoration: BoxDecoration(
+        color: AppColors.worldGreen10,
+        borderRadius: BorderRadius.circular(3),
+      ),
+      child: Text(
+        '${_calculateDiscount()}% off',
+        style: TextStyle(
+          fontSize: isGridView ? 10 : 11,
+          fontWeight: FontWeight.w600,
+          color: AppColors.worldGreen,
         ),
       ),
     );
@@ -274,7 +282,7 @@ class ProductItemWidget extends StatelessWidget {
             svgWidth: fontSize * 0.4,
           ),
           SizedBox(width: 4),
-          Flexible(
+          Expanded(
             child: CurrencyWidget(
               price: regularPrice,
               fontSize: fontSize - 2,
