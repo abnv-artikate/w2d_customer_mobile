@@ -68,14 +68,16 @@ class _CartScreenState extends State<CartScreen> {
         actions: [
           BlocBuilder<CartShippingCubit, CartShippingState>(
             builder: (context, state) {
-              return LocationWidget(
-                onTap: () => _setLocationWidget(),
-                address:
-                    state.hasLocationData
-                        ? '${state.location?.city}, ${state.location?.country}'
-                        : state.isLocationLoading
-                        ? "Loading Location"
-                        : "Set Location",
+              return Expanded(
+                child: LocationWidget(
+                  onTap: () => _setLocationWidget(),
+                  address:
+                      state.hasLocationData
+                          ? '${state.location?.city}, ${state.location?.country}'
+                          : state.isLocationLoading
+                          ? "Loading Location"
+                          : "Set Location",
+                ),
               );
             },
           ),
@@ -228,8 +230,6 @@ class _CartScreenState extends State<CartScreen> {
               : AppColors.worldGreen80,
       height: 50,
       width: MediaQuery.of(context).size.width * 0.9,
-      horizontalMargin: 0,
-      borderRadius: 4,
       onTap: () {
         state.isAnyLoading ? null : _handleProceedToBuy(state);
       },
@@ -342,6 +342,7 @@ class _CartScreenState extends State<CartScreen> {
       enableDrag: true,
       useSafeArea: true,
       showDragHandle: true,
+      useRootNavigator: true,
       scrollControlDisabledMaxHeightRatio: 0.9,
       builder: (BuildContext context) {
         return LoginBottomSheet();

@@ -38,6 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       enableDrag: true,
       useSafeArea: true,
       showDragHandle: true,
+      useRootNavigator: true,
       scrollControlDisabledMaxHeightRatio: 0.9,
       builder: (BuildContext context) {
         return LoginBottomSheet();

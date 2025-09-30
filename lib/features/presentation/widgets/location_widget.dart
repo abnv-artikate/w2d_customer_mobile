@@ -12,15 +12,18 @@ class LocationWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.only(right: 10),
+        margin: EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(LucideIcons.mapPin),
             SizedBox(width: 5),
-            Text(
-              address ?? "Tap to set Location",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            Expanded(
+              child: Text(
+                address ?? "Tap to set Location",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

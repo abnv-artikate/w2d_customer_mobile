@@ -10,6 +10,8 @@ import 'package:w2d_customer_mobile/features/presentation/cubit/category/categor
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/category_listing_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/category_bubble_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/location_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/search_widget.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
@@ -69,54 +71,115 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isBrand = context.select((CategoryCubit c) => c.isBrand);
-    return Scaffold(
-      appBar: _buildAppBar(isBrand),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildHeroBanner(),
-            _buildBannerSection(),
-            _buildCategoriesSection(),
-            _buildBannerSection(),
-            _buildBestSellers(isBrand),
-            SizedBox(height: 150),
-          ],
-        ),
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar(bool isBrand) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 400;
+    return Scaffold(
+      body: NestedScrollView(
+        headerSliverBuilder:
+            (context, innerBoxIsScrolled) => [
+              SliverAppBar(
+                pinned: true,
+                stretch: true,
 
-    return AppBar(
-      toolbarHeight: 80,
-      iconTheme: IconThemeData(color: AppColors.deepBlue),
-      leadingWidth: isSmallScreen ? 60 : 80,
-      leading: Container(
-        margin: EdgeInsets.only(left: 10),
-        child: Image.asset(
-          isBrand
-              ? Assets.iconsW2DLogoAspirationalGold
-              : Assets.iconsW2DLogoGreen,
-          fit: BoxFit.contain,
-        ),
-      ),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(right: isSmallScreen ? 8 : 16),
-          child: BrandMallToggleWidget(
-            onTap: () {
-              context.read<CategoryCubit>().toggleBrand();
-            },
-            isBrand: isBrand,
+                // use the SliverAppBar's own toolbar; don't nest an AppBar in flexibleSpace
+                toolbarHeight: kToolbarHeight,
+                leadingWidth:
+                    isSmallScreen ? screenWidth * 0.5 : screenWidth * 0.7,
+                leading: Container(
+                  margin: const EdgeInsets.only(left: 10),
+                  child: LocationWidget(onTap: () {}, address: "Set Location"),
+                ),
+
+                actions: [
+                  Padding(
+                    padding: EdgeInsets.only(right: isSmallScreen ? 8 : 16),
+                    child: BrandMallToggleWidget(
+                      onTap: () => context.read<CategoryCubit>().toggleBrand(),
+                      isBrand: isBrand,
+                    ),
+                  ),
+                ],
+                expandedHeight: 150,
+
+                flexibleSpace: FlexibleSpaceBar(
+                  background: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient:
+                          isBrand
+                              ? AppColors.aspirationGold
+                              : AppColors.worldGreenGradiant,
+                    ),
+                  ),
+                  title: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                    child: SearchWidget(
+                      onTap: () => context.push(AppRoutes.searchRoute),
+                    ),
+                  ),
+                ),
+
+                // IMPORTANT: give bottom an explicit height; no more Size.zero
+                // bottom: PreferredSize(
+                //   preferredSize: const Size.fromHeight(56),
+                //   // adjust to match your SearchWidget
+                //   child: Padding(
+                //     padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                //     child: SearchWidget(
+                //       onTap: () => context.push(AppRoutes.searchRoute),
+                //     ),
+                //   ),
+                // ),
+              ),
+            ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildHeroBanner(),
+              _buildBannerSection(),
+              _buildCategoriesSection(),
+              _buildBannerSection(),
+              _buildBestSellers(isBrand),
+              SizedBox(height: 150),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
+
+  // PreferredSizeWidget _buildAppBar(bool isBrand) {
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   final isSmallScreen = screenWidth < 400;
+  //
+  //   return AppBar(
+  //     toolbarHeight: 50,
+  //     iconTheme: IconThemeData(color: AppColors.deepBlue),
+  //     leadingWidth: isSmallScreen ? screenWidth * 0.5 : screenWidth * 0.7,
+  //     leading: Container(
+  //       margin: EdgeInsets.only(left: 10),
+  //       child: LocationWidget(onTap: () {}, address: "Set Location"),
+  //     ),
+  //     actions: [
+  //       Padding(
+  //         padding: EdgeInsets.only(right: isSmallScreen ? 8 : 16),
+  //         child: BrandMallToggleWidget(
+  //           onTap: () {
+  //             context.read<CategoryCubit>().toggleBrand();
+  //           },
+  //           isBrand: isBrand,
+  //         ),
+  //       ),
+  //     ],
+  //     bottom: PreferredSize(
+  //       preferredSize: Size.zero,
+  //       child: SearchWidget(
+  //         onTap: () {
+  //           context.push(AppRoutes.searchRoute);
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildHeroBanner() {
     return Container(

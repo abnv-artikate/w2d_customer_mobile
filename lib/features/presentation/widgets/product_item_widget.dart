@@ -143,7 +143,7 @@ class ProductItemWidget extends StatelessWidget {
             child: Stack(
               children: [
                 Container(
-                  // padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(
                       // topLeft: Radius.circular(4),
