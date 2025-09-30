@@ -71,115 +71,153 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isBrand = context.select((CategoryCubit c) => c.isBrand);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 400;
+    // final screenWidth = MediaQuery.of(context).size.width;
+    // final isSmallScreen = screenWidth < 400;
+    const double kSearchHeight = 56; // match your SearchWidget visual height
+    const double kExpandedHeight = 160; // tune as you like
     return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder:
-            (context, innerBoxIsScrolled) => [
-              SliverAppBar(
-                pinned: true,
-                stretch: true,
-
-                // use the SliverAppBar's own toolbar; don't nest an AppBar in flexibleSpace
-                toolbarHeight: kToolbarHeight,
-                leadingWidth:
-                    isSmallScreen ? screenWidth * 0.5 : screenWidth * 0.7,
-                leading: Container(
-                  margin: const EdgeInsets.only(left: 10),
-                  child: LocationWidget(onTap: () {}, address: "Set Location"),
-                ),
-
-                actions: [
-                  Padding(
-                    padding: EdgeInsets.only(right: isSmallScreen ? 8 : 16),
-                    child: BrandMallToggleWidget(
-                      onTap: () => context.read<CategoryCubit>().toggleBrand(),
-                      isBrand: isBrand,
-                    ),
-                  ),
-                ],
-                expandedHeight: 150,
-
-                flexibleSpace: FlexibleSpaceBar(
-                  background: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient:
-                          isBrand
-                              ? AppColors.aspirationGold
-                              : AppColors.worldGreenGradiant,
-                    ),
-                  ),
-                  title: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                    child: SearchWidget(
-                      onTap: () => context.push(AppRoutes.searchRoute),
-                    ),
-                  ),
-                ),
-
-                // IMPORTANT: give bottom an explicit height; no more Size.zero
-                // bottom: PreferredSize(
-                //   preferredSize: const Size.fromHeight(56),
-                //   // adjust to match your SearchWidget
-                //   child: Padding(
-                //     padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                //     child: SearchWidget(
-                //       onTap: () => context.push(AppRoutes.searchRoute),
-                //     ),
-                //   ),
-                // ),
-              ),
-            ],
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildHeroBanner(),
-              _buildBannerSection(),
-              _buildCategoriesSection(),
-              _buildBannerSection(),
-              _buildBestSellers(isBrand),
-              SizedBox(height: 150),
-            ],
-          ),
+      appBar: _buildAppBar(isBrand),
+      // body: NestedScrollView(
+      //   headerSliverBuilder:
+      //       (context, innerBoxIsScrolled) => [
+      //         SliverAppBar(
+      //           pinned: true,
+      //           stretch: true,
+      //           // We don't use toolbar leading/actions; they would stay visible when collapsed.
+      //           // Keep the toolbar minimal; the "bottom" holds the Search.
+      //           toolbarHeight: kToolbarHeight,
+      //           elevation: innerBoxIsScrolled ? 2 : 0,
+      //
+      //           expandedHeight: kExpandedHeight,
+      //
+      //           // The expandable area: contains Location + Toggle and the brand gradient.
+      //           flexibleSpace: LayoutBuilder(
+      //             builder: (context, constraints) {
+      //               // How expanded we are (1.0 = fully expanded, 0.0 = fully collapsed)
+      //               final double maxH = constraints.maxHeight;
+      //               final double collapsibleRange = (kExpandedHeight -
+      //                       kToolbarHeight)
+      //                   .clamp(1.0, double.infinity);
+      //               final double t = ((maxH - kToolbarHeight) /
+      //                       collapsibleRange)
+      //                   .clamp(0.0, 1.0);
+      //
+      //               return Stack(
+      //                 fit: StackFit.expand,
+      //                 children: [
+      //                   // Background gradient
+      //                   DecoratedBox(
+      //                     decoration: BoxDecoration(
+      //                       gradient:
+      //                           isBrand
+      //                               ? AppColors.aspirationGold
+      //                               : AppColors.worldGreenGradiant,
+      //                     ),
+      //                   ),
+      //
+      //                   // Location + Toggle row — fades out as we collapse
+      //                   SafeArea(
+      //                     bottom: false,
+      //                     child: AnimatedOpacity(
+      //                       duration: const Duration(milliseconds: 180),
+      //                       opacity: t, // 1 when expanded, 0 when collapsed
+      //                       child: Padding(
+      //                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      //                         child: Align(
+      //                           alignment: Alignment.bottomLeft,
+      //                           child: Row(
+      //                             children: [
+      //                               // Location on the left
+      //                               Flexible(
+      //                                 child: LocationWidget(
+      //                                   onTap: () {},
+      //                                   address: "Set Location",
+      //                                 ),
+      //                               ),
+      //                               const SizedBox(width: 12),
+      //                               // Toggle on the right
+      //                               BrandMallToggleWidget(
+      //                                 onTap:
+      //                                     () =>
+      //                                         context
+      //                                             .read<CategoryCubit>()
+      //                                             .toggleBrand(),
+      //                                 isBrand: isBrand,
+      //                               ),
+      //                             ],
+      //                           ),
+      //                         ),
+      //                       ),
+      //                     ),
+      //                   ),
+      //                 ],
+      //               );
+      //             },
+      //           ),
+      //
+      //           // Keep Search pinned (visible both expanded & collapsed)
+      //           bottom: PreferredSize(
+      //             preferredSize: const Size.fromHeight(kSearchHeight),
+      //             child: Padding(
+      //               padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      //               child: SizedBox(
+      //                 height: kSearchHeight,
+      //                 child: SearchWidget(
+      //                   onTap: () => context.push(AppRoutes.searchRoute),
+      //                 ),
+      //               ),
+      //             ),
+      //           ),
+      //         ),
+      //       ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildHeroBanner(),
+            _buildBannerSection(),
+            _buildCategoriesSection(),
+            _buildBannerSection(),
+            _buildBestSellers(isBrand),
+            SizedBox(height: 150),
+          ],
         ),
       ),
     );
   }
 
-  // PreferredSizeWidget _buildAppBar(bool isBrand) {
-  //   final screenWidth = MediaQuery.of(context).size.width;
-  //   final isSmallScreen = screenWidth < 400;
-  //
-  //   return AppBar(
-  //     toolbarHeight: 50,
-  //     iconTheme: IconThemeData(color: AppColors.deepBlue),
-  //     leadingWidth: isSmallScreen ? screenWidth * 0.5 : screenWidth * 0.7,
-  //     leading: Container(
-  //       margin: EdgeInsets.only(left: 10),
-  //       child: LocationWidget(onTap: () {}, address: "Set Location"),
-  //     ),
-  //     actions: [
-  //       Padding(
-  //         padding: EdgeInsets.only(right: isSmallScreen ? 8 : 16),
-  //         child: BrandMallToggleWidget(
-  //           onTap: () {
-  //             context.read<CategoryCubit>().toggleBrand();
-  //           },
-  //           isBrand: isBrand,
-  //         ),
-  //       ),
-  //     ],
-  //     bottom: PreferredSize(
-  //       preferredSize: Size.zero,
-  //       child: SearchWidget(
-  //         onTap: () {
-  //           context.push(AppRoutes.searchRoute);
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
+  PreferredSizeWidget _buildAppBar(bool isBrand) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+
+    return AppBar(
+      toolbarHeight: 150,
+      iconTheme: IconThemeData(color: AppColors.deepBlue),
+      leadingWidth: isSmallScreen ? screenWidth * 0.5 : screenWidth * 0.7,
+      leading: Container(
+        margin: EdgeInsets.only(left: 10),
+        child: LocationWidget(onTap: () {}, address: "Set Location"),
+      ),
+      actions: [
+        Padding(
+          padding: EdgeInsets.only(right: isSmallScreen ? 8 : 16),
+          child: BrandMallToggleWidget(
+            onTap: () {
+              context.read<CategoryCubit>().toggleBrand();
+            },
+            isBrand: isBrand,
+          ),
+        ),
+      ],
+      bottom: PreferredSize(
+        preferredSize: Size.zero,
+        child: SearchWidget(
+          onTap: () {
+            context.push(AppRoutes.searchRoute);
+          },
+        ),
+      ),
+    );
+  }
 
   Widget _buildHeroBanner() {
     return Container(

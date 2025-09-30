@@ -29,7 +29,6 @@ class _CartItemWidgetState extends State<CartItemWidget> {
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.black70),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Stack(
@@ -37,25 +36,19 @@ class _CartItemWidgetState extends State<CartItemWidget> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
-                height: 100,
-                width: 100,
-                child: Image.network(
-                  widget.cartItem.product.mainImage,
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, obj, stackTrace) {
-                    return Container(
-                      height: 60,
-                      width: 80,
-                      padding: EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 10,
-                      ),
-                      child: Text("error: $stackTrace"),
-                    );
-                  },
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(color: AppColors.softWhite71),
+                child: ClipRRect(
+                  child: Image.network(
+                    widget.cartItem.product.mainImage,
+                    height: 100,
+                    width: 100,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, obj, stackTrace) {
+                      return Center(child: Icon(LucideIcons.imageOff));
+                    },
+                  ),
                 ),
               ),
               SizedBox(width: 10),
@@ -70,7 +63,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                         fontWeight: FontWeight.w600,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 3,
+                      maxLines: 2,
                     ),
                     // Text(
                     //   widget.cartItem.product.salePrice.toStringAsFixed(2),
@@ -85,6 +78,8 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                             price: widget.cartItem.product.salePrice
                                 .toStringAsFixed(2),
                             fontSize: 18,
+                            svgHeight: 12,
+                            svgWidth: 12,
                             fontColor: AppColors.black,
                             strikeThrough: false,
                           ),
@@ -162,8 +157,8 @@ class _CartItemWidgetState extends State<CartItemWidget> {
     return Container(
       height: 40,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: AppColors.black70),
+        borderRadius: BorderRadius.circular(100),
+        color: AppColors.softWhite71,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

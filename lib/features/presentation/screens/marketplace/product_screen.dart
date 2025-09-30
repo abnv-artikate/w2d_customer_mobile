@@ -53,24 +53,23 @@ class _ProductScreenState extends State<ProductScreen> {
 
   CarouselOptions get _recommendationsAndRelatedProductsCarouselOption {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
 
-    // Dynamic height calculation based on screen size
-    double carouselHeight;
-    if (screenWidth < 400) {
-      carouselHeight =
-          screenHeight * 0.25; // 32% of screen height for small devices
-    } else if (screenWidth < 600) {
-      carouselHeight = screenHeight * 0.28; // 35% for medium devices
-    } else {
-      carouselHeight = screenHeight * 0.32; // 38% for larger devices
-    }
+    // // Dynamic height calculation based on screen size
+    // double carouselHeight;
+    // if (screenWidth < 400) {
+    //   carouselHeight =
+    //       screenHeight * 0.25; // 32% of screen height for small devices
+    // } else if (screenWidth < 600) {
+    //   carouselHeight = screenHeight * 0.28; // 35% for medium devices
+    // } else {
+    //   carouselHeight = screenHeight * 0.32; // 38% for larger devices
+    // }
 
     return CarouselOptions(
       disableCenter: true,
       padEnds: false,
-      height: carouselHeight,
-      viewportFraction: screenWidth < 400 ? 0.55 : 0.5,
+      height: screenWidth < 400 ? 280 : 320,
+      viewportFraction: screenWidth < 400 ? 0.4 : 0.45,
       enableInfiniteScroll: false,
     );
   }
@@ -148,7 +147,12 @@ class _ProductScreenState extends State<ProductScreen> {
 
   Widget _buildProductImage() {
     return Container(
-      decoration: BoxDecoration(),
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: AppColors.softWhite71,
+        borderRadius: BorderRadius.circular(12)
+      ),
       child: CarouselSlider(
         options: _imageCarouselOption,
         items:
@@ -239,23 +243,23 @@ class _ProductScreenState extends State<ProductScreen> {
           Text(
             widget.product.name,
             style: const TextStyle(
-              fontSize: 28,
+              fontSize: 25,
               fontWeight: FontWeight.bold,
               height: 1.2,
             ),
           ),
-          const SizedBox(height: 5),
-          Text(
-            widget.product.shortDescription,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-              color: Colors.grey[600],
-              height: 1.4,
-              overflow: TextOverflow.ellipsis,
-            ),
-            maxLines: 2,
-          ),
+          // const SizedBox(height: 5),
+          // Text(
+          //   widget.product.shortDescription,
+          //   style: TextStyle(
+          //     fontSize: 18,
+          //     fontWeight: FontWeight.w400,
+          //     color: Colors.grey[600],
+          //     height: 1.4,
+          //     overflow: TextOverflow.ellipsis,
+          //   ),
+          //   maxLines: 2,
+          // ),
           const SizedBox(height: 20),
           _buildPriceSection(),
           const Text(
@@ -265,8 +269,8 @@ class _ProductScreenState extends State<ProductScreen> {
           const SizedBox(height: 12),
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: AppColors.softWhite80),
+              borderRadius: BorderRadius.circular(100),
+              color: AppColors.softWhite71,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
