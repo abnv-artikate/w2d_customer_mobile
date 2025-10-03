@@ -11,31 +11,31 @@ class GetCurrentLocationUseCase {
     try {
       Location location = Location();
 
-      bool _serviceEnabled;
-      PermissionStatus _permissionGranted;
-      LocationData _locationData;
+      bool serviceEnabled;
+      PermissionStatus permissionGranted;
+      LocationData locationData;
 
-      _serviceEnabled = await location.serviceEnabled();
+      serviceEnabled = await location.serviceEnabled();
       // if (!_serviceEnabled) {
       //   _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
+      if (!serviceEnabled) {
         return Left("Location Service disabled");
       }
       // }
 
-      _permissionGranted = await location.hasPermission();
-      if (_permissionGranted == PermissionStatus.denied) {
-        _permissionGranted = await location.requestPermission();
-        if (_permissionGranted != PermissionStatus.granted) {
+      permissionGranted = await location.hasPermission();
+      if (permissionGranted == PermissionStatus.denied) {
+        permissionGranted = await location.requestPermission();
+        if (permissionGranted != PermissionStatus.granted) {
           return Left("Location Service disabled");
         }
       }
 
-      _locationData = await location.getLocation();
+      locationData = await location.getLocation();
 
       final List<Placemark> placemarks = await placemarkFromCoordinates(
-        _locationData.latitude!,
-        _locationData.longitude!,
+        locationData.latitude!,
+        locationData.longitude!,
       );
 
       Placemark place = placemarks[1];
@@ -45,8 +45,8 @@ class GetCurrentLocationUseCase {
           city: place.locality ?? place.subAdministrativeArea ?? "",
           country: place.country ?? "",
           isoCountryCode: place.isoCountryCode ?? "",
-          latitude: _locationData.latitude?.toDouble() ?? 0.0,
-          longitude: _locationData.longitude?.toDouble() ?? 0.0,
+          latitude: locationData.latitude?.toDouble() ?? 0.0,
+          longitude: locationData.longitude?.toDouble() ?? 0.0,
         ),
       );
     } on Exception catch (e) {

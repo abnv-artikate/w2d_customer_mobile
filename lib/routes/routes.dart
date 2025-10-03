@@ -81,16 +81,6 @@ final GoRouter router = GoRouter(
         ),
       ],
     ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: AppRoutes.loginRoute,
-    //   builder: (BuildContext context, GoRouterState state) {
-    //     return BlocProvider<AuthCubit>(
-    //       create: (context) => sl<AuthCubit>(),
-    //       child: LoginBottomSheet(),
-    //     );
-    //   },
-    // ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: AppRoutes.listingRoute,
@@ -113,6 +103,9 @@ final GoRouter router = GoRouter(
               create: (context) => sl<CategoryCubit>(),
             ),
             BlocProvider<CommonCubit>(create: (context) => sl<CommonCubit>()),
+            BlocProvider<CartShippingCubit>.value(
+              value: sl<CartShippingCubit>(),
+            ),
           ],
           child: ProductScreen(product: state.extra as ProductViewEntity),
         );

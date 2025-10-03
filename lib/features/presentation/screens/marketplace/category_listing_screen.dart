@@ -5,7 +5,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/product_item_widget.dart';
@@ -29,19 +28,15 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
     super.initState();
   }
 
-  List<CategoryProductEntity> brandProductCategoryList = [];
-  List<CategoryProductEntity> hiddenProductCategoryList = [];
+  List<CategoryProductEntity> categoryList = [];
 
   @override
   Widget build(BuildContext context) {
-    final isBrand = context.select((CategoryCubit c) => c.isBrand);
     return BlocConsumer<CategoryCubit, CategoryState>(
       listener: (context, state) {
         if (state is CategoryLoaded) {
-          brandProductCategoryList.clear();
-          hiddenProductCategoryList.clear();
-          brandProductCategoryList = state.brandMallProductCategoryListing;
-          hiddenProductCategoryList = state.hiddenGemsProductCategoryListing;
+          categoryList.clear();
+          categoryList = state.categoryListing;
         } else if (state is CategoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
@@ -62,14 +57,14 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
               widget.params.category?.name ?? widget.params.searchTerm ?? "",
             ),
             centerTitle: true,
-            actions: [
-              BrandMallToggleWidget(
-                onTap: () {
-                  context.read<CategoryCubit>().toggleBrand();
-                },
-                isBrand: isBrand,
-              ),
-            ],
+            // actions: [
+            //   BrandMallToggleWidget(
+            //     onTap: () {
+            //       context.read<CategoryCubit>().toggleBrand();
+            //     },
+            //     isBrand: isBrand,
+            //   ),
+            // ],
           ),
           body:
               state is CategoryLoading
@@ -78,14 +73,14 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                       color: AppColors.worldGreen,
                     ),
                   )
-                  : _buildContent(context, isBrand),
+                  : _buildContent(context),
           bottomNavigationBar: _bottomNavigation(),
         );
       },
     );
   }
 
-  Widget _buildContent(BuildContext context, bool isBrand) {
+  Widget _buildContent(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -95,10 +90,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
             _buildSubcategoriesSection(),
           ],
           // Products grid section
-          _buildProductsGrid(
-            context,
-            isBrand ? brandProductCategoryList : hiddenProductCategoryList,
-          ),
+          _buildProductsGrid(context, categoryList),
           SizedBox(height: 20),
         ],
       ),

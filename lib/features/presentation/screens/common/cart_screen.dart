@@ -85,12 +85,12 @@ class _CartScreenState extends State<CartScreen> {
       ),
       body: BlocListener<CartShippingCubit, CartShippingState>(
         listener: (context, state) {
-          if (state.hasSuccess) {
-            widget.showErrorToast(
-              context: context,
-              message: state.successMessage ?? "Success Message",
-            );
-          }
+          // if (state.hasSuccess) {
+          //   widget.showErrorToast(
+          //     context: context,
+          //     message: state.successMessage ?? "Success Message",
+          //   );
+          // }
 
           if (state.hasError) {
             widget.showErrorToast(
@@ -242,7 +242,7 @@ class _CartScreenState extends State<CartScreen> {
     }
 
     if (!state.hasCartData || state.cart!.items.isEmpty) {
-      return 'Add Items to Cart';
+      return 'Continue Shopping';
     }
 
     final checkedItems =
@@ -300,10 +300,7 @@ class _CartScreenState extends State<CartScreen> {
 
   void _handleProceedToBuy(CartShippingState state) {
     if (!state.hasCartData || state.cart!.items.isEmpty) {
-      widget.showErrorToast(
-        context: context,
-        message: "Please add items to cart",
-      );
+      context.go(AppRoutes.initial);
       return;
     }
 

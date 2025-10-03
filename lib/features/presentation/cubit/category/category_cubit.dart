@@ -53,34 +53,12 @@ class CategoryCubit extends Cubit<CategoryState> {
   final GetBrowsingHistoryUseCase getBrowsingHistoryUseCase;
   final LocalDatasource localDatasource;
 
-  bool get isBrand => localDatasource.getBrandMall() ?? false;
-
-  void toggleBrand() {
-    final updated = !isBrand;
-    localDatasource.setBrandMall(updated);
-    emit(BrandToggle(isBrandMall: updated));
-  }
-
   getProductCategoryList(ProductCategoryParams params) async {
     emit(CategoryLoading());
-    List<CategoryProductEntity> hidden = [];
-    List<CategoryProductEntity> brand = [];
     final result = await productCategoryUseCase.call(params);
 
     result.fold((l) => _emitFailure(l), (data) {
-      for (CategoryProductEntity item in data.results) {
-        if (item.seller.isHiddenGem) {
-          hidden.add(item);
-        } else {
-          brand.add(item);
-        }
-      }
-      emit(
-        CategoryLoaded(
-          brandMallProductCategoryListing: brand,
-          hiddenGemsProductCategoryListing: hidden,
-        ),
-      );
+      emit(CategoryLoaded(categoryListing: data.results));
     });
   }
 
@@ -202,11 +180,14 @@ class CategoryCubit extends Cubit<CategoryState> {
 
     final result = await getBrowsingHistoryUseCase.call(NoParams());
 
-    result.fold((failure){
-      emit(GetBrowsingHistoryError(error: failure.message));
-    },(success){
-      emit(GetBrowsingHistoryLoaded(browsingHistoryData: success.data));
-    });
+    result.fold(
+      (failure) {
+        emit(GetBrowsingHistoryError(error: failure.message));
+      },
+      (success) {
+        emit(GetBrowsingHistoryLoaded(browsingHistoryData: success.data));
+      },
+    );
   }
 
   FutureOr<void> _emitFailure(Failure failure) async {

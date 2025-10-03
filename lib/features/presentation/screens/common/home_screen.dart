@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/screens/marketplace/category_listing_screen.dart';
@@ -15,7 +16,6 @@ import 'package:w2d_customer_mobile/features/presentation/widgets/search_widget.
 import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/collections_entity.dart';
-import 'package:w2d_customer_mobile/features/presentation/widgets/brand_mall_toggle_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/product_item_widget.dart';
 import 'package:w2d_customer_mobile/generated/assets.dart';
 
@@ -35,14 +35,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<CollectionsResultDataEntity> brandMallCollections = [];
-  List<CollectionsResultDataEntity> hiddenGemsCollections = [];
+  List<CollectionsResultDataEntity> collections = [];
   List<SubCategoriesEntity> categoryList = [];
 
   @override
   void initState() {
     _callGetCollectionsApi();
     _callCategoriesListingAPi();
+    _callGetCartItemApi();
     super.initState();
   }
 
@@ -70,13 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isBrand = context.select((CategoryCubit c) => c.isBrand);
     // final screenWidth = MediaQuery.of(context).size.width;
     // final isSmallScreen = screenWidth < 400;
-    const double kSearchHeight = 56; // match your SearchWidget visual height
-    const double kExpandedHeight = 160; // tune as you like
     return Scaffold(
-      appBar: _buildAppBar(isBrand),
+      appBar: _buildAppBar(),
       // body: NestedScrollView(
       //   headerSliverBuilder:
       //       (context, innerBoxIsScrolled) => [
@@ -177,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildBannerSection(),
             _buildCategoriesSection(),
             _buildBannerSection(),
-            _buildBestSellers(isBrand),
+            _buildBestSellers(),
             SizedBox(height: 150),
           ],
         ),
@@ -185,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(bool isBrand) {
+  PreferredSizeWidget _buildAppBar() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 400;
 
@@ -197,17 +194,6 @@ class _HomeScreenState extends State<HomeScreen> {
         margin: EdgeInsets.only(left: 10),
         child: LocationWidget(onTap: () {}, address: "Set Location"),
       ),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(right: isSmallScreen ? 8 : 16),
-          child: BrandMallToggleWidget(
-            onTap: () {
-              context.read<CategoryCubit>().toggleBrand();
-            },
-            isBrand: isBrand,
-          ),
-        ),
-      ],
       bottom: PreferredSize(
         preferredSize: Size.zero,
         child: SearchWidget(
@@ -295,20 +281,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildBestSellers(bool isBrand) {
+  Widget _buildBestSellers() {
     return BlocConsumer<CommonCubit, CommonState>(
       listener: (context, state) {
         if (state is CollectionsLoaded) {
-          brandMallCollections.clear();
-          hiddenGemsCollections.clear();
-          brandMallCollections = state.brandMallCollections;
-          hiddenGemsCollections = state.hiddenGemsCollections;
+          collections = state.collections;
         }
       },
       builder: (context, state) {
-        final collections =
-            isBrand ? brandMallCollections : hiddenGemsCollections;
-
         if (collections.isEmpty) {
           return SizedBox();
         }
@@ -323,7 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (BuildContext context, int index) {
-              return _buildCollectionSection(collections[index], isBrand);
+              return _buildCollectionSection(collections[index]);
             },
             separatorBuilder: (context, index) => SizedBox(height: 16),
             itemCount: collections.length,
@@ -333,10 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCollectionSection(
-    CollectionsResultDataEntity collection,
-    bool isBrand,
-  ) {
+  Widget _buildCollectionSection(CollectionsResultDataEntity collection) {
     final screenWidth = MediaQuery.of(context).size.width;
     final horizontalPadding = screenWidth < 400 ? 8.0 : 16.0;
 
@@ -394,5 +371,9 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<CategoryCubit>().getProductView(
       ProductViewParams(productId: productId),
     );
+  }
+
+  void _callGetCartItemApi() {
+    context.read<CartShippingCubit>().getCartItems();
   }
 }

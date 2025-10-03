@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:uuid/data.dart';
 import 'package:uuid/v4.dart';
 import 'package:w2d_customer_mobile/core/error/exceptions.dart';
 import 'package:w2d_customer_mobile/core/error/failure.dart';
@@ -455,8 +454,6 @@ class RepositoryImpl extends Repository {
           params.toJson(),
         );
 
-        print(result.toString());
-
         return Right("Success");
       } else {
         return Left(ServerFailure(message: Constants.errorNoInternet));
@@ -659,7 +656,7 @@ class RepositoryImpl extends Repository {
 
         final result = await remoteDatasource.addBrowsingHistory({
           "product_id": params.productId,
-          "unique_id": uniqueId,
+          "unique_key": uniqueId,
         });
 
         return Right(result.message ?? 'Add to browsing history');
@@ -684,7 +681,7 @@ class RepositoryImpl extends Repository {
         }
 
         final result = await remoteDatasource.getBrowsingHistory({
-          "unique_id": uniqueId,
+          "unique_key": uniqueId,
         });
 
         return Right(result.toEntity());

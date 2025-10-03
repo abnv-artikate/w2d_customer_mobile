@@ -33,10 +33,6 @@ class CommonCubit extends Cubit<CommonState> {
   final VerifyOtpUseCase verifyOtpUseCase;
   final LocalDatasource localDatasource;
 
-  List<CollectionsResultDataEntity> brandMallCollections = [];
-  List<CollectionsResultDataEntity> hiddenGemsCollections = [];
-
-
   sendOtp(SendOtpParams params) async {
     emit(AuthLoading());
     final result = await sendOtpUseCase(params);
@@ -77,8 +73,6 @@ class CommonCubit extends Cubit<CommonState> {
 
   getCollections() async {
     emit(CollectionsLoading());
-    hiddenGemsCollections.clear();
-    brandMallCollections.clear();
     final result = await getCollectionsUseCase.call(NoParams());
 
     result.fold(
@@ -86,20 +80,7 @@ class CommonCubit extends Cubit<CommonState> {
         emit(CollectionsError(error: l.message));
       },
       (res) {
-        for (CollectionsResultDataEntity item in res.results.data) {
-          if (item.name.startsWith("Brand Mall")) {
-            brandMallCollections.add(item);
-          } else {
-            hiddenGemsCollections.add(item);
-          }
-        }
-
-        emit(
-          CollectionsLoaded(
-            brandMallCollections: brandMallCollections,
-            hiddenGemsCollections: hiddenGemsCollections,
-          ),
-        );
+        emit(CollectionsLoaded(collections: res.results.data));
       },
     );
   }

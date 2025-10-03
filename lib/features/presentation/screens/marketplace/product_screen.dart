@@ -10,6 +10,7 @@ import 'package:w2d_customer_mobile/features/domain/entities/recommendations/rec
 import 'package:w2d_customer_mobile/features/domain/entities/related_products/related_products_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/add_wishlist_usecase.dart';
+import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/product_item_widget.dart';
@@ -52,24 +53,11 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   CarouselOptions get _recommendationsAndRelatedProductsCarouselOption {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    // // Dynamic height calculation based on screen size
-    // double carouselHeight;
-    // if (screenWidth < 400) {
-    //   carouselHeight =
-    //       screenHeight * 0.25; // 32% of screen height for small devices
-    // } else if (screenWidth < 600) {
-    //   carouselHeight = screenHeight * 0.28; // 35% for medium devices
-    // } else {
-    //   carouselHeight = screenHeight * 0.32; // 38% for larger devices
-    // }
-
     return CarouselOptions(
       disableCenter: true,
       padEnds: false,
-      height: screenWidth < 400 ? 280 : 320,
-      viewportFraction: screenWidth < 400 ? 0.4 : 0.45,
+      height: 300,
+      viewportFraction: 0.47,
       enableInfiniteScroll: false,
     );
   }
@@ -85,19 +73,24 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   void initialize() {
-    final cubit = context.read<CategoryCubit>();
+    final categoryCubit = context.read<CategoryCubit>();
 
-    cubit.getRecommendation(widget.product.id);
-    cubit.getRelatedProducts(widget.product.id);
-    cubit.getBrowsingHistory();
+    categoryCubit.getRecommendation(widget.product.id);
+    categoryCubit.getRelatedProducts(widget.product.id);
+    // categoryCubit.getBrowsingHistory();
   }
 
   @override
   Widget build(BuildContext context) {
+    final int cartCount = context.select(
+      (CartShippingCubit bloc) =>
+          bloc.state.hasCartData ? bloc.state.cart!.items.length : 0,
+    );
     return BlocConsumer<CategoryCubit, CategoryState>(
       listener: (context, state) {
         if (state is CartSyncLoaded) {
           // widget.showErrorToast(context: context, message: state.message);
+          _callGetCartItemAPI();
         } else if (state is CategoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
@@ -120,7 +113,7 @@ class _ProductScreenState extends State<ProductScreen> {
       },
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(actions: [_buildCartButton()]),
+          appBar: AppBar(actions: [_buildCartButton(cartCount)]),
           body: SafeArea(
             bottom: true,
             child: ListView(
@@ -151,7 +144,7 @@ class _ProductScreenState extends State<ProductScreen> {
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: AppColors.softWhite71,
-        borderRadius: BorderRadius.circular(12)
+        borderRadius: BorderRadius.circular(12),
       ),
       child: CarouselSlider(
         options: _imageCarouselOption,
@@ -207,25 +200,13 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  Widget _buildCartButton() {
+  Widget _buildCartButton(int cartCount) {
     return Container(
-      margin: const EdgeInsets.only(right: 8),
-      child: Material(
-        color: Colors.white,
-        shape: const CircleBorder(),
-        elevation: 2,
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: () {},
-          child: const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Icon(
-              LucideIcons.shoppingCart,
-              size: 24,
-              color: Colors.black,
-            ),
-          ),
-        ),
+      margin: EdgeInsets.only(right: 30),
+      child: Badge(
+        label: Text(cartCount > 99 ? "99+" : "$cartCount"),
+        isLabelVisible: cartCount > 0,
+        child: Icon(LucideIcons.shoppingCart, size: 24, color: Colors.black),
       ),
     );
   }
@@ -489,7 +470,7 @@ class _ProductScreenState extends State<ProductScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Related Products",
+            "Recently Viewed",
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
           ),
           CarouselSlider(
@@ -653,5 +634,9 @@ class _ProductScreenState extends State<ProductScreen> {
 
   void _callAddBrowsingHistoryAPI() {
     context.read<CategoryCubit>().addBrowsingHistory(widget.product.id);
+  }
+
+  void _callGetCartItemAPI() {
+    context.read<CartShippingCubit>().getCartItems();
   }
 }
