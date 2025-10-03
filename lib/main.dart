@@ -2,7 +2,6 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/common/common_cubit.dart';
 import 'package:w2d_customer_mobile/routes/routes.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
@@ -13,12 +12,12 @@ import 'core/utils/constants.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
-  await dotenv.load(fileName: ".env");
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
       builder:
-          (context) => BlocProvider<CommonCubit>(
+          (context) =>
+          BlocProvider<CommonCubit>(
             create: (context) => sl<CommonCubit>(),
             child: MyApp(),
           ),
@@ -56,7 +55,6 @@ class MyApp extends StatelessWidget {
         fontFamily: 'DMSans',
         useMaterial3: true,
       ),
-      // home: const CategoryListingScreen(),
     );
   }
 }
