@@ -186,7 +186,7 @@ class _CategoryListingScreenState extends State<CategoryListingScreen> {
                     onViewTap: () {
                       _callProductViewApi(categoryProductList[index].id);
                     },
-                    onWishlistTap: () {},
+                    onAddButtonTap: () {},
                   );
                 },
                 itemCount: categoryProductList.length,

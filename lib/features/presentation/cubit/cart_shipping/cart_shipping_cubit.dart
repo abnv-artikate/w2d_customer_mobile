@@ -135,13 +135,14 @@ class CartShippingCubit extends Cubit<CartShippingState> {
           ),
         );
       },
-      (message) {
+      (message) async {
         emit(
           state.copyWith(
             cartStatus: LoadingStatus.loaded,
             successMessage: message,
           ),
         );
+        await getCartItems();
       },
     );
   }

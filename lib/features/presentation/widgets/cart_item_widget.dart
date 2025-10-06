@@ -28,9 +28,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
       child: Stack(
         children: [
           Row(
@@ -71,8 +69,9 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                     // ),
                     if (widget.cartItem.product.salePrice <
                         widget.cartItem.product.regularPrice) ...[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.end,
+                        spacing: 5,
                         children: [
                           CurrencyWidget(
                             price: widget.cartItem.product.salePrice
@@ -83,7 +82,6 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                             fontColor: AppColors.black,
                             strikeThrough: false,
                           ),
-                          SizedBox(width: 5),
                           CurrencyWidget(
                             price: widget.cartItem.product.regularPrice
                                 .toStringAsFixed(2),

@@ -1,6 +1,7 @@
 import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
@@ -9,11 +10,13 @@ import 'package:w2d_customer_mobile/features/domain/entities/product/product_vie
 import 'package:w2d_customer_mobile/features/domain/entities/recommendations/recommendations_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/related_products/related_products_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/add_wishlist_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/product_item_widget.dart';
+import 'package:w2d_customer_mobile/routes/routes_constants.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({super.key, required this.product});
@@ -90,7 +93,7 @@ class _ProductScreenState extends State<ProductScreen> {
       listener: (context, state) {
         if (state is CartSyncLoaded) {
           // widget.showErrorToast(context: context, message: state.message);
-          _callGetCartItemAPI();
+          // _callGetCartItemAPI();
         } else if (state is CategoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
@@ -108,6 +111,12 @@ class _ProductScreenState extends State<ProductScreen> {
           browsingHistory = state.browsingHistoryData;
           _callAddBrowsingHistoryAPI();
         } else if (state is GetBrowsingHistoryError) {
+          widget.showErrorToast(context: context, message: state.error);
+        }
+
+        if (state is ProductViewLoaded) {
+          context.push(AppRoutes.productRoute, extra: state.productEntity);
+        } else if (state is CategoryError) {
           widget.showErrorToast(context: context, message: state.error);
         }
       },
@@ -414,8 +423,10 @@ class _ProductScreenState extends State<ProductScreen> {
                           itemName: e.name,
                           regularPrice: e.regularPrice,
                           salePrice: e.salePrice,
-                          onViewTap: () {},
-                          onWishlistTap: () {},
+                          onViewTap: () {
+                            _callProductViewApi(e.id);
+                          },
+                          onAddButtonTap: () {},
                         ),
                       ),
                     )
@@ -450,8 +461,10 @@ class _ProductScreenState extends State<ProductScreen> {
                           itemName: e.name,
                           regularPrice: e.regularPrice,
                           salePrice: e.salePrice,
-                          onViewTap: () {},
-                          onWishlistTap: () {},
+                          onViewTap: () {
+                            _callProductViewApi(e.id);
+                          },
+                          onAddButtonTap: () {},
                         ),
                       ),
                     )
@@ -486,8 +499,10 @@ class _ProductScreenState extends State<ProductScreen> {
                           itemName: e.product?.name ?? "",
                           regularPrice: e.product?.regularPrice ?? "",
                           salePrice: e.product?.salePrice ?? "",
-                          onViewTap: () {},
-                          onWishlistTap: () {},
+                          onViewTap: () {
+                            _callProductViewApi(e.product?.id ?? "");
+                          },
+                          onAddButtonTap: () {},
                         ),
                       ),
                     )
@@ -521,8 +536,9 @@ class _ProductScreenState extends State<ProductScreen> {
           ),
           const SizedBox(height: 10),
         ],
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.end,
+          spacing: 5,
           children: [
             if (widget.product.salePrice.isNotEmpty &&
                 widget.product.salePrice != widget.product.regularPrice) ...[
@@ -533,7 +549,6 @@ class _ProductScreenState extends State<ProductScreen> {
                 svgHeight: 20,
                 svgWidth: 10,
               ),
-              const SizedBox(width: 12),
               CurrencyWidget(
                 price: widget.product.regularPrice,
                 fontSize: 30,
@@ -636,7 +651,9 @@ class _ProductScreenState extends State<ProductScreen> {
     context.read<CategoryCubit>().addBrowsingHistory(widget.product.id);
   }
 
-  void _callGetCartItemAPI() {
-    context.read<CartShippingCubit>().getCartItems();
+  void _callProductViewApi(String productId) {
+    context.read<CategoryCubit>().getProductView(
+      ProductViewParams(productId: productId),
+    );
   }
 }

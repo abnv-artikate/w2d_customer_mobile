@@ -96,7 +96,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                           onViewTap: () {
                             _callProductViewApi(items[index].product.id);
                           },
-                          onWishlistTap: () {},
+                          onAddButtonTap: () {},
                         );
                       },
                       itemCount: items.length,

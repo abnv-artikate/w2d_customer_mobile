@@ -39,15 +39,18 @@ class CurrencyWidget extends StatelessWidget {
           ),
           SizedBox(width: 4),
         ],
-        Text(
-          price,
-          style: TextStyle(
-            fontSize: isSmall ? fontSize - 1 : fontSize,
-            color: fontColor,
-            decoration: strikeThrough ? TextDecoration.lineThrough : null,
-            decorationColor: strikeThroughColor,
-            fontWeight: FontWeight.w500,
+        Flexible(
+          child: Text(
+            price,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: isSmall ? fontSize - 2 : fontSize,
+              color: fontColor,
+              decoration: strikeThrough ? TextDecoration.lineThrough : null,
+              decorationColor: strikeThroughColor,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],

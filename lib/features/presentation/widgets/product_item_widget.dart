@@ -13,9 +13,10 @@ class ProductItemWidget extends StatelessWidget {
     required this.regularPrice,
     required this.salePrice,
     required this.onViewTap,
-    required this.onWishlistTap,
+    required this.onAddButtonTap,
     this.isGridView = false,
     this.aspectRatio = 1.15,
+    this.isAdded = false,
   });
 
   // final double width;
@@ -24,9 +25,10 @@ class ProductItemWidget extends StatelessWidget {
   final String regularPrice;
   final String salePrice;
   final VoidCallback onViewTap;
-  final VoidCallback onWishlistTap;
+  final VoidCallback onAddButtonTap;
   final bool isGridView;
   final double aspectRatio;
+  final bool isAdded;
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +99,7 @@ class ProductItemWidget extends StatelessWidget {
                   ),
                 ),
                 _buildRatingBadge(),
+                _buildAddToCartIcon(),
               ],
             ),
           ),
@@ -166,6 +169,7 @@ class ProductItemWidget extends StatelessWidget {
                   ),
                 ),
                 _buildRatingBadge(),
+                _buildAddToCartIcon(),
               ],
             ),
           ),
@@ -251,6 +255,30 @@ class ProductItemWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildAddToCartIcon() {
+    return Positioned(
+      right: 6,
+      bottom: 6,
+      child: GestureDetector(
+        onTap: onAddButtonTap,
+        child: Container(
+          padding: EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppColors.worldGreen80, width: 1.5),
+            color: AppColors.white,
+          ),
+          child: Center(
+            child: Icon(
+              isAdded ? LucideIcons.shoppingCart : LucideIcons.plus,
+              color: AppColors.worldGreen80,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildDiscountBadge() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 9),
@@ -270,7 +298,9 @@ class ProductItemWidget extends StatelessWidget {
   }
 
   Widget _buildPriceSection({required double fontSize}) {
-    return Row(
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.end,
+      spacing: 5,
       children: [
         if (salePrice.isNotEmpty && salePrice != regularPrice) ...[
           CurrencyWidget(
@@ -281,27 +311,22 @@ class ProductItemWidget extends StatelessWidget {
             svgHeight: fontSize * 0.8,
             svgWidth: fontSize * 0.4,
           ),
-          SizedBox(width: 4),
-          Expanded(
-            child: CurrencyWidget(
-              price: regularPrice,
-              fontSize: fontSize - 2,
-              strikeThrough: true,
-              fontColor: AppColors.black70,
-              strikeThroughColor: AppColors.black,
-              svgHeight: (fontSize - 1) * 0.8,
-              svgWidth: (fontSize - 1) * 0.4,
-            ),
+          CurrencyWidget(
+            price: regularPrice,
+            fontSize: fontSize - 2,
+            strikeThrough: true,
+            fontColor: AppColors.black70,
+            strikeThroughColor: AppColors.black,
+            svgHeight: (fontSize - 1) * 0.8,
+            svgWidth: (fontSize - 1) * 0.4,
           ),
         ] else ...[
-          Flexible(
-            child: CurrencyWidget(
-              price: regularPrice,
-              fontSize: fontSize,
-              strikeThrough: false,
-              svgHeight: fontSize * 0.8,
-              svgWidth: fontSize * 0.4,
-            ),
+          CurrencyWidget(
+            price: regularPrice,
+            fontSize: fontSize,
+            strikeThrough: false,
+            svgHeight: fontSize * 0.8,
+            svgWidth: fontSize * 0.4,
           ),
         ],
       ],

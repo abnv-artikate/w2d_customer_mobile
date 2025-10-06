@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/extension/widget_ext.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/categories/categories_hierarchy_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/product/product_view_usecase.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/category/category_cubit.dart';
@@ -187,13 +188,13 @@ class _HomeScreenState extends State<HomeScreen> {
     final isSmallScreen = screenWidth < 400;
 
     return AppBar(
-      toolbarHeight: 150,
+      toolbarHeight: 80,
       iconTheme: IconThemeData(color: AppColors.deepBlue),
-      leadingWidth: isSmallScreen ? screenWidth * 0.5 : screenWidth * 0.7,
-      leading: Container(
-        margin: EdgeInsets.only(left: 10),
-        child: LocationWidget(onTap: () {}, address: "Set Location"),
-      ),
+      // leadingWidth: isSmallScreen ? screenWidth * 0.5 : screenWidth * 0.7,
+      // leading: Container(
+      //   margin: EdgeInsets.only(left: 10),
+      //   child: LocationWidget(onTap: () {}, address: "Set Location"),
+      // ),
       bottom: PreferredSize(
         preferredSize: Size.zero,
         child: SearchWidget(
@@ -321,42 +322,69 @@ class _HomeScreenState extends State<HomeScreen> {
     //     (screenWidth * (screenWidth < 400 ? 0.55 : 0.5)) -
     //     (horizontalPadding * 2);
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            collection.name,
-            style: TextStyle(
-              fontSize: screenWidth < 400 ? 18 : 20,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          SizedBox(height: 10),
-          CarouselSlider(
-            options: _categoriesCarouselOption,
-            items: List.generate(collection.products.length, (idx) {
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 4),
-                child: ProductItemWidget(
-                  isGridView: false,
-                  imgUrl: collection.products[idx].mainImage,
-                  itemName: collection.products[idx].name,
-                  salePrice: collection.products[idx].salePrice,
-                  regularPrice: collection.products[idx].regularPrice,
-                  onViewTap: () {
-                    _callProductViewApi(collection.products[idx].id);
-                  },
-                  onWishlistTap: () {},
+    return BlocBuilder<CartShippingCubit, CartShippingState>(
+      // listener: (context, state) {},
+      builder: (context, state) {
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                collection.name,
+                style: TextStyle(
+                  fontSize: screenWidth < 400 ? 18 : 20,
+                  fontWeight: FontWeight.w700,
                 ),
-              );
-            }),
+              ),
+              SizedBox(height: 10),
+              CarouselSlider(
+                options: _categoriesCarouselOption,
+                items: List.generate(collection.products.length, (idx) {
+                  final bool inServerCart = _isInServerCart(
+                    state,
+                    collection.products[idx].id,
+                  );
+                  return Container(
+                    margin: EdgeInsets.symmetric(horizontal: 4),
+                    child: ProductItemWidget(
+                      isGridView: false,
+                      imgUrl: collection.products[idx].mainImage,
+                      itemName: collection.products[idx].name,
+                      salePrice: collection.products[idx].salePrice,
+                      regularPrice: collection.products[idx].regularPrice,
+                      onViewTap: () {
+                        _callProductViewApi(collection.products[idx].id);
+                      },
+                      onAddButtonTap: () {
+                        _callAddToCartApi(collection.products[idx].id);
+                      },
+                      isAdded: inServerCart,
+                    ),
+                  );
+                }),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
+  }
+
+  bool _isInServerCart(CartShippingState state, String productId) {
+    final cart = state.cart;
+    if (cart == null) return false;
+
+    try {
+      final items = cart.items;
+      return items.any((e) {
+        final id = e.product.id;
+        return id == productId;
+      });
+    } catch (_) {
+      return false;
+    }
   }
 
   void _callGetCollectionsApi() {
@@ -375,5 +403,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _callGetCartItemApi() {
     context.read<CartShippingCubit>().getCartItems();
+  }
+
+  void _callAddToCartApi(String productId) {
+    context.read<CartShippingCubit>().cartSync(
+      params: CartSyncParams(productId: productId, quantity: 1),
+    );
   }
 }
