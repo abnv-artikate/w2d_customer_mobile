@@ -16,7 +16,7 @@ class FeesBreakdownWidget extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.worldGreen),
+        // border: Border.all(color: AppColors.worldGreen),
         borderRadius: BorderRadius.circular(4),
       ),
       child: BlocBuilder<CartShippingCubit, CartShippingState>(
@@ -25,12 +25,9 @@ class FeesBreakdownWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildEstimatedTotal(context, state),
-              // if (state.hasFreightQuoteData) ...[
-              SizedBox(height: 10),
+              SizedBox(height: 30),
               _buildShippingMethodSelector(context, state),
-              // ],
-              SizedBox(height: 10),
-              Divider(),
+              SizedBox(height: 30),
               _buildFeeBreakdown(context, state),
             ],
           );
@@ -40,61 +37,74 @@ class FeesBreakdownWidget extends StatelessWidget {
   }
 
   Widget _buildEstimatedTotal(BuildContext context, CartShippingState state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Estimated Total:',
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 4),
-        if (state.hasFeeBreakdown)
-          // Text(
-          //   '${state.feeBreakdown!.estimatedTotal.toStringAsFixed(2)}',
-          //   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-          //     color: AppColors.worldGreen,
-          //     fontWeight: FontWeight.bold,
-          //   ),
-          // )
-          CurrencyWidget(
-            price: state.feeBreakdown!.estimatedTotal.toStringAsFixed(2),
-            fontSize: 20,
-            strikeThrough: false,
-            fontColor: AppColors.worldGreen,
-          )
-        else if (state.isFeeCalculationLoading)
-          Row(
-            children: [
-              SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    AppColors.worldGreen,
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.symmetric(vertical: 18, horizontal: 10),
+      decoration: BoxDecoration(
+        color: AppColors.softWhite71,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Estimated Total:',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 4),
+          if (state.hasFeeBreakdown)
+            // Text(
+            //   '${state.feeBreakdown!.estimatedTotal.toStringAsFixed(2)}',
+            //   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            //     color: AppColors.worldGreen,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // )
+            CurrencyWidget(
+              price: state.feeBreakdown!.estimatedTotal.toStringAsFixed(2),
+              fontSize: 20,
+              strikeThrough: false,
+              svgHeight: 12,
+              svgWidth: 12,
+              fontColor: AppColors.worldGreen,
+            )
+          else if (state.isFeeCalculationLoading)
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.worldGreen,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(width: 8),
-              Text('Calculating...'),
-            ],
-          )
-        else
-          // Text(
-          //   '\$0.00',
-          //   style: Theme.of(
-          //     context,
-          //   ).textTheme.headlineSmall?.copyWith(color: Colors.grey),
-          // ),
-          CurrencyWidget(
-            price: "0.00",
-            fontSize: 20,
-            strikeThrough: false,
-            fontColor: AppColors.softWhite71,
-          ),
-      ],
+                SizedBox(width: 8),
+                Text('Calculating...'),
+              ],
+            )
+          else
+            // Text(
+            //   '\$0.00',
+            //   style: Theme.of(
+            //     context,
+            //   ).textTheme.headlineSmall?.copyWith(color: Colors.grey),
+            // ),
+            CurrencyWidget(
+              price: "0.00",
+              fontSize: 20,
+              strikeThrough: false,
+              svgHeight: 12,
+              svgWidth: 12,
+              fontColor: AppColors.softWhite71,
+            ),
+        ],
+      ),
     );
   }
 
@@ -102,55 +112,75 @@ class FeesBreakdownWidget extends StatelessWidget {
     BuildContext context,
     CartShippingState state,
   ) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            'Select shipping options:',
-            style: Theme.of(context).textTheme.bodyMedium,
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        // border: Border.all(color: AppColors.worldGreen80),
+        color: AppColors.softWhite71,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              'Select shipping options:',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           ),
-        ),
-        SizedBox(width: 10),
-        ShippingMethodDropdownWidget(
-          shippingMethodText: context
-              .read<CartShippingCubit>()
-              .getShippingMethodName(state.selectedShippingIndex),
-          onTap: onShippingMethodDropdownTap ?? () {},
-        ),
-      ],
+          SizedBox(width: 10),
+          ShippingMethodDropdownWidget(
+            shippingMethodText: context
+                .read<CartShippingCubit>()
+                .getShippingMethodName(state.selectedShippingIndex),
+            onTap: onShippingMethodDropdownTap ?? () {},
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildFeeBreakdown(BuildContext context, CartShippingState state) {
     if (state.hasFeeBreakdown) {
       final breakdown = state.feeBreakdown!;
-      return Column(
-        children: [
-          _buildFeeRow(context, 'Goods Value', breakdown.goodsValue),
-          _buildFeeRow(context, 'Platform Fee', breakdown.platformFees),
-          _buildFeeRow(
-            context,
-            'Local Transit Fee',
-            breakdown.localTransitFees,
-          ),
-          _buildFeeRow(
-            context,
-            'Export Freight / Packing / Other Fees',
-            breakdown.exportFreightPackingOtherFees,
-          ),
-          _buildFeeRow(
-            context,
-            'Dest Duty / Taxes / Other Fees',
-            breakdown.destDutyTaxesOtherFees,
-          ),
-          if (state.hasInsuranceData) ...[
-            _buildTransitInsuranceRow(
-              context,
-              state,
-              breakdown.transitInsurance,
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: AppColors.softWhite71,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Breakdown",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
+            _buildFeeRow(context, 'Goods Value', breakdown.goodsValue),
+            _buildFeeRow(context, 'Platform Fee', breakdown.platformFees),
+            _buildFeeRow(
+              context,
+              'Local Transit Fee',
+              breakdown.localTransitFees,
+            ),
+            _buildFeeRow(
+              context,
+              'Export Freight / Packing / Other Fees',
+              breakdown.exportFreightPackingOtherFees,
+            ),
+            _buildFeeRow(
+              context,
+              'Dest Duty / Taxes / Other Fees',
+              breakdown.destDutyTaxesOtherFees,
+            ),
+            if (state.hasInsuranceData) ...[
+              _buildTransitInsuranceRow(
+                context,
+                state,
+                breakdown.transitInsurance,
+              ),
+            ],
           ],
-        ],
+        ),
       );
     } else if (state.isFeeCalculationLoading) {
       return Column(
