@@ -21,6 +21,7 @@ class CartShippingState {
   final LoadingStatus insuranceStatus;
   final CalculateInsuranceEntity? insuranceData;
   final LoadingStatus insuranceConfirmationStatus;
+  final ConfirmInsuranceEntityData? insuranceConfirm;
   final bool isTransitInsured;
 
   // Fee calculation related
@@ -43,6 +44,7 @@ class CartShippingState {
     this.insuranceStatus = LoadingStatus.initial,
     this.insuranceData,
     this.insuranceConfirmationStatus = LoadingStatus.initial,
+    this.insuranceConfirm,
     this.isTransitInsured = false,
     this.feeCalculationStatus = LoadingStatus.initial,
     this.feeBreakdown,
@@ -62,6 +64,7 @@ class CartShippingState {
     LoadingStatus? insuranceStatus,
     CalculateInsuranceEntity? insuranceData,
     LoadingStatus? insuranceConfirmationStatus,
+    ConfirmInsuranceEntityData? insuranceConfirm,
     bool? isTransitInsured,
     LoadingStatus? feeCalculationStatus,
     FeeBreakdown? feeBreakdown,

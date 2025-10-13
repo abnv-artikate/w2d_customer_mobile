@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 
 abstract class Entity extends Equatable {
@@ -13,7 +14,7 @@ class CartEntity extends Entity {
   final DateTime createdAt;
   final List<CartItemEntity> items;
 
-   CartEntity({
+  CartEntity({
     required this.id,
     required this.customer,
     required this.sessionKey,
@@ -27,15 +28,17 @@ class CartEntity extends Entity {
   List<CartItemEntity> get shippableItems =>
       checkedItems.where((item) => item.isValidForShipping).toList();
 
-  double get totalValue => checkedItems.fold(
-    0.0,
-        (sum, item) => sum + item.totalPrice,
-  );
+  double get totalValue =>
+      checkedItems.fold(
+        0.0,
+            (sum, item) => sum + item.totalPrice,
+      );
 
-  int get totalQuantity => checkedItems.fold(
-    0,
-        (sum, item) => sum + item.quantity,
-  );
+  int get totalQuantity =>
+      checkedItems.fold(
+        0,
+            (sum, item) => sum + item.quantity,
+      );
 
   int get checkedItemsCount => checkedItems.length;
 
@@ -70,7 +73,7 @@ class CartItemEntity extends Entity {
   final DateTime addedAt;
   final bool isChecked;
 
-   CartItemEntity({
+  CartItemEntity({
     required this.id,
     required this.cart,
     required this.product,
@@ -83,23 +86,29 @@ class CartItemEntity extends Entity {
   });
 
   double get unitPrice => variant?.effectivePrice ?? product.effectivePrice;
+
   double get totalPrice => unitPrice * quantity;
+
   double get totalDiscountedPrice => totalPrice - discountAmount;
+
   bool get isValidForShipping => product.isShippable && quantity > 0;
+
   bool get hasVariant => variant != null;
 
-  CartItemShippingInfoEntity get shippingInfo => CartItemShippingInfoEntity(
-    attributes: variant?.attributes ?? product.attributes,
-    packagingDetails: variant?.packagingDetails ?? product.packagingDetails,
-    hsCode: variant?.hsCode ?? product.hsCode,
-    weight: variant?.weight ?? product.weight,
-  );
+  CartItemShippingInfoEntity get shippingInfo =>
+      CartItemShippingInfoEntity(
+        attributes: variant?.attributes ?? product.attributes,
+        packagingDetails: variant?.packagingDetails ?? product.packagingDetails,
+        hsCode: variant?.hsCode ?? product.hsCode,
+        weight: variant?.weight ?? product.weight,
+      );
 
   @override
-  List<Object?> get props => [
-    id, cart, product, variant, quantity,
-    voucherCode, discountAmount, addedAt, isChecked
-  ];
+  List<Object?> get props =>
+      [
+        id, cart, product, variant, quantity,
+        voucherCode, discountAmount, addedAt, isChecked
+      ];
 
   CartItemEntity copyWith({
     int? id,
@@ -176,7 +185,7 @@ class CartItemProductEntity extends Entity {
   final CartItemProductCategoryEntity? category;
   final int brand;
 
-   CartItemProductEntity({
+  CartItemProductEntity({
     required this.id,
     required this.name,
     required this.sku,
@@ -228,25 +237,72 @@ class CartItemProductEntity extends Entity {
   });
 
   double get effectivePrice => salePrice > 0 ? salePrice : regularPrice;
+
   bool get isOnSale => salePrice > 0 && salePrice < regularPrice;
+
   bool get isInStock => availableStock > 0;
+
   bool get isLowStock => availableStock <= lowStockAlert;
+
   bool get isShippable => status == ProductStatus.active && isActive;
+
   String get shippingAttribute => attributes.getShippingAttribute();
-  bool get hasValidDimensions => packagingDetails.any((detail) => detail.isValid);
+
+  bool get hasValidDimensions =>
+      packagingDetails.any((detail) => detail.isValid);
 
   @override
-  List<Object?> get props => [
-    id, name, sku, modelNumber, productType, badge, shortDescription,
-    longDescription, keyFeatures, mainImage, gallery, videoUrl, regularPrice,
-    localTransitFee, salePrice, currency, availableStock, lowStockAlert,
-    purchaseLimit, commissionPercentage, weight, shippingWeight, dimensions,
-    packagingDimensions, packagingDetails, shippingMethods, shippingRegion,
-    shippingCountries, handlingTime, returnsPolicy, tags, seoTitle,
-    metaDescription, status, publishDate, visibility, specificCustomerGroups,
-    lastUpdatedBy, technicalSpecifications, attributes, countryOfOrigin,
-    hsCode, isActive, createdAt, lastUpdatedAt, seller, category, brand,
-  ];
+  List<Object?> get props =>
+      [
+        id,
+        name,
+        sku,
+        modelNumber,
+        productType,
+        badge,
+        shortDescription,
+        longDescription,
+        keyFeatures,
+        mainImage,
+        gallery,
+        videoUrl,
+        regularPrice,
+        localTransitFee,
+        salePrice,
+        currency,
+        availableStock,
+        lowStockAlert,
+        purchaseLimit,
+        commissionPercentage,
+        weight,
+        shippingWeight,
+        dimensions,
+        packagingDimensions,
+        packagingDetails,
+        shippingMethods,
+        shippingRegion,
+        shippingCountries,
+        handlingTime,
+        returnsPolicy,
+        tags,
+        seoTitle,
+        metaDescription,
+        status,
+        publishDate,
+        visibility,
+        specificCustomerGroups,
+        lastUpdatedBy,
+        technicalSpecifications,
+        attributes,
+        countryOfOrigin,
+        hsCode,
+        isActive,
+        createdAt,
+        lastUpdatedAt,
+        seller,
+        category,
+        brand,
+      ];
 }
 
 class CartItemVariantEntity extends Entity {
@@ -268,7 +324,7 @@ class CartItemVariantEntity extends Entity {
   final String? hsCode;
   final bool isActive;
 
-   CartItemVariantEntity({
+  CartItemVariantEntity({
     this.size,
     this.color,
     this.material,
@@ -289,14 +345,16 @@ class CartItemVariantEntity extends Entity {
   });
 
   double get effectivePrice =>
-      (salePrice != null && salePrice! > 0) ? salePrice! : (regularPrice ?? 0.0);
+      (salePrice != null && salePrice! > 0) ? salePrice! : (regularPrice ??
+          0.0);
 
   @override
-  List<Object?> get props => [
-    size, color, material, style, name, sku, modelNumber, mainImage,
-    regularPrice, salePrice, currency, availableStock, weight,
-    packagingDetails, attributes, hsCode, isActive,
-  ];
+  List<Object?> get props =>
+      [
+        size, color, material, style, name, sku, modelNumber, mainImage,
+        regularPrice, salePrice, currency, availableStock, weight,
+        packagingDetails, attributes, hsCode, isActive,
+      ];
 }
 
 class CartItemProductCategoryEntity extends Entity {
@@ -306,7 +364,7 @@ class CartItemProductCategoryEntity extends Entity {
   final List<dynamic> subcategories;
   final dynamic allowedAttributes;
 
-   CartItemProductCategoryEntity({
+  CartItemProductCategoryEntity({
     required this.id,
     required this.name,
     this.parent,
@@ -315,7 +373,8 @@ class CartItemProductCategoryEntity extends Entity {
   });
 
   @override
-  List<Object?> get props => [id, name, parent, subcategories, allowedAttributes];
+  List<Object?> get props =>
+      [id, name, parent, subcategories, allowedAttributes];
 }
 
 class CartItemProductDimensionsEntity extends Entity {
@@ -324,7 +383,7 @@ class CartItemProductDimensionsEntity extends Entity {
   final MeasurementEntity length;
   final MeasurementEntity weight;
 
-   CartItemProductDimensionsEntity({
+  CartItemProductDimensionsEntity({
     required this.width,
     required this.height,
     required this.length,
@@ -332,7 +391,8 @@ class CartItemProductDimensionsEntity extends Entity {
   });
 
   bool get isValid =>
-      width.value > 0 && height.value > 0 && length.value > 0 && weight.value > 0;
+      width.value > 0 && height.value > 0 && length.value > 0 &&
+          weight.value > 0;
 
   double get volume => width.value * height.value * length.value;
 
@@ -344,7 +404,7 @@ class MeasurementEntity extends Entity {
   final String unit;
   final double value;
 
-   MeasurementEntity({
+  MeasurementEntity({
     required this.unit,
     required this.value,
   });
@@ -364,7 +424,7 @@ class ProductAttributesEntity extends Entity {
   final bool isCosmetics;
   final bool containsMagnet;
 
-   ProductAttributesEntity({
+  ProductAttributesEntity({
     required this.hasVariant,
     required this.woodenBoxPackaging,
     required this.isPerfume,
@@ -385,10 +445,11 @@ class ProductAttributesEntity extends Entity {
       isPerfume || containsBattery || isCosmetics || containsMagnet;
 
   @override
-  List<Object> get props => [
-    hasVariant, woodenBoxPackaging, isPerfume,
-    containsBattery, isCosmetics, containsMagnet,
-  ];
+  List<Object> get props =>
+      [
+        hasVariant, woodenBoxPackaging, isPerfume,
+        containsBattery, isCosmetics, containsMagnet,
+      ];
 }
 
 class CartItemShippingInfoEntity extends Entity {
@@ -397,7 +458,7 @@ class CartItemShippingInfoEntity extends Entity {
   final String? hsCode;
   final MeasurementEntity weight;
 
-   CartItemShippingInfoEntity({
+  CartItemShippingInfoEntity({
     required this.attributes,
     required this.packagingDetails,
     this.hsCode,
@@ -474,7 +535,9 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
     try {
       // Check if item is valid for shipping
       if (!isChecked) {
-        print('CartItem ${id}: Item not checked');
+        if (kDebugMode) {
+          print('CartItem $id: Item not checked');
+        }
         return null;
       }
 
@@ -494,11 +557,15 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
       try {
         totalGoodsValue = product.effectivePrice * quantity;
         if (totalGoodsValue <= 0) {
-          print('CartItem ${id}: Invalid goods value: $totalGoodsValue');
+          if (kDebugMode) {
+            print('CartItem $id: Invalid goods value: $totalGoodsValue');
+          }
           return null;
         }
       } catch (e) {
-        print('CartItem ${id}: Error calculating goods value: $e');
+        if (kDebugMode) {
+          print('CartItem $id: Error calculating goods value: $e');
+        }
         return null;
       }
 
@@ -507,7 +574,9 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
       try {
         productTypeString = product.productType.name;
       } catch (e) {
-        print('CartItem ${id}: Error getting product type: $e');
+        if (kDebugMode) {
+          print('CartItem $id: Error getting product type: $e');
+        }
         productTypeString = 'other';
       }
 
@@ -516,7 +585,9 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
       try {
         shippingAttribute = product.shippingAttribute;
       } catch (e) {
-        print('CartItem ${id}: Error getting shipping attribute: $e');
+        if (kDebugMode) {
+          print('CartItem $id: Error getting shipping attribute: $e');
+        }
         shippingAttribute = '';
       }
 
@@ -525,21 +596,28 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
       try {
         hsCode = product.hsCode ?? variant?.hsCode ?? '';
       } catch (e) {
-        print('CartItem ${id}: Error getting HS code: $e');
+        if (kDebugMode) {
+          print('CartItem $id: Error getting HS code: $e');
+        }
         hsCode = '';
       }
 
       // Get packaging details safely
       List<CartItemProductDimensionsEntity> packagingDetailsList;
       try {
-        packagingDetailsList = variant?.packagingDetails ?? product.packagingDetails;
+        packagingDetailsList =
+            variant?.packagingDetails ?? product.packagingDetails;
 
         if (packagingDetailsList.isEmpty) {
-          print('CartItem ${id}: No packaging details available');
+          if (kDebugMode) {
+            print('CartItem $id: No packaging details available');
+          }
           return null;
         }
       } catch (e) {
-        print('CartItem ${id}: Error getting packaging details: $e');
+        if (kDebugMode) {
+          print('CartItem $id: Error getting packaging details: $e');
+        }
         return null;
       }
 
@@ -550,17 +628,24 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
           try {
             return detail.isValid;
           } catch (e) {
-            print('CartItem ${id}: Error checking packaging detail validity: $e');
+            if (kDebugMode) {
+              print(
+                  'CartItem $id: Error checking packaging detail validity: $e');
+            }
             return false;
           }
         }).toList();
 
         if (validPackagingDetails.isEmpty) {
-          print('CartItem ${id}: No valid packaging details found');
+          if (kDebugMode) {
+            print('CartItem $id: No valid packaging details found');
+          }
           return null;
         }
       } catch (e) {
-        print('CartItem ${id}: Error filtering packaging details: $e');
+        if (kDebugMode) {
+          print('CartItem $id: Error filtering packaging details: $e');
+        }
         return null;
       }
 
@@ -570,7 +655,9 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
         woodenBoxPackaging = variant?.attributes.woodenBoxPackaging ??
             product.attributes.woodenBoxPackaging;
       } catch (e) {
-        print('CartItem ${id}: Error getting wooden box packaging flag: $e');
+        if (kDebugMode) {
+          print('CartItem $id: Error getting wooden box packaging flag: $e');
+        }
         woodenBoxPackaging = false;
       }
 
@@ -587,24 +674,34 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
                   dimension.length <= 0 ||
                   dimension.width <= 0 ||
                   dimension.height <= 0) {
-                print('CartItem ${id}: Invalid dimension values for detail at quantity $i');
+                if (kDebugMode) {
+                  print(
+                      'CartItem $id: Invalid dimension values for detail at quantity $i');
+                }
                 continue;
               }
 
               allDimensions.add(dimension);
             } catch (e) {
-              print('CartItem ${id}: Error creating dimension for detail at quantity $i: $e');
+              if (kDebugMode) {
+                print(
+                    'CartItem $id: Error creating dimension for detail at quantity $i: $e');
+              }
               continue;
             }
           }
         }
 
         if (allDimensions.isEmpty) {
-          print('CartItem ${id}: No valid dimensions created');
+          if (kDebugMode) {
+            print('CartItem $id: No valid dimensions created');
+          }
           return null;
         }
       } catch (e) {
-        print('CartItem ${id}: Error creating dimensions list: $e');
+        if (kDebugMode) {
+          print('CartItem $id: Error creating dimensions list: $e');
+        }
         return null;
       }
 
@@ -619,13 +716,16 @@ extension CartItemEntityFreightExtensions on CartItemEntity {
           dimensions: allDimensions,
         );
       } catch (e) {
-        print('CartItem ${id}: Error creating Items object: $e');
+        if (kDebugMode) {
+          print('CartItem $id: Error creating Items object: $e');
+        }
         return null;
       }
-
     } catch (e) {
-      print('CartItem ${id}: Unexpected error in toFreightItem(): $e');
-      print('CartItem ${id}: Stack trace: ${StackTrace.current}');
+      if (kDebugMode) {
+        print('CartItem $id: Unexpected error in toFreightItem(): $e');
+        print('CartItem $id: Stack trace: ${StackTrace.current}');
+      }
       return null;
     }
   }

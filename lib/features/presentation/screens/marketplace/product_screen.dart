@@ -85,10 +85,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final int cartCount = context.select(
-      (CartShippingCubit bloc) =>
-          bloc.state.hasCartData ? bloc.state.cart!.items.length : 0,
-    );
+
     return BlocConsumer<CategoryCubit, CategoryState>(
       listener: (context, state) {
         if (state is CartSyncLoaded) {
@@ -121,6 +118,10 @@ class _ProductScreenState extends State<ProductScreen> {
         }
       },
       builder: (context, state) {
+        final int cartCount = context.select(
+              (CartShippingCubit bloc) =>
+          bloc.state.hasCartData ? bloc.state.cart!.items.length : 0,
+        );
         return Scaffold(
           appBar: AppBar(actions: [_buildCartButton(cartCount)]),
           body: SafeArea(

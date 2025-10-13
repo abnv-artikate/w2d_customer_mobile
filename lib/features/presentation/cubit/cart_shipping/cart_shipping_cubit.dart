@@ -5,6 +5,7 @@ import 'package:w2d_customer_mobile/core/usecase/usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/cart/cart_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/get_cart_usecase.dart';
@@ -177,6 +178,7 @@ class CartShippingCubit extends Cubit<CartShippingState> {
         emit(state.copyWith(errorMessage: failure.message));
       },
       (response) {
+        resetShipping();
         emit(state.copyWith(successMessage: response.message));
         // Refresh cart after update
         getCartItems();
@@ -487,7 +489,7 @@ class CartShippingCubit extends Cubit<CartShippingState> {
       case 5:
         return "Land Freight (door)";
       default:
-        return "Select Shipping Method";
+        return "Select Method";
     }
   }
 

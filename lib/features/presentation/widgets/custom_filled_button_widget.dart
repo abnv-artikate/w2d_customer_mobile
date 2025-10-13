@@ -20,7 +20,7 @@ class CustomFilledButtonWidget extends StatelessWidget {
     required this.height,
     required this.onTap,
     this.width,
-    this.fontSize = 24,
+    this.fontSize = 20,
     this.borderRadius = 100,
     this.verticalPadding = 4,
     this.horizontalPadding = 4,

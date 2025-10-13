@@ -99,7 +99,7 @@ class ProductItemWidget extends StatelessWidget {
                   ),
                 ),
                 _buildRatingBadge(),
-                _buildAddToCartIcon(),
+                // _buildAddToCartIcon(),
               ],
             ),
           ),

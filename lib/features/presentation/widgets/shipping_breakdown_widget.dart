@@ -184,7 +184,7 @@ class ShippingBreakdownWidget extends StatelessWidget {
       case 5:
         return "Land Freight (door)";
       default:
-        return "Select Shipping Method";
+        return "Select";
     }
   }
 }

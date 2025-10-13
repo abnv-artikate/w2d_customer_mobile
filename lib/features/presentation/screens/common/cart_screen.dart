@@ -45,7 +45,6 @@ class _CartScreenState extends State<CartScreen> {
 
   void _initData() {
     final cubit = context.read<CartShippingCubit>();
-    cubit.resetShipping();
     cubit.getCartItems();
   }
 
@@ -220,7 +219,7 @@ class _CartScreenState extends State<CartScreen> {
         _getButtonTitle(state),
         style: TextStyle(
           color: AppColors.white,
-          fontSize: 25,
+          fontSize: 20,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -572,7 +571,7 @@ class _CartScreenState extends State<CartScreen> {
                           'Apply',
                           style: TextStyle(
                             color: AppColors.white,
-                            fontSize: 25,
+                            fontSize: 20,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
