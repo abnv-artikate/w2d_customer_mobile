@@ -56,22 +56,22 @@ class CartShippingState {
 
   CartShippingState copyWith({
     LoadingStatus? cartStatus,
-    Object? cart = _unset,
+    Object? cart = _unset, // CartEntity?
     LoadingStatus? locationStatus,
-    Object? location = _unset,
+    Object? location = _unset, // LocationEntity?
     LoadingStatus? freightQuoteStatus,
-    Object? freightQuote = _unset,
+    Object? freightQuote = _unset, // FreightQuoteEntityData?
     LoadingStatus? shippingSelectionStatus,
-    Object? selectedShippingIndex = _unset,
+    Object? selectedShippingIndex = _unset, // int?
     LoadingStatus? insuranceStatus,
-    Object? insuranceData = _unset,
+    Object? insuranceData = _unset, // CalculateInsuranceEntity?
     LoadingStatus? insuranceConfirmationStatus,
     ConfirmInsuranceEntityData? insuranceConfirm,
     bool? isTransitInsured,
     LoadingStatus? feeCalculationStatus,
-    Object? feeBreakdown = _unset,
-    Object? errorMessage = _unset,
-    Object? successMessage = _unset,
+    Object? feeBreakdown = _unset, // FeeBreakdown?
+    Object? errorMessage = _unset, // String?
+    Object? successMessage = _unset, // String?
   }) {
     return CartShippingState(
       cartStatus: cartStatus ?? this.cartStatus,

@@ -48,14 +48,6 @@ class CartShippingCubit extends Cubit<CartShippingState> {
   // Constants
   static const double _platformFeeRate = 0.02;
 
-  // Current state data
-  // CartEntity? _currentCart;
-  // LocationEntity? _currentLocation;
-  // FreightQuoteEntityData? _currentFreightQuote;
-  // CalculateInsuranceEntity? _currentInsuranceData;
-  // int? _selectedShippingIndex;
-  // bool _isTransitInsured = false;
-
   // Getters for current data
   CartEntity? get currentCart => state.cart;
 
@@ -110,9 +102,11 @@ class CartShippingCubit extends Cubit<CartShippingState> {
         emit(
           state.copyWith(
             locationStatus: LoadingStatus.loaded,
+            location: location,
             shippingSelectionStatus: LoadingStatus.loaded,
             selectedShippingIndex: null,
-            location: location,
+            freightQuoteStatus: LoadingStatus.loaded,
+            freightQuote: null,
           ),
         );
       },
