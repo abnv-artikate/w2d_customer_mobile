@@ -63,4 +63,8 @@ class EndPoints {
   /// Browsing History Endpoints
   static const String browsingHistory = '/browsing-history/';
   static const String browsingHistoryAdd = '/browsing-history/add/';
+
+  /// Vouchers Endpoint
+  static const String vouchers = '/vouchers/';
+  static const String voucherValidate = '/voucher/validate/';
 }

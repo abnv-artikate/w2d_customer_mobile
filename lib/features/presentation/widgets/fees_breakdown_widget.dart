@@ -14,11 +14,6 @@ class FeesBreakdownWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      decoration: BoxDecoration(
-        // border: Border.all(color: AppColors.worldGreen),
-        borderRadius: BorderRadius.circular(4),
-      ),
       child: BlocBuilder<CartShippingCubit, CartShippingState>(
         builder: (context, state) {
           return Column(
@@ -156,22 +151,30 @@ class FeesBreakdownWidget extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             _buildFeeRow(context, 'Goods Value', breakdown.goodsValue),
-            _buildFeeRow(context, 'Platform Fee', breakdown.platformFees),
-            _buildFeeRow(
-              context,
-              'Local Transit Fee',
-              breakdown.localTransitFees,
-            ),
-            _buildFeeRow(
-              context,
-              'Export Freight / Packing / Other Fees',
-              breakdown.exportFreightPackingOtherFees,
-            ),
-            _buildFeeRow(
-              context,
-              'Dest Duty / Taxes / Other Fees',
-              breakdown.destDutyTaxesOtherFees,
-            ),
+            if (breakdown.platformFees != 0.0) ...[
+              _buildFeeRow(context, 'Platform Fee', breakdown.platformFees),
+            ],
+            if (breakdown.localTransitFees != 0.0) ...[
+              _buildFeeRow(
+                context,
+                'Local Transit Fee',
+                breakdown.localTransitFees,
+              ),
+            ],
+            if (breakdown.exportFreightPackingOtherFees != 0.0) ...[
+              _buildFeeRow(
+                context,
+                'Export Freight / Packing / Other Fees',
+                breakdown.exportFreightPackingOtherFees,
+              ),
+            ],
+            if (breakdown.destDutyTaxesOtherFees != 0.0) ...[
+              _buildFeeRow(
+                context,
+                'Dest Duty / Taxes / Other Fees',
+                breakdown.destDutyTaxesOtherFees,
+              ),
+            ],
             if (state.hasInsuranceData) ...[
               _buildTransitInsuranceRow(
                 context,
@@ -183,17 +186,8 @@ class FeesBreakdownWidget extends StatelessWidget {
         ),
       );
     } else if (state.isFeeCalculationLoading) {
-      return Column(
-        children: [
-          _buildLoadingFeeRow(context, 'Goods Value'),
-          _buildLoadingFeeRow(context, 'Platform Fee'),
-          _buildLoadingFeeRow(context, 'Local Transit Fee'),
-          _buildLoadingFeeRow(context, 'Export Freight / Packing / Other Fees'),
-          _buildLoadingFeeRow(context, 'Dest Duty / Taxes / Other Fees'),
-          if (state.hasInsuranceData) ...[
-            _buildLoadingTransitInsuranceRow(context, state),
-          ],
-        ],
+      return Center(
+        child: CircularProgressIndicator(color: AppColors.worldGreen80),
       );
     } else if (state.hasError &&
         state.feeCalculationStatus == LoadingStatus.error) {
@@ -247,41 +241,13 @@ class FeesBreakdownWidget extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium,
-              // overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
           ),
-          // Text(
-          //   '${amount.toStringAsFixed(2)}',
-          //   style: Theme.of(
-          //     context,
-          //   ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-          // ),
           CurrencyWidget(
             price: amount.toStringAsFixed(2),
             fontSize: 15,
             strikeThrough: false,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLoadingFeeRow(BuildContext context, String label) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
-          ),
-          SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.worldGreen),
-            ),
           ),
         ],
       ),
@@ -312,54 +278,10 @@ class FeesBreakdownWidget extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
-          // Text(
-          //   '\$${amount.toStringAsFixed(2)}',
-          //   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          //     fontWeight: FontWeight.w500,
-          //     color: state.isTransitInsured ? null : Colors.grey,
-          //   ),
-          // ),
           CurrencyWidget(
             price: amount.toStringAsFixed(2),
             fontSize: 14,
             strikeThrough: false,
-            fontColor: state.isTransitInsured ? null : Colors.grey,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLoadingTransitInsuranceRow(
-    BuildContext context,
-    CartShippingState state,
-  ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Checkbox(
-            activeColor: AppColors.worldGreen,
-            value: state.isTransitInsured,
-            onChanged: (value) {
-              if (value != null) {
-                context.read<CartShippingCubit>().updateTransitInsurance(value);
-              }
-            },
-          ),
-          Expanded(
-            child: Text(
-              'Transit Insurance',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ),
-          SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.worldGreen),
-            ),
           ),
         ],
       ),

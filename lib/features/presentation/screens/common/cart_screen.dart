@@ -107,7 +107,8 @@ class _CartScreenState extends State<CartScreen> {
             );
           }
 
-          if (state.hasFreightQuoteData &&
+          if (state.hasLocationData &&
+              state.hasFreightQuoteData &&
               state.freightQuote?.quoteToken != null &&
               !state.hasInsuranceData &&
               state.selectedShippingIndex != null) {

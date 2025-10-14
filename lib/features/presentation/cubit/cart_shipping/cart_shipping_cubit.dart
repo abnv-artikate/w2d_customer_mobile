@@ -49,25 +49,25 @@ class CartShippingCubit extends Cubit<CartShippingState> {
   static const double _platformFeeRate = 0.02;
 
   // Current state data
-  CartEntity? _currentCart;
-  LocationEntity? _currentLocation;
-  FreightQuoteEntityData? _currentFreightQuote;
-  CalculateInsuranceEntity? _currentInsuranceData;
-  int? _selectedShippingIndex;
-  bool _isTransitInsured = false;
+  // CartEntity? _currentCart;
+  // LocationEntity? _currentLocation;
+  // FreightQuoteEntityData? _currentFreightQuote;
+  // CalculateInsuranceEntity? _currentInsuranceData;
+  // int? _selectedShippingIndex;
+  // bool _isTransitInsured = false;
 
   // Getters for current data
-  CartEntity? get currentCart => _currentCart;
+  CartEntity? get currentCart => state.cart;
 
-  LocationEntity? get currentLocation => _currentLocation;
+  LocationEntity? get currentLocation => state.location;
 
-  FreightQuoteEntityData? get currentFreightQuote => _currentFreightQuote;
+  FreightQuoteEntityData? get currentFreightQuote => state.freightQuote;
 
-  CalculateInsuranceEntity? get currentInsuranceData => _currentInsuranceData;
+  CalculateInsuranceEntity? get currentInsuranceData => state.insuranceData;
 
-  int? get selectedShippingIndex => _selectedShippingIndex;
+  int? get selectedShippingIndex => state.selectedShippingIndex;
 
-  bool get isTransitInsured => _isTransitInsured;
+  bool get isTransitInsured => state.isTransitInsured;
 
   // Cart Operations
   Future<void> getCurrentLocation() async {
@@ -83,7 +83,6 @@ class CartShippingCubit extends Cubit<CartShippingState> {
         );
       },
       (location) {
-        _currentLocation = location;
         emit(
           state.copyWith(
             locationStatus: LoadingStatus.loaded,
@@ -108,9 +107,6 @@ class CartShippingCubit extends Cubit<CartShippingState> {
         );
       },
       (location) {
-        _currentLocation = location;
-        resetShipping();
-        _calculateAndEmitFees();
         emit(
           state.copyWith(
             locationStatus: LoadingStatus.loaded,
@@ -162,7 +158,6 @@ class CartShippingCubit extends Cubit<CartShippingState> {
         );
       },
       (cart) {
-        _currentCart = cart;
         emit(state.copyWith(cartStatus: LoadingStatus.loaded, cart: cart));
 
         // Auto-calculate fees when cart is loaded
@@ -178,8 +173,15 @@ class CartShippingCubit extends Cubit<CartShippingState> {
         emit(state.copyWith(errorMessage: failure.message));
       },
       (response) {
-        resetShipping();
-        emit(state.copyWith(successMessage: response.message));
+        emit(
+          state.copyWith(
+            successMessage: response.message,
+            shippingSelectionStatus: LoadingStatus.loaded,
+            selectedShippingIndex: null,
+            freightQuoteStatus: LoadingStatus.loaded,
+            freightQuote: null,
+          ),
+        );
         // Refresh cart after update
         getCartItems();
       },
@@ -201,7 +203,6 @@ class CartShippingCubit extends Cubit<CartShippingState> {
         );
       },
       (freightQuote) {
-        _currentFreightQuote = freightQuote.data;
         emit(
           state.copyWith(
             freightQuoteStatus: LoadingStatus.loaded,
@@ -215,26 +216,23 @@ class CartShippingCubit extends Cubit<CartShippingState> {
   Future<void> selectFreightService(SelectFreightServiceParams params) async {
     // emit(state.copyWith(shippingSelectionStatus: LoadingStatus.loading));
 
-    _selectedShippingIndex = params.serviceIndex;
-
     final result = await selectFreightServiceUseCase.call(params);
     result.fold(
       (failure) {
-        _selectedShippingIndex = null;
         emit(
           state.copyWith(
             shippingSelectionStatus: LoadingStatus.error,
+            selectedShippingIndex: null,
             errorMessage: failure.message,
           ),
         );
       },
       (response) {
-        _selectedShippingIndex =
-            params.serviceIndex; // Assuming this exists in params
+        // Assuming this exists in params
         emit(
           state.copyWith(
             shippingSelectionStatus: LoadingStatus.loaded,
-            selectedShippingIndex: _selectedShippingIndex,
+            selectedShippingIndex: params.serviceIndex,
             successMessage: response.message,
           ),
         );
@@ -259,7 +257,6 @@ class CartShippingCubit extends Cubit<CartShippingState> {
         );
       },
       (insurance) {
-        _currentInsuranceData = insurance;
         emit(
           state.copyWith(
             insuranceStatus: LoadingStatus.loaded,
@@ -299,22 +296,24 @@ class CartShippingCubit extends Cubit<CartShippingState> {
 
   // Fee Calculation Methods
   void updateTransitInsurance(bool isInsured) {
-    _isTransitInsured = isInsured;
+    // _isTransitInsured = isInsured;
+    state.copyWith(isTransitInsured: isInsured);
     _calculateAndEmitFees();
   }
 
   void updateSelectedShippingIndex(int? index) {
-    _selectedShippingIndex = index;
+    // _selectedShippingIndex = index;
+    state.copyWith(selectedShippingIndex: index);
     _calculateAndEmitFees();
   }
 
   void _calculateAndEmitFees() {
-    if (_currentCart?.items == null) return;
+    if (state.cart?.items == null) return;
 
     try {
       // emit(state.copyWith(feeCalculationStatus: LoadingStatus.loading));
 
-      final cartItems = _currentCart!.items;
+      final cartItems = state.cart!.items;
       final goodsValue = _calculateGoodsValue(cartItems);
       final localTransitFees = _calculateLocalTransitFees(cartItems);
       final exportFreightPackingOtherFees =
@@ -351,7 +350,7 @@ class CartShippingCubit extends Cubit<CartShippingState> {
         state.copyWith(
           feeCalculationStatus: LoadingStatus.loaded,
           feeBreakdown: feeBreakdown,
-          isTransitInsured: _isTransitInsured,
+          isTransitInsured: state.isTransitInsured,
         ),
       );
     } catch (e) {
@@ -399,29 +398,25 @@ class CartShippingCubit extends Cubit<CartShippingState> {
   }
 
   double _calculateExportFreightPackingOtherFees() {
-    if (_currentFreightQuote == null || _selectedShippingIndex == null) {
+    if (state.freightQuote == null || state.selectedShippingIndex == null) {
       return 0.0;
     }
 
     // Return the freight amount based on selected shipping method
-    switch (_selectedShippingIndex) {
+    switch (state.selectedShippingIndex) {
       case 0: // Courier (Air) - Door
-        return _currentFreightQuote!.quoteCourier.doorDelivery.totalAmount
+        return state.freightQuote!.quoteCourier.doorDelivery.totalAmount
             .toDouble();
       case 1: // Air Freight - Door
-        return _currentFreightQuote!.quoteAir.doorDelivery.totalAmount
-            .toDouble();
+        return state.freightQuote!.quoteAir.doorDelivery.totalAmount.toDouble();
       case 2: // Air Freight - Port
-        return _currentFreightQuote!.quoteAir.portDelivery.totalAmount
-            .toDouble();
+        return state.freightQuote!.quoteAir.portDelivery.totalAmount.toDouble();
       case 3: // Sea Freight - Door
-        return _currentFreightQuote!.quoteSea.doorDelivery.totalAmount
-            .toDouble();
+        return state.freightQuote!.quoteSea.doorDelivery.totalAmount.toDouble();
       case 4: // Sea Freight - Port
-        return _currentFreightQuote!.quoteSea.portDelivery.totalAmount
-            .toDouble();
+        return state.freightQuote!.quoteSea.portDelivery.totalAmount.toDouble();
       case 5: // Land Freight - Door
-        return _currentFreightQuote!.quoteLand.doorDelivery.totalAmount
+        return state.freightQuote!.quoteLand.doorDelivery.totalAmount
             .toDouble();
       default:
         return 0.0;
@@ -429,40 +424,40 @@ class CartShippingCubit extends Cubit<CartShippingState> {
   }
 
   double _calculateDestDutyTaxesOtherFees() {
-    if (_currentFreightQuote == null || _selectedShippingIndex == null) {
+    if (state.freightQuote == null || state.selectedShippingIndex == null) {
       return 0.0;
     }
 
     // Return the freight amount based on selected shipping method
-    switch (_selectedShippingIndex) {
+    switch (state.selectedShippingIndex) {
       case 0: // Courier (Air) - Door
         return double.tryParse(
-              _currentFreightQuote!.quoteCourier.doorDelivery.totalDutyTax,
+              state.freightQuote!.quoteCourier.doorDelivery.totalDutyTax,
             ) ??
             0.0;
       case 1: // Air Freight - Door
         return double.tryParse(
-              _currentFreightQuote!.quoteAir.doorDelivery.totalDutyTax,
+              state.freightQuote!.quoteAir.doorDelivery.totalDutyTax,
             ) ??
             0.0;
       case 2: // Air Freight - Port
         return double.tryParse(
-              _currentFreightQuote!.quoteAir.portDelivery.totalDutyTax,
+              state.freightQuote!.quoteAir.portDelivery.totalDutyTax,
             ) ??
             0.0;
       case 3: // Sea Freight - Door
         return double.tryParse(
-              _currentFreightQuote!.quoteSea.doorDelivery.totalDutyTax,
+              state.freightQuote!.quoteSea.doorDelivery.totalDutyTax,
             ) ??
             0.0;
       case 4: // Sea Freight - Port
         return double.tryParse(
-              _currentFreightQuote!.quoteSea.portDelivery.totalDutyTax,
+              state.freightQuote!.quoteSea.portDelivery.totalDutyTax,
             ) ??
             0.0;
       case 5: // Land Freight - Door
         return double.tryParse(
-              _currentFreightQuote!.quoteLand.doorDelivery.totalDutyTax,
+              state.freightQuote!.quoteLand.doorDelivery.totalDutyTax,
             ) ??
             0.0;
       default:
@@ -471,7 +466,7 @@ class CartShippingCubit extends Cubit<CartShippingState> {
   }
 
   double _calculateTransitInsurance() {
-    return _currentInsuranceData?.data.insuranceAmt ?? 0.0;
+    return state.insuranceData?.data.insuranceAmt ?? 0.0;
   }
 
   String getShippingMethodName(int? shippingIndex) {
@@ -495,10 +490,6 @@ class CartShippingCubit extends Cubit<CartShippingState> {
 
   // Reset methods
   void resetShipping() {
-    _currentFreightQuote = null;
-    _currentInsuranceData = null;
-    _selectedShippingIndex = null;
-    _isTransitInsured = false;
     emit(
       state.copyWith(
         freightQuoteStatus: LoadingStatus.initial,
@@ -515,12 +506,6 @@ class CartShippingCubit extends Cubit<CartShippingState> {
   }
 
   void resetAll() {
-    _currentCart = null;
-    _currentLocation = null;
-    _currentFreightQuote = null;
-    _currentInsuranceData = null;
-    _selectedShippingIndex = null;
-    _isTransitInsured = false;
     emit(CartShippingInitial());
   }
 }

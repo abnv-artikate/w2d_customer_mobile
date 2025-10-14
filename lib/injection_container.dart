@@ -44,6 +44,8 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/vouchers/get_vouchers_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/vouchers/validate_voucher_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/add_wishlist_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/delete_wishlist_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/get_wishlist_usecase.dart';
@@ -219,6 +221,12 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<GetBrowsingHistoryUseCase>(
     () => GetBrowsingHistoryUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<GetVouchersUseCase>(
+    () => GetVouchersUseCase(sl<Repository>()),
+  );
+  sl.registerLazySingleton<ValidateVoucherUseCase>(
+    () => ValidateVoucherUseCase(sl<Repository>()),
   );
 
   /// Repositories

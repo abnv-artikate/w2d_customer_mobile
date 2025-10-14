@@ -2,6 +2,8 @@ part of 'cart_shipping_cubit.dart';
 
 enum LoadingStatus { initial, loading, loaded, error }
 
+const _unset = Object();
+
 class CartShippingState {
   // Cart related
   final LoadingStatus cartStatus;
@@ -54,43 +56,63 @@ class CartShippingState {
 
   CartShippingState copyWith({
     LoadingStatus? cartStatus,
-    CartEntity? cart,
+    Object? cart = _unset,
     LoadingStatus? locationStatus,
-    LocationEntity? location,
+    Object? location = _unset,
     LoadingStatus? freightQuoteStatus,
-    FreightQuoteEntityData? freightQuote,
+    Object? freightQuote = _unset,
     LoadingStatus? shippingSelectionStatus,
-    int? selectedShippingIndex,
+    Object? selectedShippingIndex = _unset,
     LoadingStatus? insuranceStatus,
-    CalculateInsuranceEntity? insuranceData,
+    Object? insuranceData = _unset,
     LoadingStatus? insuranceConfirmationStatus,
     ConfirmInsuranceEntityData? insuranceConfirm,
     bool? isTransitInsured,
     LoadingStatus? feeCalculationStatus,
-    FeeBreakdown? feeBreakdown,
-    String? errorMessage,
-    String? successMessage,
+    Object? feeBreakdown = _unset,
+    Object? errorMessage = _unset,
+    Object? successMessage = _unset,
   }) {
     return CartShippingState(
       cartStatus: cartStatus ?? this.cartStatus,
-      cart: cart ?? this.cart,
+      cart: identical(cart, _unset) ? this.cart : cart as CartEntity?,
       locationStatus: locationStatus ?? this.locationStatus,
-      location: location ?? this.location,
+      location:
+          identical(location, _unset)
+              ? this.location
+              : location as LocationEntity?,
       freightQuoteStatus: freightQuoteStatus ?? this.freightQuoteStatus,
-      freightQuote: freightQuote ?? this.freightQuote,
+      freightQuote:
+          identical(freightQuote, _unset)
+              ? this.freightQuote
+              : freightQuote as FreightQuoteEntityData?,
       shippingSelectionStatus:
           shippingSelectionStatus ?? this.shippingSelectionStatus,
       selectedShippingIndex:
-          selectedShippingIndex ?? this.selectedShippingIndex,
+          identical(selectedShippingIndex, _unset)
+              ? this.selectedShippingIndex
+              : selectedShippingIndex as int?,
       insuranceStatus: insuranceStatus ?? this.insuranceStatus,
-      insuranceData: insuranceData ?? this.insuranceData,
+      insuranceData:
+          identical(insuranceData, _unset)
+              ? this.insuranceData
+              : insuranceData as CalculateInsuranceEntity?,
       insuranceConfirmationStatus:
           insuranceConfirmationStatus ?? this.insuranceConfirmationStatus,
       isTransitInsured: isTransitInsured ?? this.isTransitInsured,
       feeCalculationStatus: feeCalculationStatus ?? this.feeCalculationStatus,
-      feeBreakdown: feeBreakdown ?? this.feeBreakdown,
-      errorMessage: errorMessage,
-      successMessage: successMessage,
+      feeBreakdown:
+          identical(feeBreakdown, _unset)
+              ? this.feeBreakdown
+              : feeBreakdown as FeeBreakdown?,
+      errorMessage:
+          identical(errorMessage, _unset)
+              ? this.errorMessage
+              : errorMessage as String?,
+      successMessage:
+          identical(successMessage, _unset)
+              ? this.successMessage
+              : successMessage as String?,
     );
   }
 
@@ -185,11 +207,6 @@ class FeeBreakdown {
       estimatedTotal: estimatedTotal ?? this.estimatedTotal,
     );
   }
-
-  // @override
-  // String toString() {
-  //   return 'FeeBreakdown(goodsValue: $goodsValue, platformFees: $platformFees, localTransitFees: $localTransitFees, exportFreightPackingOtherFees: $exportFreightPackingOtherFees, destDutyTaxesOtherFees: $destDutyTaxesOtherFees, transitInsurance: $transitInsurance, estimatedTotal: $estimatedTotal)';
-  // }
 
   @override
   bool operator ==(Object other) {

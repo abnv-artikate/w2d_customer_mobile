@@ -25,6 +25,8 @@ import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_confir
 import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_payment_request_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/telr_payment/telr_payment_response_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/telr_payment/terl_confirm_payment_request_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/vouchers/validate_voucher_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/vouchers/vouchers_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/wishlist/get_wishlist_model.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
 
@@ -116,6 +118,11 @@ abstract class RemoteDatasource {
   Future<BrowsingHistoryModel> getBrowsingHistory(Map<String, dynamic> query);
 
   Future<SuccessMessageModel> addBrowsingHistory(Map<String, dynamic> body);
+
+  /// Vouchers Datasource
+  Future<List<VouchersModel>> getVouchers(Map<String, dynamic> body);
+
+  Future<ValidateVoucherModel> validateVoucher(Map<String, dynamic> body);
 }
 
 class RemoteDatasourceImpl extends RemoteDatasource {
@@ -505,6 +512,30 @@ class RemoteDatasourceImpl extends RemoteDatasource {
   ) async {
     try {
       return await w2dClient.getBrowsingHistory(query);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<VouchersModel>> getVouchers(Map<String, dynamic> body) async {
+    try {
+      return await w2dClient.getVouchers(body);
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ValidateVoucherModel> validateVoucher(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      return await w2dClient.validateVoucher(body);
     } on DioException catch (e) {
       throw Exception(e.message);
     } on Exception {

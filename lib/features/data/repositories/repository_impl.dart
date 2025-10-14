@@ -6,6 +6,7 @@ import 'package:w2d_customer_mobile/core/network/network_info.dart';
 import 'package:w2d_customer_mobile/core/utils/constants.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/local_datasource/local_datasource.dart';
 import 'package:w2d_customer_mobile/features/data/datasource/remote_datasource/remote_datasource.dart';
+import 'package:w2d_customer_mobile/features/data/model/vouchers/vouchers_model.dart';
 import 'package:w2d_customer_mobile/features/data/repositories/repository_conv.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/address/customer_address_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/browsing_history/browsing_history_entity.dart';
@@ -28,6 +29,8 @@ import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/confir
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_request_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/telr_payment/payment_response_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/user_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/vouchers/validate_voucher_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/vouchers/vouchers_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/wishlist/wishlist_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/repositories/repository.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/address/create_address_usecase.dart';
@@ -45,6 +48,8 @@ import 'package:w2d_customer_mobile/features/domain/usecases/product/product_vie
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/vouchers/get_vouchers_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/vouchers/validate_voucher_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/wishlist/add_wishlist_usecase.dart';
 
 class RepositoryImpl extends Repository {
@@ -683,6 +688,40 @@ class RepositoryImpl extends Repository {
         final result = await remoteDatasource.getBrowsingHistory({
           "unique_key": uniqueId,
         });
+
+        return Right(result.toEntity());
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<VouchersEntity>>> getVouchers(
+    GetVouchersParams params,
+  ) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.getVouchers(params.toJson());
+
+        return Right(result.map((e) => e.toEntity()).toList(growable: false));
+      } else {
+        return Left(ServerFailure(message: Constants.errorNoInternet));
+      }
+    } on ServerFailure catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ValidateVoucherEntity>> validateVoucher(
+    ValidateVoucherParams params,
+  ) async {
+    try {
+      if (await networkInfo.isConnected) {
+        final result = await remoteDatasource.validateVoucher(params.toJson());
 
         return Right(result.toEntity());
       } else {

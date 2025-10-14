@@ -20,6 +20,8 @@ import 'package:w2d_customer_mobile/features/data/model/recommendations/recommen
 import 'package:w2d_customer_mobile/features/data/model/related_products/related_products_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/search/search_result_autocomplete_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/success_message_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/vouchers/validate_voucher_model.dart';
+import 'package:w2d_customer_mobile/features/data/model/vouchers/vouchers_model.dart';
 import 'package:w2d_customer_mobile/features/data/model/wishlist/get_wishlist_model.dart';
 
 part 'client.g.dart';
@@ -224,10 +226,23 @@ abstract class W2DClient {
   @GET('${EndPoints.related}/{productId}')
   Future<RelatedProductsModel> getRelatedProducts(@Path() String productId);
 
-  /// Browsing History
+  /// Browsing History Client
   @GET(EndPoints.browsingHistory)
-  Future<BrowsingHistoryModel> getBrowsingHistory(@Queries() Map<String, dynamic> queries);
+  Future<BrowsingHistoryModel> getBrowsingHistory(
+    @Queries() Map<String, dynamic> queries,
+  );
 
   @POST(EndPoints.browsingHistoryAdd)
-  Future<SuccessMessageModel> addBrowsingHistory(@Body() Map<String, dynamic> body);
+  Future<SuccessMessageModel> addBrowsingHistory(
+    @Body() Map<String, dynamic> body,
+  );
+
+  /// Vouchers Client
+  @POST(EndPoints.vouchers)
+  Future<List<VouchersModel>> getVouchers(@Body() Map<String, dynamic> body);
+
+  @POST(EndPoints.voucherValidate)
+  Future<ValidateVoucherModel> validateVoucher(
+    @Body() Map<String, dynamic> body,
+  );
 }
