@@ -7,7 +7,7 @@ class VouchersModel {
   String? title;
   String? description;
   String? discountType;
-  double? discountValue;
+  int? discountValue;
   double? minSpent;
 
   VouchersModel({
@@ -37,7 +37,7 @@ class VouchersModel {
       title: title ?? "",
       description: description ?? "",
       discountType: discountType ?? "",
-      discountValue: discountValue ?? 0.0,
+      discountValue: discountValue ?? 0,
       minSpent: minSpent ?? 0.0,
     );
   }

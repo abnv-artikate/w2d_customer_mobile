@@ -7,6 +7,8 @@ import 'package:w2d_customer_mobile/features/domain/entities/location_entity.dar
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/calculate_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/confirm_insurance_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/entities/shipping/freight_quote_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/vouchers/validate_voucher_entity.dart';
+import 'package:w2d_customer_mobile/features/domain/entities/vouchers/vouchers_entity.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/cart_sync_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/get_cart_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/cart/update_cart_usecase.dart';
@@ -16,6 +18,8 @@ import 'package:w2d_customer_mobile/features/domain/usecases/shipping/calculate_
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/confirm_insurance_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/get_freight_quote_usecase.dart';
 import 'package:w2d_customer_mobile/features/domain/usecases/shipping/select_freight_service_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/vouchers/get_vouchers_usecase.dart';
+import 'package:w2d_customer_mobile/features/domain/usecases/vouchers/validate_voucher_usecase.dart';
 
 part 'cart_shipping_state.dart';
 
@@ -30,6 +34,8 @@ class CartShippingCubit extends Cubit<CartShippingState> {
     required this.selectFreightServiceUseCase,
     required this.calculateInsuranceUseCase,
     required this.confirmInsuranceUseCase,
+    required this.getVouchersUseCase,
+    required this.validateVoucherUseCase,
   }) : super(CartShippingInitial());
 
   // Cart Use Cases
@@ -44,6 +50,10 @@ class CartShippingCubit extends Cubit<CartShippingState> {
   final SelectFreightServiceUseCase selectFreightServiceUseCase;
   final CalculateInsuranceUseCase calculateInsuranceUseCase;
   final ConfirmInsuranceUseCase confirmInsuranceUseCase;
+
+  // Voucher Use Cases
+  final GetVouchersUseCase getVouchersUseCase;
+  final ValidateVoucherUseCase validateVoucherUseCase;
 
   // Constants
   static const double _platformFeeRate = 0.02;
@@ -156,6 +166,13 @@ class CartShippingCubit extends Cubit<CartShippingState> {
 
         // Auto-calculate fees when cart is loaded
         _calculateAndEmitFees();
+
+        // call Vouchers
+        getVouchers(
+          GetVouchersParams(
+            cartTotal: state.feeBreakdown?.estimatedTotal.toString() ?? "0.0",
+          ),
+        );
       },
     );
   }
@@ -282,6 +299,53 @@ class CartShippingCubit extends Cubit<CartShippingState> {
           state.copyWith(
             insuranceConfirmationStatus: LoadingStatus.loaded,
             successMessage: response.message,
+          ),
+        );
+      },
+    );
+  }
+
+  // Voucher Operations
+  Future<void> getVouchers(GetVouchersParams params) async {
+    final result = await getVouchersUseCase.call(params);
+
+    result.fold(
+      (fail) {
+        emit(
+          state.copyWith(
+            getVoucherStatus: LoadingStatus.error,
+            errorMessage: fail.message,
+          ),
+        );
+      },
+      (vouchers) {
+        emit(
+          state.copyWith(
+            getVoucherStatus: LoadingStatus.loaded,
+            vouchers: vouchers,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> validateVouchers(ValidateVoucherParams params) async {
+    final result = await validateVoucherUseCase.call(params);
+
+    result.fold(
+      (fail) {
+        emit(
+          state.copyWith(
+            validateVoucherStatus: LoadingStatus.error,
+            errorMessage: fail.message,
+          ),
+        );
+      },
+      (validateVoucher) {
+        emit(
+          state.copyWith(
+            validateVoucherStatus: LoadingStatus.loaded,
+            validatedVoucher: validateVoucher,
           ),
         );
       },

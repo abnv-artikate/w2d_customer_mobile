@@ -20,6 +20,7 @@ import 'package:w2d_customer_mobile/features/presentation/screens/auth/login_bot
 import 'package:w2d_customer_mobile/features/presentation/screens/checkout/checkout_screen.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/blank_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/cart_item_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/coupon_code_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/fees_breakdown_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/location_widget.dart';
@@ -59,11 +60,6 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: Text(
-        //   'Cart',
-        //   style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
-        // ),
-        // centerTitle: false,
         actions: [
           BlocBuilder<CartShippingCubit, CartShippingState>(
             builder: (context, state) {
@@ -210,6 +206,9 @@ class _CartScreenState extends State<CartScreen> {
         onShippingMethodDropdownTap: () {
           _handleShippingMethodDropdown(state);
         },
+        onViewAvailableOffersTap: () {
+          _handleVoucherDropdown(state);
+        },
       ),
     );
   }
@@ -281,6 +280,74 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
+  _handleVoucherDropdown(CartShippingState state) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.white,
+      enableDrag: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      useRootNavigator: true,
+      scrollControlDisabledMaxHeightRatio: 0.9,
+      builder: (BuildContext context) {
+        return state.vouchers != null
+            ? Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 20,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Available Offers",
+                    style: TextStyle(
+                      color: AppColors.deepBlue,
+                      fontSize: 25,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Divider(),
+                  Text(
+                    "Coupon Offers",
+                    style: TextStyle(
+                      color: AppColors.deepBlue,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 22,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  ListView.separated(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (ctx, idx) {
+                      return CouponCodeWidget(
+                        voucher: state.vouchers![idx],
+                        onApplyTap: () {},
+                      );
+                    },
+                    separatorBuilder: (ctx, idx) {
+                      return SizedBox(height: 10);
+                    },
+                    itemCount: state.vouchers?.length ?? 0,
+                  ),
+                ],
+              ),
+            )
+            : Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline_sharp, color: AppColors.techRed),
+                  Text("No Vouchers yet"),
+                ],
+              ),
+            );
+      },
+    );
+  }
+
   _handleShippingMethodDropdown(CartShippingState state) {
     final checkedItems =
         state.cart!.items.where((item) => item.isChecked).toList();
@@ -332,7 +399,7 @@ class _CartScreenState extends State<CartScreen> {
     _navigateToCheckout(state);
   }
 
-  _showLoginBottomSheet() async {
+  void _showLoginBottomSheet() async {
     await showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.white,
@@ -669,12 +736,12 @@ class _CartScreenState extends State<CartScreen> {
                 },
                 itemBuilder: (context, index, Prediction prediction) {
                   return Container(
-                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(color: AppColors.white),
                     child: Row(
                       children: [
                         Icon(LucideIcons.mapPin),
                         SizedBox(width: 7),
-                        Expanded(child: Text(prediction.description ?? "")),
+                        Text(prediction.description ?? ""),
                       ],
                     ),
                   );

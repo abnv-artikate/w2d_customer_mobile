@@ -119,6 +119,8 @@ Future<void> init() async {
       selectFreightServiceUseCase: sl<SelectFreightServiceUseCase>(),
       calculateInsuranceUseCase: sl<CalculateInsuranceUseCase>(),
       confirmInsuranceUseCase: sl<ConfirmInsuranceUseCase>(),
+      getVouchersUseCase: sl<GetVouchersUseCase>(),
+      validateVoucherUseCase: sl<ValidateVoucherUseCase>(),
     ),
   );
 

@@ -1,14 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:w2d_customer_mobile/core/utils/app_colors.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/currency_widget.dart';
+import 'package:w2d_customer_mobile/features/presentation/widgets/custom_filled_button_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/widgets/shipping_method_dropdown_widget.dart';
 import 'package:w2d_customer_mobile/features/presentation/cubit/cart_shipping/cart_shipping_cubit.dart';
 
-class FeesBreakdownWidget extends StatelessWidget {
+class FeesBreakdownWidget extends StatefulWidget {
   final VoidCallback? onShippingMethodDropdownTap;
+  final VoidCallback? onViewAvailableOffersTap;
 
-  const FeesBreakdownWidget({super.key, this.onShippingMethodDropdownTap});
+  const FeesBreakdownWidget({
+    super.key,
+    this.onShippingMethodDropdownTap,
+    this.onViewAvailableOffersTap,
+  });
+
+  @override
+  State<FeesBreakdownWidget> createState() => _FeesBreakdownWidgetState();
+}
+
+class _FeesBreakdownWidgetState extends State<FeesBreakdownWidget> {
+  final TextEditingController _voucherController = TextEditingController();
+  final FocusNode _voucherNode = FocusNode();
+
+  @override
+  void dispose() {
+    _voucherController.dispose();
+    _voucherNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,14 +41,117 @@ class FeesBreakdownWidget extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildEstimatedTotal(context, state),
+              _buildVoucherSection(context, state),
+              SizedBox(height: 30),
+              _buildFeeBreakdown(context, state),
               SizedBox(height: 30),
               _buildShippingMethodSelector(context, state),
               SizedBox(height: 30),
-              _buildFeeBreakdown(context, state),
+              _buildEstimatedTotal(context, state),
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildVoucherSection(BuildContext context, CartShippingState state) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 18, horizontal: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: AppColors.softWhite71,
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _voucherController,
+                  focusNode: _voucherNode,
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: AppColors.softWhite80),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: AppColors.worldGreen,
+                        width: 2,
+                      ),
+                    ),
+                    hintText: 'Enter Voucher Code',
+                    hintStyle: TextStyle(
+                      color: AppColors.softWhite80,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 10,
+                    ),
+                    fillColor: AppColors.white,
+                    filled: true,
+                  ),
+                  cursorColor: AppColors.black,
+                  style: TextStyle(
+                    color: AppColors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  onTapOutside: (_) {
+                    _voucherNode.unfocus();
+                  },
+                ),
+              ),
+              SizedBox(width: 10),
+              CustomFilledButtonWidget(
+                title: Text(
+                  "Apply",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: AppColors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                color: AppColors.worldGreen80,
+                height: 48,
+                onTap: () {},
+                borderRadius: 8,
+                horizontalPadding: 25,
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          InkWell(
+            onTap: widget.onViewAvailableOffersTap,
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.discount, color: Colors.blue),
+                  SizedBox(width: 10),
+                  Text(
+                    "View Available Offers",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  Spacer(),
+                  Icon(LucideIcons.chevronRight, color: Colors.blue),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -50,13 +175,6 @@ class FeesBreakdownWidget extends StatelessWidget {
           ),
           SizedBox(height: 4),
           if (state.hasFeeBreakdown)
-            // Text(
-            //   '${state.feeBreakdown!.estimatedTotal.toStringAsFixed(2)}',
-            //   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            //     color: AppColors.worldGreen,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // )
             CurrencyWidget(
               price: state.feeBreakdown!.estimatedTotal.toStringAsFixed(2),
               fontSize: 20,
@@ -84,12 +202,6 @@ class FeesBreakdownWidget extends StatelessWidget {
               ],
             )
           else
-            // Text(
-            //   '\$0.00',
-            //   style: Theme.of(
-            //     context,
-            //   ).textTheme.headlineSmall?.copyWith(color: Colors.grey),
-            // ),
             CurrencyWidget(
               price: "0.00",
               fontSize: 20,
@@ -111,7 +223,6 @@ class FeesBreakdownWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        // border: Border.all(color: AppColors.worldGreen80),
         color: AppColors.softWhite71,
       ),
       child: Row(
@@ -127,7 +238,7 @@ class FeesBreakdownWidget extends StatelessWidget {
             shippingMethodText: context
                 .read<CartShippingCubit>()
                 .getShippingMethodName(state.selectedShippingIndex),
-            onTap: onShippingMethodDropdownTap ?? () {},
+            onTap: widget.onShippingMethodDropdownTap ?? () {},
           ),
         ],
       ),

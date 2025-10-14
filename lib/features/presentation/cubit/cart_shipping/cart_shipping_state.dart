@@ -26,6 +26,13 @@ class CartShippingState {
   final ConfirmInsuranceEntityData? insuranceConfirm;
   final bool isTransitInsured;
 
+  // Voucher related
+  final LoadingStatus getVoucherStatus;
+  final List<VouchersEntity>? vouchers;
+  final LoadingStatus validateVoucherStatus;
+  final ValidateVoucherEntity? validatedVoucher;
+  final bool isVoucherApplied;
+
   // Fee calculation related
   final LoadingStatus feeCalculationStatus;
   final FeeBreakdown? feeBreakdown;
@@ -48,6 +55,11 @@ class CartShippingState {
     this.insuranceConfirmationStatus = LoadingStatus.initial,
     this.insuranceConfirm,
     this.isTransitInsured = false,
+    this.getVoucherStatus = LoadingStatus.initial,
+    this.vouchers,
+    this.validateVoucherStatus = LoadingStatus.initial,
+    this.validatedVoucher,
+    this.isVoucherApplied = false,
     this.feeCalculationStatus = LoadingStatus.initial,
     this.feeBreakdown,
     this.errorMessage,
@@ -68,6 +80,11 @@ class CartShippingState {
     LoadingStatus? insuranceConfirmationStatus,
     ConfirmInsuranceEntityData? insuranceConfirm,
     bool? isTransitInsured,
+    LoadingStatus? getVoucherStatus,
+    Object? vouchers, // List<VouchersEntity>?
+    LoadingStatus? validateVoucherStatus,
+    Object? validatedVoucher, // ValidateVoucherEntity
+    bool? isVoucherApplied,
     LoadingStatus? feeCalculationStatus,
     Object? feeBreakdown = _unset, // FeeBreakdown?
     Object? errorMessage = _unset, // String?
@@ -100,6 +117,18 @@ class CartShippingState {
       insuranceConfirmationStatus:
           insuranceConfirmationStatus ?? this.insuranceConfirmationStatus,
       isTransitInsured: isTransitInsured ?? this.isTransitInsured,
+      getVoucherStatus: getVoucherStatus ?? this.getVoucherStatus,
+      vouchers:
+          identical(vouchers, _unset)
+              ? this.vouchers
+              : vouchers as List<VouchersEntity>?,
+      validateVoucherStatus:
+          validateVoucherStatus ?? this.validateVoucherStatus,
+      validatedVoucher:
+          identical(validatedVoucher, _unset)
+              ? this.validatedVoucher
+              : validatedVoucher as ValidateVoucherEntity?,
+      isVoucherApplied: isVoucherApplied ?? this.isVoucherApplied,
       feeCalculationStatus: feeCalculationStatus ?? this.feeCalculationStatus,
       feeBreakdown:
           identical(feeBreakdown, _unset)

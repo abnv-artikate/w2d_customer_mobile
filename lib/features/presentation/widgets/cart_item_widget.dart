@@ -26,9 +26,9 @@ class _CartItemWidgetState extends State<CartItemWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
+      // margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
       child: Stack(
         children: [
           Row(

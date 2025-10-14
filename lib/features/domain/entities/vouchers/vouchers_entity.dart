@@ -3,7 +3,7 @@ class VouchersEntity {
   final String title;
   final String description;
   final String discountType;
-  final double discountValue;
+  final int discountValue;
   final double minSpent;
 
   VouchersEntity({
